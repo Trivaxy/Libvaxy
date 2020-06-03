@@ -1,0 +1,3 @@
+displayName = Libvaxy
+author = Trivaxy
+version = 0.1

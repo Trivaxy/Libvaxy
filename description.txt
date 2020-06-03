@@ -1,0 +1,9 @@
+A library mod providing functionality for the rest of my mods.
+
+You can use it for yourself, the documentation and source code are public.
+
+Here's an overview of what Libvaxy provides:
+- Easy runtime reflection with automatic caching, so you don't have to do it yourself
+- A ModAnalyzer class to retrieve a mod's resources without hassle, along with stuff such as item count, mod size, etc.
+- Manipulating and creating textures at runtime, with automatic cleaning up
+- The ability to turn tiles into falling tiles, without any extra work done on your part
