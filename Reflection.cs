@@ -268,33 +268,25 @@ namespace Libvaxy
 		/// <typeparam name="T">The type of the attribute</typeparam>
 		/// <param name="assembly">The assembly to search in</param>
 		/// <returns>An array of all types in the assembly holding the specified attribute</returns>
-		public static Type[] GetTypesWithAttribute<T>(Assembly assembly)
+		public static Type[] GetTypesWithAttribute<T>(Assembly assembly = null, bool inherited = false)
 			where T: Attribute
 		{
-			List<Type> types = new List<Type>();
+			Type[] types = assembly?.GetTypes() ?? Libvaxy.ModAssemblies.SelectMany(asm => asm.GetTypes()).ToArray();
 
-			foreach (Type type in assembly.GetTypes())
-				if (type.GetCustomAttributes(typeof(T), false).Length > 0)
-					types.Add(type);
-
-			return types.ToArray();
+			return types
+				.Where(t => t.GetCustomAttributes(typeof(T), inherited).Length > 0)
+				.ToArray();
 		}
 
-		public static MethodInfo[] GetMethodsWithAttribute<T>(Assembly assembly)
+		public static MethodInfo[] GetMethodsWithAttribute<T>(Assembly assembly = null, bool inherited = false)
 			where T: Attribute
 		{
-			List<MethodInfo> methods = new List<MethodInfo>();
+			Type[] types = assembly?.GetTypes() ?? Libvaxy.ModAssemblies.SelectMany(asm => asm.GetTypes()).ToArray();
 
-			foreach (Type type in assembly.GetTypes())
-			{
-				foreach (MethodInfo method in type.GetMethods())
-				{
-					if (method.GetCustomAttributes(typeof(T), false).Length > 0))
-							methods.Add(method);
-				}
-			}
-
-			return methods.ToArray();
+			return types
+				.SelectMany(t => t.GetMethods(AllFlags))
+				.Where(m => m.GetCustomAttributes(typeof(T), inherited).Length > 0)
+				.ToArray();
 		}
 
 		// will cache the provided MemberInfo into its respective cache dictionary
@@ -312,7 +304,7 @@ namespace Libvaxy
 				constructorCache[key] = (ConstructorInfo)info;
 		}
 
-		private static string FullMemberName(this MemberInfo info)
+		internal static string FullMemberName(this MemberInfo info)
 		{
 			string name = $"{info.ReflectedType.FullName}.{info.Name}";
 
@@ -329,7 +321,7 @@ namespace Libvaxy
 		// e.g the full name of System.Random.Next(int, int) is System.Random.Next[Int32, Int32]
 		// the name of every constructor is .ctor so e.g System.Random..ctor[Int32] stands for new Random(int)
 		// this method is ugly
-		private static string FullMethodName(Type reflectedType, string methodName, params Type[] parameters)
+		internal static string FullMethodName(Type reflectedType, string methodName, params Type[] parameters)
 			=> $"{reflectedType.FullName}.{methodName}[{string.Join(", ", parameters.Select(t => t.Name).ToArray())}]";
 	}
 }
