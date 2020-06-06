@@ -10,10 +10,10 @@ namespace Libvaxy
 		public const BindingFlags AllFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
 		public const BindingFlags AnyPublic = BindingFlags.Public | BindingFlags.NonPublic;
 
-		private static Dictionary<string, FieldInfo> fieldCache = new Dictionary<string, FieldInfo>();
-		private static Dictionary<string, PropertyInfo> propertyCache = new Dictionary<string, PropertyInfo>();
-		private static Dictionary<string, MethodInfo> methodCache = new Dictionary<string, MethodInfo>();
-		private static Dictionary<string, ConstructorInfo> constructorCache = new Dictionary<string, ConstructorInfo>();
+		private static Dictionary<string, FieldInfo> fieldCache;
+		private static Dictionary<string, PropertyInfo> propertyCache;
+		private static Dictionary<string, MethodInfo> methodCache;
+		private static Dictionary<string, ConstructorInfo> constructorCache;
 
 		internal static void InitializeCaches()
 		{

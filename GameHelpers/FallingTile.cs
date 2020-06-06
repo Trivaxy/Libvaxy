@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ModLoader;
 
-namespace Libvaxy.ContentHelpers
+namespace Libvaxy.GameHelpers
 {
 	public class FallingTile : ModProjectile
 	{

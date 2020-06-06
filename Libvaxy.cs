@@ -1,5 +1,5 @@
 using Libvaxy.Attributes;
-using Libvaxy.ContentHelpers;
+using Libvaxy.GameHelpers;
 using log4net;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -23,33 +23,50 @@ namespace Libvaxy
 		private static List<IDisposable> disposeList;
 		public static Assembly TerrariaAssembly;
 		public static Assembly[] ModAssemblies;
+		public static List<DustEmitter> DustEmitters;
 
 		internal static new ILog Logger => instance.Logger;
-
 
 		internal void PreLoad()
 		{
 			instance = this;
 		}
 
+		public static void DespicableMethod()
+		{
+			for (int i = 0; i < 10; i++)
+				DustEmitter.SpawnParentedDustEmitter(Main.LocalPlayer, 16, 16, new Vector2(i * 20 + 30, 20), -1, updateAction: de =>
+				{
+					de.ParentOffset = de.ParentOffset.RotatedBy(0.1f);
+					Dust.NewDust(de.Position, de.Width, de.Height, Terraria.ID.DustID.AncientLight, de.SpeedX, de.SpeedY);
+
+					if (Main.GameUpdateCount % 120 == 0)
+						DustEmitter.SpawnDustEmitter(de.Position, de.SpeedX, de.SpeedY, 4, 4, 120, de2 => Dust.NewDust(de2.Position, de2.Width, de2.Height, Terraria.ID.DustID.Fire, de2.SpeedX, de2.SpeedY));
+				});
+		}
+
 		public override void Load()
 		{
 			Reflection.InitializeCaches();
 			FallingTileTextures = new Dictionary<int, Texture2D>();
-			fallingTileAlphaMask = GetTexture("ContentHelpers/FallingTileAlphaMask");
+			fallingTileAlphaMask = GetTexture("GameHelpers/FallingTileAlphaMask");
 			disposeList = new List<IDisposable>();
+			DustEmitters = new List<DustEmitter>();
 		}
 
 		public void PostLoad()
 		{
 			TerrariaAssembly = typeof(Main).Assembly;
-			ModAssemblies = ModLoader.Mods.Select(mod => mod.Code).Skip(1).ToArray(); // index 0 is always null for some reason
+			ModAssemblies = ModLoader.Mods.Select(mod => mod.Code).Skip(1).ToArray(); // index 0 is always null
 			HookHandler.ApplyHooks();
 		}
 
 		public override void Unload()
 		{
+			instance = null;
+
 			Reflection.UnloadCaches();
+
 			FallingTileTextures = null;
 			fallingTileAlphaMask = null;
 
@@ -59,6 +76,27 @@ namespace Libvaxy
 
 			TerrariaAssembly = null;
 			ModAssemblies = null;
+
+			DustEmitters.Clear();
+			DustEmitters = null;
+		}
+
+		public override void MidUpdateDustTime()
+		{
+			// cOlLeCtIon ModIfIeD, eNuMeRaTIOn OpErAtIoN MAy not ExECuTe
+			for (int i = DustEmitters.Count - 1; i >= 0; i--)
+				DustEmitters[i].Update();
+		}
+
+		public override void PreSaveAndQuit()
+		{
+			DustEmitters.Clear();
+		}
+
+		public override void PostDrawInterface(SpriteBatch spriteBatch)
+		{
+			for (int i = DustEmitters.Count - 1; i >= 0; i--)
+				DustEmitters[i].DebugDrawRect(spriteBatch);
 		}
 
 		internal static void DisposeOnUnload(IDisposable disposable)
