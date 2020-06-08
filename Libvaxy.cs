@@ -22,28 +22,12 @@ namespace Libvaxy
 		public static Dictionary<int, Texture2D> FallingTileTextures;
 		private static List<IDisposable> disposeList;
 		public static Assembly TerrariaAssembly;
-		public static Assembly[] ModAssemblies;
+		public static Dictionary<string, Assembly> ModAssemblies;
 		public static List<DustEmitter> DustEmitters;
 
 		internal static new ILog Logger => instance.Logger;
 
-		internal void PreLoad()
-		{
-			instance = this;
-		}
-
-		public static void DespicableMethod()
-		{
-			for (int i = 0; i < 10; i++)
-				DustEmitter.SpawnParentedDustEmitter(Main.LocalPlayer, 16, 16, new Vector2(i * 20 + 30, 20), -1, updateAction: de =>
-				{
-					de.ParentOffset = de.ParentOffset.RotatedBy(0.1f);
-					Dust.NewDust(de.Position, de.Width, de.Height, Terraria.ID.DustID.AncientLight, de.SpeedX, de.SpeedY);
-
-					if (Main.GameUpdateCount % 120 == 0)
-						DustEmitter.SpawnDustEmitter(de.Position, de.SpeedX, de.SpeedY, 4, 4, 120, de2 => Dust.NewDust(de2.Position, de2.Width, de2.Height, Terraria.ID.DustID.Fire, de2.SpeedX, de2.SpeedY));
-				});
-		}
+		internal void PreLoad() => instance = this;
 
 		public override void Load()
 		{
@@ -57,8 +41,9 @@ namespace Libvaxy
 		public void PostLoad()
 		{
 			TerrariaAssembly = typeof(Main).Assembly;
-			ModAssemblies = ModLoader.Mods.Select(mod => mod.Code).Skip(1).ToArray(); // index 0 is always null
+			ModAssemblies = ModLoader.Mods.Skip(1).ToDictionary(m => m.Name, m => m.Code);
 			HookHandler.ApplyHooks();
+			DetourHandler.ApplyDetours();
 		}
 
 		public override void Unload()

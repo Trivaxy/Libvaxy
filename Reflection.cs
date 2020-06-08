@@ -262,6 +262,8 @@ namespace Libvaxy
 		/// <returns>An array containing the type of each parameter, in order</returns>
 		public static Type[] GetObjectTypes(params object[] parameters) => parameters.Select(p => p.GetType()).ToArray();
 
+		public static Type[] GetParameterTypes(MethodInfo info) => info.GetParameters().Select(p => p.ParameterType).ToArray();
+
 		/// <summary>
 		/// Searches the given assembly for types holding the specified attribute.
 		/// </summary>
@@ -271,7 +273,7 @@ namespace Libvaxy
 		public static Type[] GetTypesWithAttribute<T>(Assembly assembly = null, bool inherited = false)
 			where T: Attribute
 		{
-			Type[] types = assembly?.GetTypes() ?? Libvaxy.ModAssemblies.SelectMany(asm => asm.GetTypes()).ToArray();
+			Type[] types = assembly?.GetTypes() ?? Libvaxy.ModAssemblies.Values.SelectMany(asm => asm.GetTypes()).ToArray();
 
 			return types
 				.Where(t => t.GetCustomAttributes(typeof(T), inherited).Length > 0)
@@ -281,7 +283,7 @@ namespace Libvaxy
 		public static MethodInfo[] GetMethodsWithAttribute<T>(Assembly assembly = null, bool inherited = false)
 			where T: Attribute
 		{
-			Type[] types = assembly?.GetTypes() ?? Libvaxy.ModAssemblies.SelectMany(asm => asm.GetTypes()).ToArray();
+			Type[] types = assembly?.GetTypes() ?? Libvaxy.ModAssemblies.Values.SelectMany(asm => asm.GetTypes()).ToArray();
 
 			return types
 				.SelectMany(t => t.GetMethods(AllFlags))
