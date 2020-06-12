@@ -40,7 +40,7 @@ namespace Libvaxy.GameHelpers
 
 		public override bool OnTileCollide(Vector2 oldVelocity)
 		{
-			WorldGen.PlaceTile((int)projectile.Center.X / 16, (int)(projectile.Center.Y / 16), (int)projectile.ai[0]);
+			Terraria.WorldGen.PlaceTile((int)projectile.Center.X / 16, (int)(projectile.Center.Y / 16), (int)projectile.ai[0]);
 			return true;
 		}
 	}
