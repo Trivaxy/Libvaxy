@@ -59,6 +59,30 @@ namespace Libvaxy
 			return rectColors.ToArray();
 		}
 
+		public static Color GetAverageColor(this Texture2D texture)
+		{
+			Color[] colors = texture.GetColors();
+			int r = 0;
+			int g = 0;
+			int b = 0;
+			int countedColors = colors.Length;
+
+			for (int i = 0; i < colors.Length; i++)
+			{
+				if (colors[i].A != 255)
+				{
+					countedColors--;
+					continue;
+				}
+
+				r += colors[i].R;
+				g += colors[i].G;
+				b += colors[i].B;
+			}
+
+			return new Color((byte)(r / countedColors), (byte)(g / countedColors), (byte)(b / countedColors));
+		}
+
 		public static void PreMultiply(this Texture2D texture)
 		{
 			Color[] colors = texture.GetColors();
