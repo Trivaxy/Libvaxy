@@ -97,14 +97,6 @@ namespace Libvaxy.GameHelpers.IO
 				true
 				);
 
-			/*var assemblyName = new AssemblyName("AutoSerialize");
-			var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.RunAndSave, Terraria.Main.SavePath);
-			var moduleBuilder = assemblyBuilder.DefineDynamicModule(assemblyName.Name, assemblyName.Name + ".dll");
-
-			TypeBuilder builder = moduleBuilder.DefineType("Test", TypeAttributes.Public);
-			var methodBuilder = builder.DefineMethod("AutoDeserialize_"+type.Name, MethodAttributes.Public | MethodAttributes.Static, typeof(T), new[] { typeof(TagCompound) });
-			ILGenerator il = methodBuilder.GetILGenerator(1024);*/
-
 			ILGenerator il = deserializer.GetILGenerator(1024);
 
 			il.DeclareLocal(type);
@@ -162,8 +154,6 @@ namespace Libvaxy.GameHelpers.IO
 			il.Emit(OpCodes.Ldloc_0);
 			il.Emit(OpCodes.Ret);
 
-			/*var t = builder.CreateType();
-			assemblyBuilder.Save(assemblyName.Name + ".dll");*/
 			return (Func<TagCompound, T>)deserializer.CreateDelegate<Func<TagCompound, T>>();
 		}
 	}
