@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization;
 
 namespace Libvaxy
 {
@@ -9,6 +10,8 @@ namespace Libvaxy
 	{
 		public const BindingFlags AllFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
 		public const BindingFlags AnyPublic = BindingFlags.Public | BindingFlags.NonPublic;
+		public const BindingFlags AnyInstance = AnyPublic | BindingFlags.Instance;
+		public const BindingFlags AnyStatic = AnyPublic | BindingFlags.Static;
 
 		private static Dictionary<string, FieldInfo> fieldCache;
 		private static Dictionary<string, PropertyInfo> propertyCache;
@@ -253,7 +256,7 @@ namespace Libvaxy
 		/// <param name="type">The type containing the property</param>
 		/// <param name="paramTypes">The parameter types of the constructor, in order</param>
 		/// <returns>The acquired ConstructorInfo</returns>
-		public static ConstructorInfo GetConstructorInfo(Type type, Type[] paramTypes) => type.GetConstructor(paramTypes);
+		public static ConstructorInfo GetConstructorInfo(Type type, Type[] paramTypes) => type.GetConstructor(AllFlags, Type.DefaultBinder, paramTypes, null);
 
 		/// <summary>
 		/// Gets the type of each parameter passed in.
@@ -263,6 +266,10 @@ namespace Libvaxy
 		public static Type[] GetObjectTypes(params object[] parameters) => parameters.Select(p => p.GetType()).ToArray();
 
 		public static Type[] GetParameterTypes(MethodInfo info) => info.GetParameters().Select(p => p.ParameterType).ToArray();
+
+		public static T CreateInstance<T>() => (T)CreateInstance(typeof(T));
+
+		public static object CreateInstance(Type type) => FormatterServices.GetUninitializedObject(type);
 
 		/// <summary>
 		/// Searches the given assembly for types holding the specified attribute.

@@ -1,5 +1,6 @@
 using Libvaxy.Attributes;
 using Libvaxy.GameHelpers;
+using Libvaxy.GameHelpers.IO;
 using log4net;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -9,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using Terraria;
 using Terraria.ModLoader;
+using Terraria.ModLoader.IO;
 
 namespace Libvaxy
 {
