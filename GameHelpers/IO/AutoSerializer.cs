@@ -1,5 +1,4 @@
-﻿using IL.Terraria;
-using MonoMod.Utils;
+﻿using MonoMod.Utils;
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -26,6 +25,8 @@ namespace Libvaxy.GameHelpers.IO
 				deserializer = CreateDeserializer<T>();
 			return deserializer.Invoke(tag);
 		}
+
+		public void Deserialize(TagCompound tag, ref T obj) => obj = Deserialize(tag);
 
 #pragma warning disable CS0693
 		private static Func<T, TagCompound> CreateSerializer<T>()

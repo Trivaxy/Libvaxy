@@ -1,6 +1,6 @@
 using Libvaxy.Attributes;
+using Libvaxy.Debug;
 using Libvaxy.GameHelpers;
-using Libvaxy.GameHelpers.IO;
 using log4net;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -10,7 +10,6 @@ using System.Linq;
 using System.Reflection;
 using Terraria;
 using Terraria.ModLoader;
-using Terraria.ModLoader.IO;
 
 namespace Libvaxy
 {
@@ -38,6 +37,7 @@ namespace Libvaxy
 			fallingTileAlphaMask = GetTexture("GameHelpers/FallingTileAlphaMask");
 			disposeList = new List<IDisposable>();
 			DustEmitters = new List<DustEmitter>();
+			StackInspectHandler.Initialize();
 		}
 
 		public void PostLoad()
@@ -66,6 +66,8 @@ namespace Libvaxy
 
 			DustEmitters.Clear();
 			DustEmitters = null;
+
+			StackInspectHandler.Unload();
 		}
 
 		public override void MidUpdateDustTime()
@@ -104,6 +106,9 @@ namespace Libvaxy
 
 		public static int SpawnFallingTile(Point position, int tileType, int damage, float knockback = 6f)
 			=> SpawnFallingTile(position.X, position.Y, tileType, damage, knockback);
+
+		public static void InspectStack(StackInspectTarget target)
+			=> StackInspectHandler.ApplyStackInspection(target);
 
 		public override void PostAddRecipes() => PostLoad();
 	}

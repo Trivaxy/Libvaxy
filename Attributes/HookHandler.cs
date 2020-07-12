@@ -1,5 +1,4 @@
-﻿using Libvaxy.Attributes;
-using System;
+﻿using System;
 using System.Reflection;
 
 namespace Libvaxy.Attributes
