@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 using Terraria;
 
 namespace Libvaxy.WorldGen
@@ -12,6 +13,14 @@ namespace Libvaxy.WorldGen
 		public const int MediumWorldHeight = (int)(SmallWorldHeight * 1.5f);
 		public const int LargeWorldWidth = SmallWorldWidth * 2;
 		public const int LargeWorldHeight = SmallWorldHeight * 2;
+		/// <summary>
+		/// In case the user is using tML 64bit
+		/// </summary>
+		public const int ExtraLargeWorldWidth = SmallWorldWidth * 4;
+        /// <summary>
+        /// In case the user is using tML 64bit
+        /// </summary>
+		public const int ExtraLargeWorldHeight = SmallWorldHeight * 4;
 
 		public static void Replace(int x, int y, int width, int height, ushort type, ushort newType)
 		{
@@ -39,6 +48,51 @@ namespace Libvaxy.WorldGen
 				}
 			}
 		}
+
+		/// <summary>
+		/// Contribution by dradon<br />
+		/// Original source here:
+		/// https://github.com/TUA-Team/ROI/blob/Dradon-branch/Helpers/ROIWorldGenHelper.cs#L14
+		/// </summary>
+		/// <param name="i"></param>
+		/// <param name="j"></param>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="tile">Array of tile you want to place</param>
+		/// <param name="weight">Weight of each tile, this number need to be equal to the amount of tile in the tile parameter</param>
+		/// <param name="replaceTileMode">Set to true to only replace tile instead of adding them</param>
+        public static void FillAdvanced(int i, int j, int width, int height, ushort[] tile, ushort[] weight, bool replaceTileMode = false)
+        {
+            if (tile.Length != weight.Length) return;
+
+            List<ushort> weightedList = new List<ushort>();
+
+            for (int index = 0; index < weight.Length; index++)
+            {
+                for (int amountOfItem = 0; amountOfItem < weight[index]; amountOfItem++)
+                {
+                    weightedList.Add(tile[index]);
+                }
+            }
+
+            for (int x = i; x < i + width; x++)
+            {
+                for (int y = j; y < j + height; y++)
+                {
+                    if (replaceTileMode && Main.tile[x, y].active())
+                    {
+                        Main.tile[x, y].type = Terraria.WorldGen.genRand.Next(weightedList);
+                        Terraria.WorldGen.SquareTileFrame(x, y);
+                    }
+                    else if(!replaceTileMode)
+                    {
+                        Main.tile[x, y].active(true);
+                        Main.tile[x, y].type = Terraria.WorldGen.genRand.Next(weightedList);
+                        Terraria.WorldGen.SquareTileFrame(x, y);
+                    }
+                }
+            }
+        }
 
 		public static void FillAir(int x, int y, int width, int height)
 		{
