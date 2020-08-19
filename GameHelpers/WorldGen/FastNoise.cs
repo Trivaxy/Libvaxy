@@ -38,7 +38,7 @@ using FN_DECIMAL = System.Single;
 using System;
 using System.Runtime.CompilerServices;
 
-namespace Libvaxy.WorldGen
+namespace Libvaxy.GameHelpers.WorldGen
 {
 	public class FastNoise
 	{

@@ -98,7 +98,7 @@ namespace Libvaxy
 			Color[] colors = texture.GetColors();
 			Texture2D newTexture = new Texture2D(Main.instance.GraphicsDevice, texture.Width, texture.Height);
 			newTexture.SetData(colors);
-			Libvaxy.DisposeOnUnload(newTexture);
+			LibvaxyMod.DisposeOnUnload(newTexture);
 			return newTexture;
 		}
 
@@ -107,7 +107,7 @@ namespace Libvaxy
 			Texture2D newTexture = new Texture2D(Main.instance.GraphicsDevice, rect.Width, rect.Height);
 			Color[] colors = texture.GetColorsRect(rect);
 			newTexture.SetData(colors);
-			Libvaxy.DisposeOnUnload(newTexture);
+			LibvaxyMod.DisposeOnUnload(newTexture);
 			return newTexture;
 		}
 

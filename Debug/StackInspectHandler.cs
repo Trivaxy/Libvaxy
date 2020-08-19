@@ -27,7 +27,7 @@ namespace Libvaxy.Debug
 			{
 				if (inspectedMethodsRegisterCount.TryGetValue(hook, out int registerCount) && registerCount + 1 >= 2)
 				{
-					Libvaxy.Logger.Warn($"Tried to inspect {hook.FullMemberName()} more than once. Ignoring...");
+					LibvaxyMod.Logger.Warn($"Tried to inspect {hook.FullMemberName()} more than once. Ignoring...");
 					return;
 				}
 
@@ -67,7 +67,7 @@ namespace Libvaxy.Debug
 #pragma warning restore IDE0051
 		{
 
-			Libvaxy.Logger.Debug($"Topmost value in stack of {method} BEFORE [{instruction}] is run: {obj ?? "None"}");
+			LibvaxyMod.Logger.Debug($"Topmost value in stack of {method} BEFORE [{instruction}] is run: {obj ?? "None"}");
 		}
 	}
 }

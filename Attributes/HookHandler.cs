@@ -20,7 +20,7 @@ namespace Libvaxy.Attributes
 						throw new LibvaxyException($"Attempted to hook into an unknown method: {fullHookName}");
 
 					hookEvent.AddEventHandler(null, Delegate.CreateDelegate(hookEvent.EventHandlerType, method));
-					Libvaxy.Logger.Info($"Registered hook: {fullHookName}\nBy: {method.FullMemberName()}");
+					LibvaxyMod.Logger.Info($"Registered hook: {fullHookName}\nBy: {method.FullMemberName()}");
 				}
 			}
 		}

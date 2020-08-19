@@ -7,6 +7,14 @@ namespace Libvaxy.GameHelpers
 		public const int DayLength = 54000;
 		public const int NightLength = 32400;
 
+		public static int FromMilliSeconds(float milliseconds) => FromSeconds(milliseconds / 1000);
+
+		public static int FromSeconds(float seconds) => (int)(seconds * 60);
+
+		public static int FromMinutes(float minutes) => FromSeconds(minutes) * 60;
+
+		public static int FromHours(float hours) => FromMinutes(hours) * 60;
+
 		public static void SetToDusk()
 		{
 			Main.dayTime = false;

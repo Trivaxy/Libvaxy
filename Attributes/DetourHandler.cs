@@ -18,13 +18,13 @@ namespace Libvaxy.Attributes
 				DetourAttribute attribute = method.GetCustomAttribute<DetourAttribute>();
 				string modName = attribute.typeName.Split('.')[0];
 
-				if (!Libvaxy.ModAssemblies.ContainsKey(modName))
+				if (!LibvaxyMod.ModAssemblies.ContainsKey(modName))
 				{
-					Libvaxy.Logger.Warn("Attempted to detour an unknown / unloaded mod, ignoring and moving on...");
+					LibvaxyMod.Logger.Warn("Attempted to detour an unknown / unloaded mod, ignoring and moving on...");
 					continue;
 				}
 
-				Type targetMethodType = Libvaxy.ModAssemblies[modName].GetType(attribute.typeName);
+				Type targetMethodType = LibvaxyMod.ModAssemblies[modName].GetType(attribute.typeName);
 
 				if (targetMethodType == null)
 					throw new LibvaxyException("Could not find the target type to perform detour");
@@ -41,8 +41,8 @@ namespace Libvaxy.Attributes
 				if (method.ReturnType != targetMethod.ReturnType)
 					throw new LibvaxyException("The target method and detour method do not have matching return types");
 
-				Libvaxy.DisposeOnUnload(new Detour(targetMethod, method));
-				Libvaxy.Logger.Info($"Registered detour from {targetMethod.FullMemberName()}\nTo: {method.FullMemberName()}");
+				LibvaxyMod.DisposeOnUnload(new Detour(targetMethod, method));
+				LibvaxyMod.Logger.Info($"Registered detour from {targetMethod.FullMemberName()}\nTo: {method.FullMemberName()}");
 			}
 		}
 	}

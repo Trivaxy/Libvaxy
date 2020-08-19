@@ -72,21 +72,21 @@ namespace Libvaxy.GameHelpers
 			Utils.DrawRectangle(spriteBatch, Position, Position + new Vector2(Width, Height), Color.White, Color.White, 1f);
 		}
 
-		public void Kill() => Libvaxy.DustEmitters.RemoveAt(Index);
+		public void Kill() => LibvaxyMod.DustEmitters.RemoveAt(Index);
 
 		public static int SpawnDustEmitter(Vector2 position, float speedX, float speedY, int width, int height, int timeLeft, Action<DustEmitter> updateAction = null)
 		{
 			DustEmitter emitter = new DustEmitter(position, speedX, speedY, width, height, Vector2.Zero, null, timeLeft, true, false, false, updateAction);
-			emitter.Index = Libvaxy.DustEmitters.Count;
-			Libvaxy.DustEmitters.Add(emitter);
+			emitter.Index = LibvaxyMod.DustEmitters.Count;
+			LibvaxyMod.DustEmitters.Add(emitter);
 			return emitter.Index;
 		}
 		 
 		public static int SpawnParentedDustEmitter(Entity parent, int width, int height, Vector2 parentOffset, int timeLeft, bool syncParentPosition = true, bool syncParentSpeed = true, Action<DustEmitter> updateAction = null)
 		{
 			DustEmitter emitter = new DustEmitter(parent.position, 0, 0, width, height, parentOffset, parent, timeLeft, true, syncParentPosition, syncParentSpeed, updateAction);
-			emitter.Index = Libvaxy.DustEmitters.Count;
-			Libvaxy.DustEmitters.Add(emitter);
+			emitter.Index = LibvaxyMod.DustEmitters.Count;
+			LibvaxyMod.DustEmitters.Add(emitter);
 			return emitter.Index;
 		}
 	}

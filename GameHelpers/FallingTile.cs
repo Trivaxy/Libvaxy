@@ -31,10 +31,10 @@ namespace Libvaxy.GameHelpers
 		{
 			int tileType = (int)projectile.ai[0];
 
-			if (!Libvaxy.FallingTileTextures.ContainsKey(tileType))
-				Libvaxy.FallingTileTextures[tileType] = Libvaxy.CreateFallingTileTexture(tileType);
+			if (!LibvaxyMod.FallingTileTextures.ContainsKey(tileType))
+				LibvaxyMod.FallingTileTextures[tileType] = LibvaxyMod.CreateFallingTileTexture(tileType);
 
-			spriteBatch.Draw(Libvaxy.FallingTileTextures[tileType], projectile.position - Main.screenPosition, null, lightColor, projectile.rotation, new Vector2(projectile.width / 2, projectile.height / 2), 1f, SpriteEffects.None, 0f);
+			spriteBatch.Draw(LibvaxyMod.FallingTileTextures[tileType], projectile.position - Main.screenPosition, null, lightColor, projectile.rotation, new Vector2(projectile.width / 2, projectile.height / 2), 1f, SpriteEffects.None, 0f);
 			return false;
 		}
 

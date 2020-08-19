@@ -39,7 +39,7 @@ namespace Libvaxy.GameHelpers.IO
 				"AutoSerialize_" + type.Name,
 				tagCompound,
 				new Type[] { type },
-				typeof(Libvaxy).Module,
+				typeof(LibvaxyMod).Module,
 				true
 				);
 
@@ -94,7 +94,7 @@ namespace Libvaxy.GameHelpers.IO
 				"AutoDeserialize_" + type.Name,
 				type,
 				new Type[] { tagCompound },
-				typeof(Libvaxy).Module,
+				typeof(LibvaxyMod).Module,
 				true
 				);
 

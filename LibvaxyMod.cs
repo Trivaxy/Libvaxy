@@ -1,4 +1,5 @@
 using Libvaxy.Attributes;
+using Libvaxy.ContentHelpers;
 using Libvaxy.Debug;
 using Libvaxy.GameHelpers;
 using log4net;
@@ -9,13 +10,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Terraria;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace Libvaxy
 {
-	public class Libvaxy : Mod
+	// i want the class name to be Libvaxy so bad, but the namespace already reserved it :(
+	public class LibvaxyMod : Mod
 	{
-		public Libvaxy() => PreLoad();
+		public LibvaxyMod() => PreLoad();
 
 		internal static Mod instance;
 		internal static Texture2D fallingTileAlphaMask;
@@ -25,6 +28,8 @@ namespace Libvaxy
 		public static Assembly TerrariaAssembly;
 		public static Dictionary<string, Assembly> ModAssemblies;
 		public static List<DustEmitter> DustEmitters;
+		internal static Dictionary<string, ModEvent> ModEvents;
+		public static ModEvent CurrentEvent;
 
 		internal static new ILog Logger => instance.Logger;
 
@@ -38,6 +43,7 @@ namespace Libvaxy
 			disposeList = new List<IDisposable>();
 			DustEmitters = new List<DustEmitter>();
 			StackInspectHandler.Initialize();
+			ModEvents = new Dictionary<string, ModEvent>();
 		}
 
 		public void PostLoad()
@@ -68,6 +74,9 @@ namespace Libvaxy
 			DustEmitters = null;
 
 			StackInspectHandler.Unload();
+
+			ModEvents = null;
+			CurrentEvent = null;
 		}
 
 		public override void MidUpdateDustTime()
@@ -109,6 +118,14 @@ namespace Libvaxy
 
 		public static void InspectStack(StackInspectTarget target)
 			=> StackInspectHandler.ApplyStackInspection(target);
+
+		public static void SendMessage(string message, Color color, int excludedPlayer = -1)
+		{
+			if (Main.dedServ)
+				NetMessage.BroadcastChatMessage(NetworkText.FromLiteral(message), color, excludedPlayer);
+			else
+				Main.NewText(message, color);
+		}
 
 		public override void PostAddRecipes() => PostLoad();
 	}

@@ -269,6 +269,8 @@ namespace Libvaxy
 
 		public static T CreateInstance<T>() => (T)CreateInstance(typeof(T));
 
+		public static T CreateInstance<T>(Type type) => (T)CreateInstance(type);
+
 		public static object CreateInstance(Type type) => FormatterServices.GetUninitializedObject(type);
 
 		/// <summary>
@@ -280,7 +282,7 @@ namespace Libvaxy
 		public static Type[] GetTypesWithAttribute<T>(Assembly assembly = null, bool inherited = false)
 			where T: Attribute
 		{
-			Type[] types = assembly?.GetTypes() ?? Libvaxy.ModAssemblies.Values.SelectMany(asm => asm.GetTypes()).ToArray();
+			Type[] types = assembly?.GetTypes() ?? LibvaxyMod.ModAssemblies.Values.SelectMany(asm => asm.GetTypes()).ToArray();
 
 			return types
 				.Where(t => t.GetCustomAttributes(typeof(T), inherited).Length > 0)
@@ -290,11 +292,29 @@ namespace Libvaxy
 		public static MethodInfo[] GetMethodsWithAttribute<T>(Assembly assembly = null, bool inherited = false)
 			where T: Attribute
 		{
-			Type[] types = assembly?.GetTypes() ?? Libvaxy.ModAssemblies.Values.SelectMany(asm => asm.GetTypes()).ToArray();
+			Type[] types = assembly?.GetTypes() ?? LibvaxyMod.ModAssemblies.Values.SelectMany(asm => asm.GetTypes()).ToArray();
 
 			return types
 				.SelectMany(t => t.GetMethods(AllFlags))
 				.Where(m => m.GetCustomAttributes(typeof(T), inherited).Length > 0)
+				.ToArray();
+		}
+
+		public static Type[] GetSubtypes(Type type, Assembly assembly = null)
+		{
+			Type[] types = assembly?.GetTypes() ?? LibvaxyMod.ModAssemblies.Values.SelectMany(asm => asm.GetTypes()).ToArray();
+
+			return types
+				.Where(t => t.IsSubclassOf(type))
+				.ToArray();
+		}
+
+		public static Type[] GetNonAbstractSubtypes(Type type, Assembly assembly = null)
+		{
+			Type[] types = assembly?.GetTypes() ?? LibvaxyMod.ModAssemblies.Values.SelectMany(asm => asm.GetTypes()).ToArray();
+
+			return types
+				.Where(t => t.IsSubclassOf(type) && !t.IsAbstract)
 				.ToArray();
 		}
 

@@ -1,8 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using static Terraria.WorldGen;
 
-namespace Libvaxy.WorldGen
+namespace Libvaxy.GameHelpers.WorldGen
 {
 	public static class WorldGenUtils
 	{
@@ -74,7 +75,7 @@ namespace Libvaxy.WorldGen
 			return displacements;
 		}
 
-		public static Point GetRandomPointInArea(int x, int y, int width, int height) => new Point(Terraria.WorldGen.genRand.Next(x, x + width), Terraria.WorldGen.genRand.Next(y, y + height));
+		public static Point GetRandomPointInArea(int x, int y, int width, int height) => new Point(genRand.Next(x, x + width), genRand.Next(y, y + height));
 
 		public static Point[] GetRandomPointsInArea(int x, int y, int width, int height, int points)
 		{
@@ -106,6 +107,43 @@ namespace Libvaxy.WorldGen
 					randPoints[i] = GetRandomPointInArea(x, y, width, height);
 
 			return randPoints;
+		}
+
+		public static Point FindLowestTile(int x, int y)
+		{
+			while (y < Main.maxTilesY && y > -1 && x < Main.maxTilesX && x > -1)
+			{
+				if (Main.tile[x, y].active())
+					return new Point(x, y);
+				y++;
+			}
+			return Point.Zero;
+		}
+
+		public static bool SafeCoordinates(int i, int j) => i > 0 && i < Main.maxTilesX && j > 0 && j < Main.maxTilesY;
+
+		public static void NoiseRunner(int i, int j, int type, float radius, float frequency)
+		{
+			int[] circleDisplacements = GetPerlinDisplacements((int)(2 * Math.PI * radius), frequency, (int)radius, 1f, Main.rand.Next(int.MaxValue));
+			float angle = (float)(2 * Math.PI / circleDisplacements.Length);
+
+			for (int x = 0; x < circleDisplacements.Length; x++)
+			{
+				MovingPoint point = new MovingPoint(i, j, (float)(Math.Sin(angle * x)), (float)Math.Cos(angle * x));
+
+				float distance = radius + circleDisplacements[x];
+
+				for (int z = 0; z < distance; z++)
+				{
+					if (!SafeCoordinates(point.Position.X, point.Position.Y))
+						break;
+
+					Main.tile[point.Position.X, point.Position.Y].active(true);
+					Main.tile[point.Position.X, point.Position.Y].type = (ushort)type;
+
+					point.Move();
+				}	
+			}
 		}
 	}
 
