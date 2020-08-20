@@ -122,14 +122,23 @@ namespace Libvaxy.GameHelpers.WorldGen
 
 		public static bool SafeCoordinates(int i, int j) => i > 0 && i < Main.maxTilesX && j > 0 && j < Main.maxTilesY;
 
+		/// <summary>
+		/// An alternative version of WorldGen.TileRunner. It uses noise to fill out a shape for you, which typically looks much more smooth than TileRunner.
+		/// </summary>
+		/// <param name="i">The X tile coordinate.</param>
+		/// <param name="j">The Y tile coordinate.</param>
+		/// <param name="type">The type of tile to fill. If this is -1, NoiseRunner will fill air instead.</param>
+		/// <param name="radius">The base radius to try and fill.</param>
+		/// <param name="frequency">How erratic the resulting fill will be. A higher frequency means more intense deformation.
+		/// It is recommended to keep the frequency anywhere between 0.005 - 0.6, but you can use any you wish.</param>
 		public static void NoiseRunner(int i, int j, int type, float radius, float frequency)
 		{
-			int[] circleDisplacements = GetPerlinDisplacements((int)(2 * Math.PI * radius), frequency, (int)radius, 1f, Main.rand.Next(int.MaxValue));
+			int[] circleDisplacements = GetPerlinDisplacements((int)(2 * Math.PI * radius * 1.5f), frequency, (int)radius, 1f, Main.rand.Next(int.MaxValue));
 			float angle = (float)(2 * Math.PI / circleDisplacements.Length);
 
 			for (int x = 0; x < circleDisplacements.Length; x++)
 			{
-				MovingPoint point = new MovingPoint(i, j, (float)(Math.Sin(angle * x)), (float)Math.Cos(angle * x));
+				MovingPoint point = new MovingPoint(i, j, (float)Math.Sin(angle * x), (float)Math.Cos(angle * x));
 
 				float distance = radius + circleDisplacements[x];
 
@@ -138,8 +147,18 @@ namespace Libvaxy.GameHelpers.WorldGen
 					if (!SafeCoordinates(point.Position.X, point.Position.Y))
 						break;
 
-					Main.tile[point.Position.X, point.Position.Y].active(true);
-					Main.tile[point.Position.X, point.Position.Y].type = (ushort)type;
+					Tile tile = Main.tile[point.Position.X, point.Position.Y];
+
+					if (type == -1)
+					{
+						tile.active(false);
+						tile.type = 0;
+					}
+					else
+					{
+						tile.active(true);
+						tile.type = (ushort)type;
+					}
 
 					point.Move();
 				}	
