@@ -1,5 +1,4 @@
 using Libvaxy.Attributes;
-using Libvaxy.ContentHelpers;
 using Libvaxy.Debug;
 using Libvaxy.GameHelpers;
 using log4net;
@@ -28,8 +27,6 @@ namespace Libvaxy
 		public static Assembly TerrariaAssembly;
 		public static Dictionary<string, Assembly> ModAssemblies;
 		public static List<DustEmitter> DustEmitters;
-		internal static Dictionary<string, ModEvent> ModEvents;
-		public static ModEvent CurrentEvent;
 
 		internal static new ILog Logger => instance.Logger;
 
@@ -43,7 +40,6 @@ namespace Libvaxy
 			disposeList = new List<IDisposable>();
 			DustEmitters = new List<DustEmitter>();
 			StackInspectHandler.Initialize();
-			ModEvents = new Dictionary<string, ModEvent>();
 		}
 
 		public void PostLoad()
@@ -74,9 +70,6 @@ namespace Libvaxy
 			DustEmitters = null;
 
 			StackInspectHandler.Unload();
-
-			ModEvents = null;
-			CurrentEvent = null;
 		}
 
 		public override void MidUpdateDustTime()
