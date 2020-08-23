@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
+using System.Linq;
 using Terraria;
 using static Terraria.WorldGen;
 
@@ -130,8 +131,10 @@ namespace Libvaxy.GameHelpers.WorldGen
 		/// <param name="type">The type of tile to fill. If this is -1, NoiseRunner will fill air instead.</param>
 		/// <param name="radius">The base radius to try and fill.</param>
 		/// <param name="frequency">How erratic the resulting fill will be. A higher frequency means more intense deformation.
-		/// It is recommended to keep the frequency anywhere between 0.005 - 0.6, but you can use any you wish.</param>
-		public static void NoiseRunner(int i, int j, int type, float radius, float frequency)
+		/// It is recommended to keep the frequency anywhere between 0.005 - 0.6, but you can use any you wish.
+		/// For good results, remember that smaller radii will require higher frequencies in order to deform better.</param>
+		/// <param name="ignoredTiles">A list of tile IDs the NoiseRunner should not affect.</param>
+		public static void NoiseRunner(int i, int j, int type, float radius, float frequency, params int[] ignoredTiles)
 		{
 			int[] circleDisplacements = GetPerlinDisplacements((int)(2 * Math.PI * radius * 1.5f), frequency, (int)radius, 1f, Main.rand.Next(int.MaxValue));
 			float angle = (float)(2 * Math.PI / circleDisplacements.Length);
@@ -148,6 +151,8 @@ namespace Libvaxy.GameHelpers.WorldGen
 						break;
 
 					Tile tile = Main.tile[point.Position.X, point.Position.Y];
+
+					// TODO: ignored tiles
 
 					if (type == -1)
 					{
