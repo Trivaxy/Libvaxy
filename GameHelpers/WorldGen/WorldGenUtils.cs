@@ -152,7 +152,9 @@ namespace Libvaxy.GameHelpers.WorldGen
 
 					Tile tile = Main.tile[point.Position.X, point.Position.Y];
 
-					// TODO: ignored tiles
+					for (int g = 0; g < ignoredTiles.Length; g++)
+						if (tile.type == ignoredTiles[g])
+							goto BadTile; // sometimes, goto is less evil than the alternatives
 
 					if (type == -1)
 					{
@@ -165,8 +167,9 @@ namespace Libvaxy.GameHelpers.WorldGen
 						tile.type = (ushort)type;
 					}
 
+					BadTile:
 					point.Move();
-				}	
+				}
 			}
 		}
 	}
