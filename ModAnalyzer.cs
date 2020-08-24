@@ -87,50 +87,48 @@ namespace Libvaxy
 		}
 
 		/// <summary>
-		/// Returns all resources inside a mod as objects.
+		/// Gets all the resources inside a mod as a Dictionary whose keys are the Type of the resource and the values are the collection of the resource.
 		/// </summary>
-		/// <returns>A 2-dimensional array containing all resources. Each array contains one type of resource.</returns>
-		public object[][] GetAllResources()
+		/// <returns>Returns all resources inside a mod as a Dictionary</returns>
+		public Dictionary<Type, object> GetAllResources()
 		{
-			// oh god
-			object[][] resources = new object[][]
+			// i hate this.
+			return new Dictionary<Type, object>()
 			{
-				GetResources<Texture2D>(),
-				GetResources<SoundEffect>(),
-				GetResources<Music>(),
-				GetResources<DynamicSpriteFont>(),
-				GetResources<Effect>(),
-				GetResources<ModItem>(),
-				GetResources<GlobalItem>(),
-				GetResources<EquipTexture>(),
-				GetResources<ModPrefix>(),
-				GetResources<ModDust>(),
-				GetResources<ModTile>(),
-				GetResources<GlobalTile>(),
-				GetResources<ModTileEntity>(),
-				GetResources<ModWall>(),
-				GetResources<GlobalWall>(),
-				GetResources<ModProjectile>(),
-				GetResources<GlobalProjectile>(),
-				GetResources<ModNPC>(),
-				GetResources<GlobalNPC>(),
-				GetResources<ModPlayer>(),
-				GetResources<ModMountData>(),
-				GetResources<ModBuff>(),
-				GetResources<GlobalBuff>(),
-				GetResources<ModWorld>(),
-				GetResources<ModUgBgStyle>(),
-				GetResources<ModSurfaceBgStyle>(),
-				GetResources<GlobalBgStyle>(),
-				GetResources<ModWaterStyle>(),
-				GetResources<ModWaterfallStyle>(),
-				GetResources<ModRecipe>(),
-				GetResources<GlobalRecipe>(),
-				GetResources<ModTranslation>(),
-				GetResources<ModGore>()
+				{ typeof(Texture2D), GetResources<Texture2D>() },
+				{ typeof(SoundEffect), GetResources<SoundEffect>() },
+				{ typeof(Music), GetResources<Music>() },
+				{ typeof(DynamicSpriteFont), GetResources<DynamicSpriteFont>() },
+				{ typeof(Effect), GetResources<Effect>() },
+				{ typeof(ModItem), GetResources<ModItem>() },
+				{ typeof(GlobalItem), GetResources<GlobalItem>() },
+				{ typeof(EquipTexture), GetResources<EquipTexture>() },
+				{ typeof(ModPrefix), GetResources<ModPrefix>() },
+				{ typeof(ModDust), GetResources<ModDust>() },
+				{ typeof(ModTile), GetResources<ModTile>() },
+				{ typeof(GlobalTile), GetResources<GlobalTile>() },
+				{ typeof(ModTileEntity), GetResources<ModTileEntity>() },
+				{ typeof(ModWall), GetResources<ModWall>() },
+				{ typeof(GlobalWall), GetResources<GlobalWall>() },
+				{ typeof(ModProjectile), GetResources<ModProjectile>() },
+				{ typeof(GlobalProjectile), GetResources<GlobalProjectile>() },
+				{ typeof(ModNPC), GetResources<ModNPC>() },
+				{ typeof(GlobalNPC), GetResources<GlobalNPC>() },
+				{ typeof(ModPlayer), GetResources<ModPlayer>() },
+				{ typeof(ModMountData), GetResources<ModMountData>() },
+				{ typeof(ModBuff), GetResources<ModBuff>() },
+				{ typeof(GlobalBuff), GetResources<GlobalBuff>() },
+				{ typeof(ModWorld), GetResources<ModWorld>() },
+				{ typeof(ModUgBgStyle), GetResources<ModUgBgStyle>() },
+				{ typeof(ModSurfaceBgStyle), GetResources<ModSurfaceBgStyle>() },
+				{ typeof(GlobalBgStyle), GetResources<GlobalBgStyle>() },
+				{ typeof(ModWaterStyle), GetResources<ModWaterStyle>() },
+				{ typeof(ModWaterfallStyle), GetResources<ModWaterfallStyle>() },
+				{ typeof(ModRecipe), GetResources<ModRecipe>() },
+				{ typeof(GlobalRecipe), GetResources<GlobalRecipe>() },
+				{ typeof(ModTranslation), GetResources<ModTranslation>() },
+				{ typeof(ModGore), GetResources<ModGore>() }
 			};
-
-			return resources;
 		}
 	}
 }
