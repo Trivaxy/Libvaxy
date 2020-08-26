@@ -8,7 +8,10 @@ namespace Libvaxy.Attributes
 		internal static void ApplyHooks()
 		{
 			foreach (MethodInfo method in Reflection.GetMethodsWithAttribute<HookAttribute>())
-			{ 
+			{
+				if (!method.IsStatic)
+					throw new LibvaxyException($"{method.Name} must be static to be used by a Hook attribute");
+
 				foreach (HookAttribute hookAttribute in method.GetCustomAttributes(typeof(HookAttribute), false))
 				{
 					Type parentType = hookAttribute.eventParentType;
