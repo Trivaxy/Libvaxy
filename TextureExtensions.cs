@@ -1,14 +1,19 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 
 namespace Libvaxy
 {
-	public static class Texture2DOverloads
+	public static class TextureExtensions
 	{
 		// TODO: make this not call GetColors() every single time
+		/// <summary>
+		/// Sets the color of the texture's pixel in a specified coordinate.
+		/// </summary>
+		/// <param name="x">The X coordinate of the pixel.</param>
+		/// <param name="y">The Y coordinate of the pixel.</param>
+		/// <param name="color">The color to set the pixel to.</param>
 		public static void SetColor(this Texture2D texture, int x, int y, Color color)
 		{
 			Color[] colors = texture.GetColors();
@@ -16,6 +21,11 @@ namespace Libvaxy
 			texture.SetData(colors);
 		}
 
+		/// <summary>
+		/// Sets a rectangle of pixels in a texture to a certain color.
+		/// </summary>
+		/// <param name="rect">The rectangle within the texture.</param>
+		/// <param name="color">The color to set the rectangle to.</param>
 		public static void SetColorsRect(this Texture2D texture, Rectangle rect, Color color)
 		{
 			Color[] colors = texture.GetColors();
@@ -27,6 +37,10 @@ namespace Libvaxy
 			texture.SetData(colors);
 		}
 
+		/// <summary>
+		/// Fills an entire texture with a color.
+		/// </summary>
+		/// <param name="color">The color to set the texture to.</param>
 		public static void Fill(this Texture2D texture, Color color)
 		{
 			Color[] colors = texture.GetColors();
@@ -37,6 +51,9 @@ namespace Libvaxy
 			texture.SetData(colors);
 		}
 
+		/// <summary>
+		/// Returns all the colors in a texture.
+		/// </summary>
 		public static Color[] GetColors(this Texture2D texture)
 		{
 			Color[] colors = new Color[texture.Width * texture.Height];
@@ -44,6 +61,10 @@ namespace Libvaxy
 			return colors;
 		}
 
+		/// <summary>
+		/// Returns all the colors within a specified rectangle in a texture.
+		/// </summary>
+		/// <param name="rect">The rectangle within the texture.</param>
 		public static Color[] GetColorsRect(this Texture2D texture, Rectangle rect)
 		{
 			if (!texture.GetDimensions().Contains(rect))
@@ -59,6 +80,9 @@ namespace Libvaxy
 			return rectColors.ToArray();
 		}
 
+		/// <summary>
+		/// Gets the average color in the texture, ignoring transparency.
+		/// </summary>
 		public static Color GetAverageColor(this Texture2D texture)
 		{
 			Color[] colors = texture.GetColors();
@@ -83,6 +107,9 @@ namespace Libvaxy
 			return new Color((byte)(r / countedColors), (byte)(g / countedColors), (byte)(b / countedColors));
 		}
 
+		/// <summary>
+		/// Premultiplies a texture.
+		/// </summary>
 		public static void PreMultiply(this Texture2D texture)
 		{
 			Color[] colors = texture.GetColors();
@@ -93,6 +120,10 @@ namespace Libvaxy
 			texture.SetData(colors);
 		}
 
+		/// <summary>
+		/// Clones a certain texture and returns a new Texture2D object for it. Libvaxy will automatically dispose the cloned texture on unload.
+		/// </summary>
+		/// <returns>The cloned texture.</returns>
 		public static Texture2D Clone(this Texture2D texture)
 		{
 			Color[] colors = texture.GetColors();
@@ -102,6 +133,11 @@ namespace Libvaxy
 			return newTexture;
 		}
 
+		/// <summary>
+		/// Clones a certain rectangle within a texture and returns a new Texture2D object for it. Libvaxy will automatically dispose the cloned texture on unload.
+		/// </summary>
+		/// <param name="rect">The rectangle within the texture to clone.</param>
+		/// <returns>The cloned texture rectangle.</returns>
 		public static Texture2D CloneRectangle(this Texture2D texture, Rectangle rect)
 		{
 			Texture2D newTexture = new Texture2D(Main.instance.GraphicsDevice, rect.Width, rect.Height);
@@ -111,8 +147,15 @@ namespace Libvaxy
 			return newTexture;
 		}
 
+		/// <summary>
+		/// Returns a rectangle specifying the texture's dimensions.
+		/// </summary>
 		public static Rectangle GetDimensions(this Texture2D texture) => new Rectangle(0, 0, texture.Width, texture.Height);
 
+		/// <summary>
+		/// Masks a texture with another texture's transparency. Transparent pixels in the alpha mask will have their alpha value placed onto the masked texture.
+		/// </summary>
+		/// <param name="alphaMask">The alpha mask texture.</param>
 		public static void MaskAlpha(this Texture2D texture, Texture2D alphaMask)
 		{
 			CheckMasksCompatible(texture, alphaMask);
@@ -136,24 +179,29 @@ namespace Libvaxy
 			texture.PreMultiply();
 		}
 
-		public static void MaskTexture(this Texture2D texture, Texture2D mask, bool allowAlpha = false)
+		/// <summary>
+		/// Merges a texture with another texture by interpolating between them both. You can optionally specify whether transparent pixels are interpolated or ignored (ignored by default).
+		/// </summary>
+		/// <param name="otherTexture">The texture to merge with.</param>
+		/// <param name="allowAlpha">Whether transparent pixels are interpolated as well or ignored. This is false by default.</param>
+		public static void MergeTexture(this Texture2D texture, Texture2D otherTexture, bool allowAlpha = false)
 		{
-			CheckMasksCompatible(texture, mask);
+			CheckMasksCompatible(texture, otherTexture);
 
 			Color[] textureColors = texture.GetColors();
-			Color[] maskColors = mask.GetColors();
+			Color[] otherTextureColors = otherTexture.GetColors();
 
 			for (int x = 0; x < texture.Width; x++)
 			{
 				for (int y = 0; y < texture.Height; y++)
 				{
 					int index = CoordinateToIndex(x, y, texture.Width);
-					Color maskColor = maskColors[index];
+					Color otherTextureColor = otherTextureColors[index];
 
-					if (maskColor.A != 255 && !allowAlpha)
+					if (otherTextureColor.A != 255 && !allowAlpha)
 						continue;
 
-					textureColors[index] = Color.Lerp(textureColors[index], maskColor, 0.5f);
+					textureColors[index] = Color.Lerp(textureColors[index], otherTextureColor, 0.5f);
 				}
 			}
 
@@ -163,7 +211,7 @@ namespace Libvaxy
 				texture.PreMultiply();
 		}
 
-		public static int CoordinateToIndex(int x, int y, int width) => y * width + x;
+		private static int CoordinateToIndex(int x, int y, int width) => y * width + x;
 
 		private static void CheckMasksCompatible(Texture2D texture, Texture2D mask)
 		{
