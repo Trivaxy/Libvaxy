@@ -96,6 +96,12 @@ namespace Libvaxy
 			fieldCache[key].SetValue(null, value);
 		}
 
+		/// <summary>
+		/// Checks if a given type has a field.
+		/// </summary>
+		/// <param name="type">The type.</param>
+		/// <param name="name">The field name.</param>
+		/// <returns>Whether the type has the field or not.</returns>
 		public static bool HasField(Type type, string name)
 			=> GetFieldInfo(type, name) != null;
 
@@ -161,6 +167,12 @@ namespace Libvaxy
 			propertyCache[key].SetValue(null, value);
 		}
 
+		/// <summary>
+		/// Checks whether the given type has a property.
+		/// </summary>
+		/// <param name="type">The type.</param>
+		/// <param name="name">The name of the property.</param>
+		/// <returns>Whether the type has the property or not.</returns>
 		public static bool HasProperty(Type type, string name)
 			=> GetPropertyInfo(type, name) != null;
 
