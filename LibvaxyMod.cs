@@ -38,15 +38,16 @@ namespace Libvaxy
 			FallingTileTextures = new Dictionary<int, Texture2D>();
 			fallingTileAlphaMask = GetTexture("GameHelpers/FallingTileAlphaMask");
 			disposeList = new List<IDisposable>();
+			ModAssemblies = ModLoader.Mods.Skip(1).ToDictionary(m => m.Name, m => m.Code); // initialize on load so libvaxy-dependent mods function when using this
 			DustEmitters = new List<DustEmitter>();
 			StackInspectHandler.Initialize();
+			HookHandler.ApplyHooks();
 		}
 
 		public void PostLoad()
 		{
 			TerrariaAssembly = typeof(Main).Assembly;
-			ModAssemblies = ModLoader.Mods.Skip(1).ToDictionary(m => m.Name, m => m.Code);
-			HookHandler.ApplyHooks();
+			ModAssemblies = ModLoader.Mods.Skip(1).ToDictionary(m => m.Name, m => m.Code); // add the rest of the loaded mods after Load()
 			DetourHandler.ApplyDetours();
 		}
 
@@ -99,7 +100,7 @@ namespace Libvaxy
 			Main.instance.LoadTiles(tileType); // load the tile texture if it hasn't been yet
 			Texture2D newTexture = Main.tileTexture[tileType].CloneRectangle(fallingTileFrame); // rip out a specific frame in the tilesheet
 			newTexture.MaskAlpha(fallingTileAlphaMask); // lay over it the falling tile alpha mask, this will circularize the edges
-			newTexture.MaskTexture(Main.projectileTexture[ModContent.ProjectileType<FallingTile>()]); // we lay over a dark border on the texture
+			newTexture.MergeTexture(Main.projectileTexture[ModContent.ProjectileType<FallingTile>()]); // we lay over a dark border on the texture
 			return newTexture;
 		}
 
