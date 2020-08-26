@@ -211,6 +211,19 @@ namespace Libvaxy
 				texture.PreMultiply();
 		}
 
+		/// <summary>
+		/// Creates a blank texture you can use. Libvaxy will automatically dispose this texture on unload.
+		/// </summary>
+		/// <param name="width">The width of the texture.</param>
+		/// <param name="height">The height of the texture.</param>
+		/// <returns>The newly created texture.</returns>
+		public static Texture2D CreateTexture(int width, int height)
+		{
+			Texture2D texture = new Texture2D(Main.graphics.GraphicsDevice, width, height);
+			LibvaxyMod.DisposeOnUnload(texture);
+			return texture;
+		}
+
 		private static int CoordinateToIndex(int x, int y, int width) => y * width + x;
 
 		private static void CheckMasksCompatible(Texture2D texture, Texture2D mask)
