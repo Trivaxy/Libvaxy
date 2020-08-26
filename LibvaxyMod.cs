@@ -26,7 +26,6 @@ namespace Libvaxy
 		private static List<IDisposable> disposeList;
 		public static Assembly TerrariaAssembly;
 		public static Dictionary<string, Assembly> ModAssemblies;
-		public static List<DustEmitter> DustEmitters;
 
 		internal static new ILog Logger => instance.Logger;
 
@@ -39,7 +38,6 @@ namespace Libvaxy
 			fallingTileAlphaMask = GetTexture("GameHelpers/FallingTileAlphaMask");
 			disposeList = new List<IDisposable>();
 			ModAssemblies = ModLoader.Mods.Skip(1).ToDictionary(m => m.Name, m => m.Code); // initialize on load so libvaxy-dependent mods function when using this
-			DustEmitters = new List<DustEmitter>();
 			StackInspectHandler.Initialize();
 			HookHandler.ApplyHooks();
 		}
@@ -67,28 +65,7 @@ namespace Libvaxy
 			TerrariaAssembly = null;
 			ModAssemblies = null;
 
-			DustEmitters.Clear();
-			DustEmitters = null;
-
 			StackInspectHandler.Unload();
-		}
-
-		public override void MidUpdateDustTime()
-		{
-			// cOlLeCtIon ModIfIeD, eNuMeRaTIOn OpErAtIoN MAy not ExECuTe
-			for (int i = DustEmitters.Count - 1; i >= 0; i--)
-				DustEmitters[i].Update();
-		}
-
-		public override void PreSaveAndQuit()
-		{
-			DustEmitters.Clear();
-		}
-
-		public override void PostDrawInterface(SpriteBatch spriteBatch)
-		{
-			for (int i = DustEmitters.Count - 1; i >= 0; i--)
-				DustEmitters[i].DebugDrawRect(spriteBatch);
 		}
 
 		internal static void DisposeOnUnload(IDisposable disposable)
