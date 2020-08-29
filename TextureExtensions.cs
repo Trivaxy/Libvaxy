@@ -217,52 +217,43 @@ namespace Libvaxy
 		/// <summary>
         /// Returns whether a specific color is found in the texture or a color within a range of colors to your selected color.
         /// </summary>
-        /// <param name="texture"></param>
         /// <param name="searchColor">The color you wish to search for.</param>
-        /// <param name="tolerance">The tolerance level in hue shiftings, starting from 0 for no tolerance, by default, going
-        ///                             up to 1 for any degree of difference in hue (100%)</param>
-        /// <param name="alphaTolerant"></param>
+        /// <param name="tolerance">The tolerance level in hue shiftings, starting from 0 for no tolerance, by default, going up to 1 for any degree of difference in hue (100%)</param>
+        /// <param name="alphaTolerant">Whether to take alpha into consideration. False by default.</param>
         /// <returns>True if the color or specified approximate color was found.</returns>
         public static bool ContainsColor(this Texture2D texture, Color searchColor, float tolerance = 0, bool alphaTolerant = false)
         {
             if (tolerance == 1)
-            {
                 return true;
-            }
 
-            Color[] Colors = texture.GetColors();
+            Color[] colors = texture.GetColors();
 
-            if (tolerance == 0)
-            {
-                for (int Index = 0; Index < Colors.Length; Index++)
-                {
-                    if (Colors[Index] == searchColor)
-                    {
-                        return true;
-                    }
-                }
-            }
-            else
-            {
-                for (int Index = 0; Index < Colors.Length; Index++)
-                {
-                    if (Colors[Index].R > GetColorTolerance(-searchColor.R, tolerance) &&
-                        Colors[Index].R < GetColorTolerance(searchColor.R, tolerance) &&
-                        Colors[Index].G > GetColorTolerance(-searchColor.G, tolerance) &&
-                        Colors[Index].G < GetColorTolerance(searchColor.G, tolerance) &&
-                        Colors[Index].B > GetColorTolerance(-searchColor.B, tolerance) &&
-                        Colors[Index].B < GetColorTolerance(searchColor.B, tolerance))
-                    {
-                        if (alphaTolerant &&
-                           Colors[Index].A > GetColorTolerance(-searchColor.A, tolerance) &&
-                        Colors[Index].A < GetColorTolerance(searchColor.A, tolerance))
-                        {
-                            return true;
-                        }
-                    }
-                }
+			if (tolerance == 0)
+			{
+				for (int i = 0; i < colors.Length; i++)
+					if (colors[i] == searchColor)
+						return true;
+			}
+			else
+			{
+				for (int i = 0; i < colors.Length; i++)
+				{
+					if (colors[i].R > GetColorTolerance(-searchColor.R, tolerance) &&
+						colors[i].R < GetColorTolerance(searchColor.R, tolerance) &&
+						colors[i].G > GetColorTolerance(-searchColor.G, tolerance) &&
+						colors[i].G < GetColorTolerance(searchColor.G, tolerance) &&
+						colors[i].B > GetColorTolerance(-searchColor.B, tolerance) &&
+						colors[i].B < GetColorTolerance(searchColor.B, tolerance))
+					{
+						if (alphaTolerant)
+							return colors[i].A > GetColorTolerance(-searchColor.A, tolerance) && colors[i].A < GetColorTolerance(searchColor.A, tolerance);
+						else
+							return true;
+					}
+				}
 
-            }
+			}
+
             return false;
         }
 		
@@ -279,7 +270,7 @@ namespace Libvaxy
 			return texture;
 		}
 		
-        private static byte GetColorTolerance(float HueValue, float Tolerance) => (byte)(HueValue *= Tolerance);
+        private static byte GetColorTolerance(float hueValue, float tolerance) => (byte)(hueValue * tolerance);
 
 		private static int CoordinateToIndex(int x, int y, int width) => y * width + x;
 
