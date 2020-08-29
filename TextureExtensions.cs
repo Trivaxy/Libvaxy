@@ -220,7 +220,7 @@ namespace Libvaxy
         /// <param name="texture"></param>
         /// <param name="searchColor">The color you wish to search for.</param>
         /// <param name="tolerance">The tolerance level in hue shiftings, starting from 0 for no tolerance, by default, going
-        ///                             up to 1 for any degree of difference in hue (100$)</param>
+        ///                             up to 1 for any degree of difference in hue (100%)</param>
         /// <param name="alphaTolerant"></param>
         /// <returns>True if the color or specified approximate color was found.</returns>
         public static bool ContainsColor(this Texture2D texture, Color searchColor, float tolerance = 0, bool alphaTolerant = false)
