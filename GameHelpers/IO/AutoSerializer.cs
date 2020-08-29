@@ -7,11 +7,21 @@ using OpCodes = System.Reflection.Emit.OpCodes;
 
 namespace Libvaxy.GameHelpers.IO
 {
+	/// <summary>
+	/// A class that makes serializing and deserializing objects extremely easy, with very little to no loss in performance.
+	/// Note: collections and arrays are not supported yet.
+	/// </summary>
+	/// <typeparam name="T">The type to serialize and deserialize.</typeparam>
 	public class AutoSerializer<T>
 	{
 		private static Func<T, TagCompound> serializer;
 		private static Func<TagCompound, T> deserializer;
 
+		/// <summary>
+		/// Serializes an object to a TagCompound.
+		/// </summary>
+		/// <param name="obj">The object to serialize.</param>
+		/// <returns>A TagCompound that represents the object.</returns>
 		public TagCompound Serialize(T obj)
 		{
 			if (serializer == null)
@@ -19,6 +29,11 @@ namespace Libvaxy.GameHelpers.IO
 			return serializer.Invoke(obj);
 		}
 
+		/// <summary>
+		/// Deserializes a TagCompound back to an object.
+		/// </summary>
+		/// <param name="tag">The TagCompound to deserialize.</param>
+		/// <returns>A deserialized object.</returns>
 		public T Deserialize(TagCompound tag)
 		{
 			if (deserializer == null)

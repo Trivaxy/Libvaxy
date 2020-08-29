@@ -6,6 +6,9 @@ using System.Runtime.Serialization;
 
 namespace Libvaxy
 {
+	/// <summary>
+	/// Provides many useful reflection utilities to make it easy. Does automatic caching for certain methods.
+	/// </summary>
 	public static class Reflection
 	{
 		public const BindingFlags AllFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;

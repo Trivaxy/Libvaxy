@@ -4,12 +4,14 @@ using ReLogic.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Audio;
 
 namespace Libvaxy
 {
+	/// <summary>
+	/// Represents a wrapper around Mod objects that can retrieve its internal tModLoader-supported resources (things such as ModItem, Texture2D, etc).
+	/// </summary>
 	public class ModAnalyzer
 	{
 		private Mod mod;

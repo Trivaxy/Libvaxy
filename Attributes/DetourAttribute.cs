@@ -2,6 +2,9 @@
 
 namespace Libvaxy.Attributes
 {
+	/// <summary>
+	/// An attribute that lets you detour any method completely (including mod methods).
+	/// </summary>
 	[AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
 	public class DetourAttribute : Attribute
 	{

@@ -15,6 +15,9 @@ using Terraria.ModLoader;
 namespace Libvaxy
 {
 	// i want the class name to be Libvaxy so bad, but the namespace already reserved it :(
+	/// <summary>
+	/// The main class of Libvaxy that makes everything work. Contains certain useful methods regarding FallingTile and StackInspect.
+	/// </summary>
 	public class LibvaxyMod : Mod
 	{
 		public LibvaxyMod() => PreLoad();

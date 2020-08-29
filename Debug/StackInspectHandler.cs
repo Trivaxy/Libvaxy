@@ -5,6 +5,9 @@ using System.Reflection;
 
 namespace Libvaxy.Debug
 {
+	/// <summary>
+	/// Handles all stack inspections. Used internally by Libvaxy.
+	/// </summary>
 	internal static class StackInspectHandler
 	{
 		internal static Dictionary<EventInfo, int> inspectedMethodsRegisterCount;

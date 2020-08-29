@@ -6,6 +6,9 @@ using static Terraria.WorldGen;
 
 namespace Libvaxy.GameHelpers.WorldGen
 {
+	/// <summary>
+	/// Provides many utilities to make worldgen-related things more viable (some methods can be used outside worldgen as well).
+	/// </summary>
 	public static class WorldGenUtils
 	{
 		public const int SmallWorldWidth = 4200;
@@ -15,6 +18,15 @@ namespace Libvaxy.GameHelpers.WorldGen
 		public const int LargeWorldWidth = SmallWorldWidth * 2;
 		public const int LargeWorldHeight = SmallWorldHeight * 2;
 
+		/// <summary>
+		/// Replaces all tiles of a certain type in a rectangle to another type.
+		/// </summary>
+		/// <param name="x">The X coordinate of the rectangle.</param>
+		/// <param name="y">The Y coordinate of the rectangle.</param>
+		/// <param name="width">The width of the rectangle.</param>
+		/// <param name="height">The height of the rectangle.</param>
+		/// <param name="type">The type of tile to replace.</param>
+		/// <param name="newType">The type to set replaced tiles to.</param>
 		public static void Replace(int x, int y, int width, int height, ushort type, ushort newType)
 		{
 			for (int i = x; i < x + width; i++)
@@ -30,6 +42,14 @@ namespace Libvaxy.GameHelpers.WorldGen
 			}
 		}
 
+		/// <summary>
+		/// Sets all tiles in a rectangle to a specified type.
+		/// </summary>
+		/// <param name="x">The X coordinate of the rectangle.</param>
+		/// <param name="y">The Y coordinate of the rectangle.</param>
+		/// <param name="width">The width of the rectangle.</param>
+		/// <param name="height">The height of the rectangle.</param>
+		/// <param name="type">The type to set the tiles to within the rectangle.</param>
 		public static void Fill(int x, int y, int width, int height, ushort type)
 		{
 			for (int i = x; i < x + width; i++)
@@ -42,6 +62,13 @@ namespace Libvaxy.GameHelpers.WorldGen
 			}
 		}
 
+		/// <summary>
+		/// Sets all tiles within a rectangle to air.
+		/// </summary>
+		/// <param name="x">The X coordinate of the rectangle.</param>
+		/// <param name="y">The Y coordinate of the rectangle.</param>
+		/// <param name="width">The width of the rectangle.</param>
+		/// <param name="height">The height of the rectangle.</param>
 		public static void FillAir(int x, int y, int width, int height)
 		{
 			for (int i = x; i < x + width; i++)
@@ -49,6 +76,14 @@ namespace Libvaxy.GameHelpers.WorldGen
 					Main.tile[i, j].active(false);
 		}
 
+		/// <summary>
+		/// Sets all tiles within a rectangle to a specified vanilla liquid.
+		/// </summary>
+		/// <param name="x">The X coordinate of the rectangle.</param>
+		/// <param name="y">The Y coordinate of the rectangle.</param>
+		/// <param name="width">The width of the rectangle.</param>
+		/// <param name="height">The height of the rectangle.</param>
+		/// <param name="liquidType">The type of liquid to fill.</param>
 		public static void FillLiquid(int x, int y, int width, int height, LiquidType liquidType)
 		{
 			for (int i = x; i < x + width; i++)
@@ -62,6 +97,15 @@ namespace Libvaxy.GameHelpers.WorldGen
 					
 		}
 
+		/// <summary>
+		/// Gets you an array of displacements generated through perlin noise.
+		/// </summary>
+		/// <param name="displacementCount">How many displacements to generate.</param>
+		/// <param name="frequency">The frequency of the displacements.</param>
+		/// <param name="maxLimit">The maximum limit the displacements can be, both positive and negative. Can be any number.</param>
+		/// <param name="multiplier">The multiplier to affect the maxLimit by.</param>
+		/// <param name="seed">The seed to use for the perlin generator.</param>
+		/// <returns>An array of perlin displacements.</returns>
 		public static int[] GetPerlinDisplacements(int displacementCount, float frequency, int maxLimit, float multiplier, int seed)
 		{
 			FastNoise noise = new FastNoise(seed);
@@ -76,8 +120,25 @@ namespace Libvaxy.GameHelpers.WorldGen
 			return displacements;
 		}
 
+		/// <summary>
+		/// Gets a random point within a rectangle.
+		/// </summary>
+		/// <param name="x">The X coordinate of the rectangle.</param>
+		/// <param name="y">The Y coordinate of the rectangle.</param>
+		/// <param name="width">The width of the rectangle.</param>
+		/// <param name="height">The height of the rectangle.</param>
+		/// <returns>A random point within the rectangle.</returns>
 		public static Point GetRandomPointInArea(int x, int y, int width, int height) => new Point(genRand.Next(x, x + width), genRand.Next(y, y + height));
 
+		/// <summary>
+		/// Gets multiple random points within a rectangle.
+		/// </summary>
+		/// <param name="x">The X coordinate of the rectangle.</param>
+		/// <param name="y">The Y coordinate of the rectangle.</param>
+		/// <param name="width">The width of the rectangle.</param>
+		/// <param name="height">The height of the rectangle.</param>
+		/// <param name="points">The number of random points to get.</param>
+		/// <returns>Random points within the rectangle.</returns>
 		public static Point[] GetRandomPointsInArea(int x, int y, int width, int height, int points)
 		{
 			Point[] randPoints = new Point[points];
@@ -88,6 +149,16 @@ namespace Libvaxy.GameHelpers.WorldGen
 			return randPoints;
 		}
 
+		/// <summary>
+		/// Gets random points within a rectangle that have a specific tile type.
+		/// </summary>
+		/// <param name="x">The X coordinate of the rectangle.</param>
+		/// <param name="y">The Y coordinate of the rectangle.</param>
+		/// <param name="width">The width of the rectangle.</param>
+		/// <param name="height">The height of the rectangle.</param>
+		/// <param name="points">The number of random points to get.</param>
+		/// <param name="type">The tile type to search for.</param>
+		/// <returns>Random points within the rectangle that have the specified type.</returns>
 		public static Point[] GetRandomTilePointsInArea(int x, int y, int width, int height, int points, ushort type)
 		{
 			Point[] randPoints = GetRandomPointsInArea(x, y, width, height, points);
@@ -99,6 +170,15 @@ namespace Libvaxy.GameHelpers.WorldGen
 			return randPoints;
 		}
 
+		/// <summary>
+		/// Gets random points within a rectangle that are all air.
+		/// </summary>
+		/// <param name="x">The X coordinate of the rectangle.</param>
+		/// <param name="y">The Y coordinate of the rectangle.</param>
+		/// <param name="width">The width of the rectangle.</param>
+		/// <param name="height">The height of the rectangle.</param>
+		/// <param name="points">The number of random points to get.</param>
+		/// <returns></returns>
 		public static Point[] GetRandomAirPointsInArea(int x, int y, int width, int height, int points)
 		{
 			Point[] randPoints = GetRandomPointsInArea(x, y, width, height, points);
@@ -110,7 +190,13 @@ namespace Libvaxy.GameHelpers.WorldGen
 			return randPoints;
 		}
 
-		public static Point FindLowestTile(int x, int y)
+		/// <summary>
+		/// Keeps searching downwards until a non-air tile is found.
+		/// </summary>
+		/// <param name="x">The X coordinate to start searching from.</param>
+		/// <param name="y">The Y coordinate to start searching from.</param>
+		/// <returns>The first non-air tile found after searching downwards.</returns>
+		public static Point FindDownwardsTile(int x, int y)
 		{
 			while (y < Main.maxTilesY && y > -1 && x < Main.maxTilesX && x > -1)
 			{
@@ -118,10 +204,16 @@ namespace Libvaxy.GameHelpers.WorldGen
 					return new Point(x, y);
 				y++;
 			}
-			return Point.Zero;
+			return new Point(x, Main.maxTilesY - 1);
 		}
 
-		public static bool SafeCoordinates(int i, int j) => i > 0 && i < Main.maxTilesX && j > 0 && j < Main.maxTilesY;
+		/// <summary>
+		/// Checks if the specified coordinates are within the world boundaries.
+		/// </summary>
+		/// <param name="i">The X coordinate of the tile.</param>
+		/// <param name="j">The Y coordinate of the tile.</param>
+		/// <returns>Whether the coordinates are within the world boundaries or not.</returns>
+		public static bool SafeCoordinates(int i, int j) => i >= 0 && i < Main.maxTilesX && j >= 0 && j < Main.maxTilesY;
 
 		/// <summary>
 		/// An alternative version of WorldGen.TileRunner. It uses noise to fill out a shape for you, which typically looks much more smooth than TileRunner.
@@ -174,6 +266,9 @@ namespace Libvaxy.GameHelpers.WorldGen
 		}
 	}
 
+	/// <summary>
+	/// Represents a vanilla liquid.
+	/// </summary>
 	public enum LiquidType
 	{
 		Water,

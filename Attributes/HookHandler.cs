@@ -3,6 +3,9 @@ using System.Reflection;
 
 namespace Libvaxy.Attributes
 {
+	/// <summary>
+	/// Internal class used by Libvaxy to apply Hook attributes.
+	/// </summary>
 	internal class HookHandler
 	{
 		internal static void ApplyHooks()

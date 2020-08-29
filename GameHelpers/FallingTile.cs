@@ -5,6 +5,9 @@ using Terraria.ModLoader;
 
 namespace Libvaxy.GameHelpers
 {
+	/// <summary>
+	/// Represents any falling tile in projectile form. This is internally used by Libvaxy. You should use LibvaxyMod.SpawnFallingTile to create falling tiles.
+	/// </summary>
 	public class FallingTile : ModProjectile
 	{
 		public override void SetStaticDefaults() =>	DisplayName.SetDefault("Falling Tile");

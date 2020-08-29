@@ -2,6 +2,10 @@
 
 namespace Libvaxy.ContentHelpers
 {
+	/// <summary>
+	/// A simple tile-placing item that needs nothing but a name, maximum stack, value and placed tile type. Extra attributes can be specified through different constructors.
+	/// Using this class is as simple as extending from it and calling the base constructor with the attributes you want.
+	/// </summary>
 	public class SimpleTileItem : SimpleItem
 	{
 		private readonly int placeType;

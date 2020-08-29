@@ -3,6 +3,10 @@ using Terraria.ModLoader;
 
 namespace Libvaxy.ContentHelpers
 {
+	/// <summary>
+	/// A simple item that needs nothing but a name, maximum stack and value. Extra attributes can be specified through different constructors.
+	/// Using this class is as simple as extending from it and calling the base constructor with the attributes you want.
+	/// </summary>
 	public class SimpleItem : ModItem
 	{
 		private readonly string name;

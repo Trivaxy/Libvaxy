@@ -5,6 +5,9 @@ using Terraria;
 
 namespace Libvaxy
 {
+	/// <summary>
+	/// A bunch of extensions to the Texture2D class that make them easier to manipulate, copy, etc.
+	/// </summary>
 	public static class TextureExtensions
 	{
 		// TODO: make this not call GetColors() every single time

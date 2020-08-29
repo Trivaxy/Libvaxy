@@ -40,6 +40,9 @@ using System.Runtime.CompilerServices;
 
 namespace Libvaxy.GameHelpers.WorldGen
 {
+	/// <summary>
+	/// A direct copy of the C# FastNoise library included within Libvaxy.
+	/// </summary>
 	public class FastNoise
 	{
 		private const Int16 FN_INLINE = 256; //(Int16)MethodImplOptions.AggressiveInlining;
