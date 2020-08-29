@@ -215,18 +215,18 @@ namespace Libvaxy
 		}
 
 		/// <summary>
-        /// Returns whether a specific color is found in the texture or a color within a range of colors to your selected color.
-        /// </summary>
-        /// <param name="searchColor">The color you wish to search for.</param>
-        /// <param name="tolerance">The tolerance level in hue shiftings, starting from 0 for no tolerance, by default, going up to 1 for any degree of difference in hue (100%)</param>
-        /// <param name="alphaTolerant">Whether to take alpha into consideration. False by default.</param>
-        /// <returns>True if the color or specified approximate color was found.</returns>
-        public static bool ContainsColor(this Texture2D texture, Color searchColor, float tolerance = 0, bool alphaTolerant = false)
-        {
-            if (tolerance == 1)
-                return true;
+		/// Returns whether a specific color is found in the texture or a color within a range of colors to your selected color.
+		/// </summary>
+		/// <param name="searchColor">The color you wish to search for.</param>
+		/// <param name="tolerance">The tolerance level in hue shiftings, starting from 0 for no tolerance, by default, going up to 1 for any degree of difference in hue (100%)</param>
+		/// <param name="alphaTolerant">Whether to take alpha into consideration. False by default.</param>
+		/// <returns>True if the color or specified approximate color was found.</returns>
+		public static bool ContainsColor(this Texture2D texture, Color searchColor, float tolerance = 0, bool alphaTolerant = false)
+		{
+			if (tolerance == 1)
+				return true;
 
-            Color[] colors = texture.GetColors();
+			Color[] colors = texture.GetColors();
 
 			if (tolerance == 0)
 			{
@@ -254,9 +254,9 @@ namespace Libvaxy
 
 			}
 
-            return false;
-        }
-		
+			return false;
+		}
+
 		/// <summary>
 		/// Creates a blank texture you can use. Libvaxy will automatically dispose this texture on unload.
 		/// </summary>
