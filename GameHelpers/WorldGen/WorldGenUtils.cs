@@ -264,6 +264,45 @@ namespace Libvaxy.GameHelpers.WorldGen
 				}
 			}
 		}
+		/// <summary>
+		/// Checks whether a point is in the specified oval.
+		/// </summary>
+		/// <param name="midX">X coordinate of the middle of the specified oval.</param>
+		/// <param name="midY">Y coordinate of the middle of the specified oval.</param>
+		/// <param name="x">X coordinate of the point you want to check</param>
+		/// <param name="y">Y coordinate of the point you want to check</param>
+		/// <param name="sizeX">How wide the oval will be</param>
+		/// <param name="sizeY">How tall the oval will be</param>
+		public static bool OvalCheck(int midX, int midY, int x, int y, int sizeX, int sizeY)
+		{
+			double p = Math.Pow(x - midX, 2) / Math.Pow(sizeX, 2)
+					+ Math.Pow(y - midY, 2) / Math.Pow(sizeY, 2);
+
+			return p < 1 ? true : false;
+		}
+		/// <summary>
+		/// Fills oval with a specified tile type.
+		/// </summary>
+		/// <param name="width">Width of Oval</param>
+		/// <param name="height">Height of Oval</param>
+		/// <param name="startingPoint">Starting point of Oval</param>
+		/// <param name="type">Specified tile you want the oval to be filled with</param>
+		/// <param name="forced">Wether or not this will override existing blocks</param>
+		public static void MakeOval(int width, int height, Vector2 startingPoint, int type, bool forced)
+		{
+			for (int i = 0; i < width; i++)
+			{
+				for (int j = 0; j < height; j++)
+				{
+					if (OvalCheck((int)(startingPoint.X + width / 2), (int)(startingPoint.Y + height / 2), i + (int)startingPoint.X, j + (int)startingPoint.Y, (int)(width * .5f), (int)(height * .5f)))
+					{
+						Tile tile = Framing.GetTileSafely(i + (int)startingPoint.X, j + (int)startingPoint.Y);
+						if(!(forced && tile.active()))
+						tile.type = (ushort)type;
+					}
+				}
+			}
+		}
 	}
 
 	/// <summary>
