@@ -1,4 +1,5 @@
 displayName = Libvaxy
 author = Trivaxy
-version = 0.1
+version = 0.1.1
 buildIgnore = Properties/, .gitignore, LICENSE, README.md, bin/, obj/, Doxyfile, html/, latex/
+homepage = https://discord.gg/CRjMu7C

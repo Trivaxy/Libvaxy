@@ -1,14 +1,18 @@
-A library mod providing functionality for the rest of my mods.
+Libvaxy is a general utility mod that aims at speeding up development, and eliminating repetitive boilerplate code, getting things done faster and opening up new possibilities for you.
 
-You can use it for yourself, the documentation and source code are public.
-
-Libvaxy is a utility mod that aims at speeding up development, and eliminating repetitive boilerplate code, so you can get things done faster.
-
-Here's an overview of what Libvaxy provides:
+Here's an overview of what Libvaxy currently provides:
 - Easy runtime reflection with automatic caching, so you don't have to do it yourself
 - A ModAnalyzer class to retrieve a mod's resources without hassle (items, projectiles, globalnpcs, backgrounds, etc)
 - Manipulating and creating textures at runtime, with automatic cleaning up
 - The ability to turn tiles into falling tiles, without any extra work done on your part
-- Various attributes that ease hooking and detouring methods
+- Various attributes that ease hooking and detouring methods both Terraria and other mods
 - A handful of WorldGen utilities, along with the popular FastNoise library
 - Classes that allow you to add content quicker (SimpleItem, SimpleTileItem, etc)
+- AutoSerializers so saving/loading custom data is easier
+- Debugging utilities for IL edits
+
+... and much more, coming soon, with your help!
+
+Libvaxy is in an alpha 0.1 stage but relatively stable. You're free to use it in any shape or form (and we always welcome contributions on our github!)
+
+Feedback on using this library is always welcome, you can find me on either the tModLoader discord, or my own discord in the homepage link.

@@ -11,6 +11,14 @@
     <Exec Command="&quot;$(tMLBuildServerPath)&quot; -build $(ProjectDir) -eac $(TargetPath) -define &quot;$(DefineConstants)&quot; -unsafe $(AllowUnsafeBlocks)" />
   </Target>
   <ItemGroup>
+    <Compile Remove="html\**" />
+    <Compile Remove="latex\**" />
+    <EmbeddedResource Remove="html\**" />
+    <EmbeddedResource Remove="latex\**" />
+    <None Remove="html\**" />
+    <None Remove="latex\**" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="tModLoader.CodeAssist" Version="0.1.*" />
   </ItemGroup>
 </Project>

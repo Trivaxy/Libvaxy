@@ -1,5 +1,7 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Libvaxy.GameHelpers.WorldGen;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using Terraria;
 
@@ -255,6 +257,31 @@ namespace Libvaxy
 			}
 
 			return false;
+		}
+
+
+		public static Texture2D CreateNoiseTexture(int width, int height, float frequency, FastNoise.NoiseType noiseType = FastNoise.NoiseType.Perlin)
+		{
+			Texture2D texture = CreateTexture(width, height);
+
+			FastNoise noise = new FastNoise(Main.rand.Next(int.MaxValue));
+			noise.SetNoiseType(noiseType);
+			noise.SetFrequency(frequency);
+
+			Color[] colors = new Color[width * height];
+
+			for (int x = 0; x < width; x++)
+			{
+				for (int y = 0; y < height; y++)
+				{
+					byte value = (byte)Math.Abs(noise.GetNoise(x, y) * 255);
+					colors[CoordinateToIndex(x, y, width)] = new Color(value, value, value);
+				}
+			}
+
+			texture.SetData(colors);
+
+			return texture;
 		}
 
 		/// <summary>
