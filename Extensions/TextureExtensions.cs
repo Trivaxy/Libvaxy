@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using Terraria;
 
-namespace Libvaxy
+namespace Libvaxy.Extensions
 {
 	/// <summary>
 	/// A bunch of extensions to the Texture2D class that make them easier to manipulate, copy, etc.
