@@ -1,4 +1,4 @@
-﻿using Libvaxy.GameHelpers.WorldGen;
+﻿using Libvaxy.WorldGen;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ObjectData;

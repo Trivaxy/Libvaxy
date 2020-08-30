@@ -1,7 +1,7 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace Libvaxy.ContentHelpers
+namespace Libvaxy.Content
 {
 	/// <summary>
 	/// A simple item that needs nothing but a name, maximum stack and value. Extra attributes can be specified through different constructors.

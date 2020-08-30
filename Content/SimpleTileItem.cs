@@ -1,6 +1,6 @@
 ﻿using Terraria.ID;
 
-namespace Libvaxy.ContentHelpers
+namespace Libvaxy.Content
 {
 	/// <summary>
 	/// A simple tile-placing item that needs nothing but a name, maximum stack, value and placed tile type. Extra attributes can be specified through different constructors.

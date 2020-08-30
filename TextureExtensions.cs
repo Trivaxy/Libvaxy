@@ -1,4 +1,4 @@
-﻿using Libvaxy.GameHelpers.WorldGen;
+﻿using Libvaxy.WorldGen;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;

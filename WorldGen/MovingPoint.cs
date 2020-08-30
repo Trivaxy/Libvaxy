@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
 
-namespace Libvaxy.GameHelpers.WorldGen
+namespace Libvaxy.WorldGen
 {
 	public struct MovingPoint
 	{

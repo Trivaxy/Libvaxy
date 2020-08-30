@@ -1,10 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
-using System.Linq;
 using Terraria;
 using static Terraria.WorldGen;
 
-namespace Libvaxy.GameHelpers.WorldGen
+namespace Libvaxy.WorldGen
 {
 	/// <summary>
 	/// Provides many utilities to make worldgen-related things more viable (some methods can be used outside worldgen as well).
@@ -310,7 +309,6 @@ namespace Libvaxy.GameHelpers.WorldGen
 		/// <param name="x">The X coordinate of the circle origin.</param>
 		/// <param name="y">The Y coordinate of the circle origin.</param>
 		/// <param name="radius">Radius of the circle.</param>
-		/// <param name="startingPoint">Position of the circle.</param>
 		/// <param name="type">Specified tile you want the circle to be filled with.</param>
 		/// <param name="forced">Wether or not this will override existing blocks.</param>
 		public static void FillCircle(int x, int y, int radius, int type, bool forced)

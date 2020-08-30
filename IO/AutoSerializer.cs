@@ -5,7 +5,7 @@ using System.Reflection.Emit;
 using Terraria.ModLoader.IO;
 using OpCodes = System.Reflection.Emit.OpCodes;
 
-namespace Libvaxy.GameHelpers.IO
+namespace Libvaxy.IO
 {
 	/// <summary>
 	/// A class that makes serializing and deserializing objects extremely easy, with very little to no loss in performance.
