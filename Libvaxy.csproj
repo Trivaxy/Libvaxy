@@ -13,10 +13,13 @@
   <ItemGroup>
     <Compile Remove="html\**" />
     <Compile Remove="latex\**" />
+    <Compile Remove="lib\**" />
     <EmbeddedResource Remove="html\**" />
     <EmbeddedResource Remove="latex\**" />
+    <EmbeddedResource Remove="lib\**" />
     <None Remove="html\**" />
     <None Remove="latex\**" />
+    <None Remove="lib\**" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="tModLoader.CodeAssist" Version="0.1.*" />

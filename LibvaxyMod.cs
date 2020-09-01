@@ -1,16 +1,20 @@
 using Libvaxy.Attributes;
 using Libvaxy.Debug;
+using Libvaxy.Debug.REPL;
+using Libvaxy.Extensions;
 using Libvaxy.GameHelpers;
 using log4net;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using Terraria;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.UI;
 
 namespace Libvaxy
 {
@@ -29,6 +33,8 @@ namespace Libvaxy
 		private static List<IDisposable> disposeList;
 		public static Assembly TerrariaAssembly;
 		public static Dictionary<string, Assembly> ModAssemblies;
+		private static UserInterface REPLInterface;
+		private static ReplUI REPLUI;
 
 		internal static new ILog Logger => instance.Logger;
 
@@ -40,14 +46,22 @@ namespace Libvaxy
 			FallingTileTextures = new Dictionary<int, Texture2D>();
 			fallingTileAlphaMask = GetTexture("GameHelpers/FallingTileAlphaMask");
 			disposeList = new List<IDisposable>();
+			TerrariaAssembly = typeof(Main).Assembly;
 			ModAssemblies = ModLoader.Mods.Skip(1).ToDictionary(m => m.Name, m => m.Code); // initialize on load so libvaxy-dependent mods function when using this
 			StackInspectHandler.Initialize();
 			HookHandler.ApplyHooks();
+
+			if (!Main.dedServ)
+			{
+				REPLInterface = new UserInterface();
+				REPLUI = new ReplUI();
+				REPLUI.Activate();
+				ShowREPL();
+			}
 		}
 
 		public void PostLoad()
 		{
-			TerrariaAssembly = typeof(Main).Assembly;
 			ModAssemblies = ModLoader.Mods.Skip(1).ToDictionary(m => m.Name, m => m.Code); // add the rest of the loaded mods after Load()
 			DetourHandler.ApplyDetours();
 		}
@@ -69,7 +83,43 @@ namespace Libvaxy
 			ModAssemblies = null;
 
 			StackInspectHandler.Unload();
+
+			REPLInterface = null;
+			REPLUI = null;
 		}
+
+		private GameTime lastGameTime;
+
+		public override void UpdateUI(GameTime gameTime)
+		{
+			lastGameTime = gameTime;
+
+			if (REPLInterface?.CurrentState != null)
+				REPLInterface.Update(gameTime);
+		}
+
+		public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
+		{
+			int mouseTextIndex = layers.FindIndex(layer => layer.Name.Equals("Vanilla: Mouse Text"));
+			if (mouseTextIndex != -1)
+			{
+				layers.Insert(mouseTextIndex, new LegacyGameInterfaceLayer(
+					"LibvaxyMod: REPL UI",
+					delegate
+					{
+						if (lastGameTime != null && REPLInterface?.CurrentState != null)
+						{
+							REPLInterface.Draw(Main.spriteBatch, lastGameTime);
+						}
+						return true;
+					},
+					   InterfaceScaleType.UI));
+			}
+		}
+
+		public static void ShowREPL() => REPLInterface?.SetState(REPLUI);
+
+		public static void HideREPL() => REPLInterface?.SetState(null);
 
 		internal static void DisposeOnUnload(IDisposable disposable)
 			=> disposeList.Add(disposable);
