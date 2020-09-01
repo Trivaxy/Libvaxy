@@ -288,6 +288,15 @@ namespace Libvaxy
 
 		public static object CreateInstance(Type type) => FormatterServices.GetUninitializedObject(type);
 
+		public static Type GetType(string name, Assembly assembly = null)
+		{
+			Type[] types = assembly?.GetTypes() ?? LibvaxyMod.ModAssemblies.Values.SelectMany(asm => asm.GetTypes()).ToArray();
+
+			return types
+				.Where(type => type.FullName == name)
+				.First();
+		}
+
 		/// <summary>
 		/// Searches the given assembly for types holding the specified attribute.
 		/// </summary>
