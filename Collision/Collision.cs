@@ -790,6 +790,16 @@ namespace Libvaxy.Collision
 			public float radius;
 			public int count;
 			public Vector[] verts; // max size MAXPOLYGONVERTS
+
+			public Proxy()
+			{
+				radius = 0;
+				count = 0;
+				verts = new Vector[C2_MAX_POLYGON_VERTS];
+
+				for (int i = 0; i < C2_MAX_POLYGON_VERTS; i++)
+					verts[i] = new Vector();
+			}
 		}
 
 		class SVector
@@ -800,6 +810,26 @@ namespace Libvaxy.Collision
 			public float u;
 			public int iA;
 			public int iB;
+
+			public SVector()
+			{
+				sA = new Vector();
+				sB = new Vector();
+				p = new Vector();
+				u = 0;
+				iA = 0;
+				iB = 0;
+			}
+
+			public SVector(Vector sA, Vector sB, Vector p, float u, int iA, int iB)
+			{
+				this.sA = sA;
+				this.sB = sB;
+				this.p = p;
+				this.u = u;
+				this.iA = iA;
+				this.iB = iB;
+			}
 		}
 
 		class Simplex
@@ -807,6 +837,26 @@ namespace Libvaxy.Collision
 			public SVector a, b, c, d;
 			public float div;
 			public int count;
+
+			public Simplex()
+			{
+				a = new SVector();
+				b = new SVector();
+				c = new SVector();
+				d = new SVector();
+				div = 0f;
+				count = 0;
+			}
+
+			public Simplex(SVector a, SVector b, SVector c, SVector d, float div, int count)
+			{
+				this.a = a;
+				this.b = b;
+				this.c = c;
+				this.d = d;
+				this.div = div;
+				this.count = count;
+			}
 		}
 
 		static /* inline */ void c2MakeProxy(object shape, ShapeType type, Proxy p)
