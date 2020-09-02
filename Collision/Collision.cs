@@ -163,265 +163,265 @@ using System;
 
 namespace Libvaxy.Collision
 {
+	// 2d vector
+	public class Vector
+	{
+		public float x;
+		public float y;
+
+		public Vector()
+		{
+			x = 0;
+			y = 0;
+		}
+
+		public Vector(float x, float y)
+		{
+			this.x = x;
+			this.y = y;
+		}
+	}
+
+	// 2d rotation composed of cos/sin pair
+	public class Rotation
+	{
+		public float c;
+		public float s;
+	}
+
+	// 2d rotation matrix
+	public class RotationMatrix
+	{
+		public Vector x;
+		public Vector y;
+
+		public RotationMatrix()
+		{
+			x = new Vector();
+			y = new Vector();
+		}
+
+		public RotationMatrix(Vector x, Vector y)
+		{
+			this.x = x;
+			this.y = y;
+		}
+	}
+
+	// 2d transformation "x"
+	// These are used especially for c2Poly when a c2Poly is passed to a function.
+	// Since polygons are prime for "instancing" a c2x transform can be used to
+	// transform a polygon from local space to world space. In functions that take
+	// a c2x pointer (like c2PolytoPoly), these pointers can be NULL, which represents
+	// an identity transformation and assumes the verts inside of c2Poly are already
+	// in world space.
+
+	public class Transformation
+	{
+		public Vector p;
+		public Rotation r;
+
+		public Transformation()
+		{
+			p = new Vector();
+			r = new Rotation();
+		}
+
+		public Transformation(Vector p, Rotation r)
+		{
+			this.p = p;
+			this.r = r;
+		}
+	}
+
+	// 2d halfspace (aka plane, aka line)
+	public class HalfSpace
+	{
+		public Vector n;   // normal, normalized
+		public float d; // distance to origin from plane, or ax + by = d
+
+		public HalfSpace()
+		{
+			n = new Vector();
+			d = 0;
+		}
+
+		public HalfSpace(Vector n, float d)
+		{
+			this.n = n;
+			this.d = d;
+		}
+	}
+
+	public class Circle
+	{
+		public Vector p;
+		public float r;
+
+		public Circle()
+		{
+			p = new Vector();
+			r = 0;
+		}
+
+		public Circle(Vector p, float r)
+		{
+			this.p = p;
+			this.r = r;
+		}
+	}
+
+	public class AABB
+	{
+		public Vector min;
+		public Vector max;
+
+		public AABB()
+		{
+			min = new Vector();
+			max = new Vector();
+		}
+
+		public AABB(Vector min, Vector max)
+		{
+			this.min = min;
+			this.max = max;
+		}
+	}
+
+	// a capsule is defined as a line segment (from a to b) and radius r
+	public class Capsule
+	{
+		public Vector a;
+		public Vector b;
+		public float r;
+
+		public Capsule()
+		{
+			a = new Vector();
+			b = new Vector();
+			r = 0;
+		}
+	}
+
+	public class Poly
+	{
+		public int count;
+		public Vector[] verts; // max size 8
+		public Vector[] norms; // max size 8
+
+		public Poly()
+		{
+			count = 0;
+			verts = new Vector[8];
+			norms = new Vector[8];
+
+			for (int i = 0; i < 8; i++)
+			{
+				verts[i] = new Vector();
+				norms[i] = new Vector();
+			}
+		}
+	}
+
+	// IMPORTANT:
+	// Many algorithms in this file are sensitive to the magnitude of the
+	// ray direction (c2Ray::d). It is highly recommended to normalize the
+	// ray direction and use t to specify a distance. Please see this link
+	// for an in-depth explanation: https://github.com/RandyGaul/cute_headers/issues/30
+	public class Ray
+	{
+		public Vector p;   // position
+		public Vector d;   // direction (normalized)
+		public float t; // distance along d from position p to find endpoint of ray
+
+		public Ray()
+		{
+			p = new Vector();
+			d = new Vector();
+			t = 0;
+		}
+
+		public Ray(Vector p, Vector d, float t)
+		{
+			this.p = p;
+			this.d = d;
+			this.t = t;
+		}
+	}
+
+	public class RayCast
+	{
+		public float t; // time of impact
+		public Vector n;   // normal of surface at impact (unit length)
+
+		public RayCast()
+		{
+			t = 0;
+			n = new Vector();
+		}
+
+		public RayCast(float t, Vector n)
+		{
+			this.t = t;
+			this.n = n;
+		}
+	}
+
+	// contains all information necessary to resolve a collision, or in other words
+	// this is the information needed to separate shapes that are colliding. Doing
+	// the resolution step is *not* included in cute_c2.
+	public class Manifold
+	{
+		public int count;
+		public float[] depths; // max size 2
+		public Vector[] contact_points; // max size 2
+
+		// always points from shape A to shape B (first and second shapes passed into
+		// any of the c2***to***Manifold functions)
+		public Vector n;
+
+		public Manifold()
+		{
+			count = 0;
+			depths = new float[2];
+			contact_points = new[] { new Vector(), new Vector() };
+		}
+	}
+
+	public enum ShapeType
+	{
+		None,
+		Circle,
+		AABB,
+		Capsule,
+		Poly
+	}
+
+	// This struct is only for advanced usage of the c2GJK function. See comments inside of the
+	// c2GJK function for more details.
+	public class GJKCache
+	{
+		public float metric;
+		public int count;
+		public int[] iA;  // max size 3
+		public int[] iB;  // max size 3
+		public float div;
+
+		public GJKCache()
+		{
+			metric = 0;
+			count = 0;
+			iA = new int[3];
+			iB = new int[3];
+			div = 0;
+		}
+	}
+
 	public class DynamicCollision
 	{
 		public const int C2_MAX_POLYGON_VERTS = 8;
 		public const int C2_GJK_ITERS = 20;
-
-		// 2d vector
-		class Vector
-		{
-			public float x;
-			public float y;
-
-			public Vector()
-			{
-				x = 0;
-				y = 0;
-			}
-
-			public Vector(float x, float y)
-			{
-				this.x = x;
-				this.y = y;
-			}
-		}
-
-		// 2d rotation composed of cos/sin pair
-		class Rotation
-		{
-			public float c;
-			public float s;
-		}
-
-		// 2d rotation matrix
-		class RotationMatrix
-		{
-			public Vector x;
-			public Vector y;
-
-			public RotationMatrix()
-			{
-				x = new Vector();
-				y = new Vector();
-			}
-
-			public RotationMatrix(Vector x, Vector y)
-			{
-				this.x = x;
-				this.y = y;
-			}
-		}
-
-		// 2d transformation "x"
-		// These are used especially for c2Poly when a c2Poly is passed to a function.
-		// Since polygons are prime for "instancing" a c2x transform can be used to
-		// transform a polygon from local space to world space. In functions that take
-		// a c2x pointer (like c2PolytoPoly), these pointers can be NULL, which represents
-		// an identity transformation and assumes the verts inside of c2Poly are already
-		// in world space.
-
-		class Transformation
-		{
-			public Vector p;
-			public Rotation r;
-
-			public Transformation()
-			{
-				p = new Vector();
-				r = new Rotation();
-			}
-
-			public Transformation(Vector p, Rotation r)
-			{
-				this.p = p;
-				this.r = r;
-			}
-		}
-
-		// 2d halfspace (aka plane, aka line)
-		class HalfSpace
-		{
-			public Vector n;   // normal, normalized
-			public float d; // distance to origin from plane, or ax + by = d
-
-			public HalfSpace()
-			{
-				n = new Vector();
-				d = 0;
-			}
-
-			public HalfSpace(Vector n, float d)
-			{
-				this.n = n;
-				this.d = d;
-			}
-		}
-
-		class Circle
-		{
-			public Vector p;
-			public float r;
-
-			public Circle()
-			{
-				p = new Vector();
-				r = 0;
-			}
-
-			public Circle(Vector p, float r)
-			{
-				this.p = p;
-				this.r = r;
-			}
-		}
-
-		class AABB
-		{
-			public Vector min;
-			public Vector max;
-
-			public AABB()
-			{
-				min = new Vector();
-				max = new Vector();
-			}
-
-			public AABB(Vector min, Vector max)
-			{
-				this.min = min;
-				this.max = max;
-			}
-		}
-
-		// a capsule is defined as a line segment (from a to b) and radius r
-		class Capsule
-		{
-			public Vector a;
-			public Vector b;
-			public float r;
-
-			public Capsule()
-			{
-				a = new Vector();
-				b = new Vector();
-				r = 0;
-			}
-		}
-
-		class Poly
-		{
-			public int count;
-			public Vector[] verts; // max size 8
-			public Vector[] norms; // max size 8
-
-			public Poly()
-			{
-				count = 0;
-				verts = new Vector[8];
-				norms = new Vector[8];
-
-				for (int i = 0; i < 8; i++)
-				{
-					verts[i] = new Vector();
-					norms[i] = new Vector();
-				}
-			}
-		}
-
-		// IMPORTANT:
-		// Many algorithms in this file are sensitive to the magnitude of the
-		// ray direction (c2Ray::d). It is highly recommended to normalize the
-		// ray direction and use t to specify a distance. Please see this link
-		// for an in-depth explanation: https://github.com/RandyGaul/cute_headers/issues/30
-		class Ray
-		{
-			public Vector p;   // position
-			public Vector d;   // direction (normalized)
-			public float t; // distance along d from position p to find endpoint of ray
-
-			public Ray()
-			{
-				p = new Vector();
-				d = new Vector();
-				t = 0;
-			}
-
-			public Ray(Vector p, Vector d, float t)
-			{
-				this.p = p;
-				this.d = d;
-				this.t = t;
-			}
-		}
-
-		class RayCast
-		{
-			public float t; // time of impact
-			public Vector n;   // normal of surface at impact (unit length)
-
-			public RayCast()
-			{
-				t = 0;
-				n = new Vector();
-			}
-
-			public RayCast(float t, Vector n)
-			{
-				this.t = t;
-				this.n = n;
-			}
-		}
-
-		// contains all information necessary to resolve a collision, or in other words
-		// this is the information needed to separate shapes that are colliding. Doing
-		// the resolution step is *not* included in cute_c2.
-		class Manifold
-		{
-			public int count;
-			public float[] depths; // max size 2
-			public Vector[] contact_points; // max size 2
-
-			// always points from shape A to shape B (first and second shapes passed into
-			// any of the c2***to***Manifold functions)
-			public Vector n;
-
-			public Manifold()
-			{
-				count = 0;
-				depths = new float[2];
-				contact_points = new[] { new Vector(), new Vector() };
-			}
-		}
-
-		enum ShapeType
-		{
-			None,
-			Circle,
-			AABB,
-			Capsule,
-			Poly
-		}
-
-		// This struct is only for advanced usage of the c2GJK function. See comments inside of the
-		// c2GJK function for more details.
-		class GJKCache
-		{
-			public float metric;
-			public int count;
-			public int[] iA;  // max size 3
-			public int[] iB;  // max size 3
-			public float div;
-
-			public GJKCache()
-			{
-				metric = 0;
-				count = 0;
-				iA = new int[3];
-				iB = new int[3];
-				div = 0;
-			}
-		}
 
 		// This is an advanced function, intended to be used by people who know what they're doing.
 		//
@@ -524,7 +524,7 @@ namespace Libvaxy.Collision
 		static Vector c2Add(Vector a, Vector b) { a.x += b.x; a.y += b.y; return a; }
 
 		/* inline */
-		static Vector c2Sub(Vector a, Vector b) { a.x -= b.x; a.y -= b.y; return a; }
+		static Vector c2Sub(Vector a, Vector b) { Vector c = new Vector(a.x - b.x, a.y - b.y); return c; }
 
 		/* inline */
 		static float c2Dot(Vector a, Vector b) { return a.x * b.x + a.y * b.y; }
@@ -672,7 +672,7 @@ namespace Libvaxy.Collision
 			verts[3] = c2V(bb.min.x, bb.max.y);
 		}
 
-		static bool c2Collided(object A, Transformation ax, ShapeType typeA, object B, Transformation bx, ShapeType typeB)
+		public static bool c2Collided(object A, Transformation ax, ShapeType typeA, object B, Transformation bx, ShapeType typeB)
 		{
 			switch (typeA)
 			{
@@ -721,7 +721,7 @@ namespace Libvaxy.Collision
 			}
 		}
 
-		Manifold c2Collide(in object A, Transformation ax, ShapeType typeA, in object B, Transformation bx, ShapeType typeB)
+		public static Manifold c2Collide(in object A, Transformation ax, ShapeType typeA, in object B, Transformation bx, ShapeType typeB)
 		{
 			Manifold m;
 
@@ -771,7 +771,7 @@ namespace Libvaxy.Collision
 			return null; // should never happen
 		}
 
-		bool c2CastRay(Ray A, in object B, Transformation bx, ShapeType typeB, out RayCast rayCast)
+		public static bool c2CastRay(Ray A, in object B, Transformation bx, ShapeType typeB, out RayCast rayCast)
 		{
 			switch (typeB)
 			{
@@ -1083,7 +1083,7 @@ namespace Libvaxy.Collision
 		// Please see http://box2d.org/downloads/ under GDC 2010 for Erin's demo code
 		// and PDF slides for documentation on the GJK algorithm. This function is mostly
 		// from Erin's version from his online resources.
-		static float c2GJK(object A, ShapeType typeA, Transformation ax_ptr, object B, ShapeType typeB, Transformation bx_ptr, Vector outA, Vector outB, bool use_radius, int iterations, GJKCache cache)
+		public static float c2GJK(object A, ShapeType typeA, Transformation ax_ptr, object B, ShapeType typeB, Transformation bx_ptr, Vector outA, Vector outB, bool use_radius, int iterations, GJKCache cache)
 		{
 			Transformation ax;
 			Transformation bx;
