@@ -166,45 +166,45 @@ namespace Libvaxy.Collision
 	// 2d vector
 	public class Vector
 	{
-		public float x;
-		public float y;
+		public float X;
+		public float Y;
 
 		public Vector()
 		{
-			x = 0;
-			y = 0;
+			X = 0;
+			Y = 0;
 		}
 
 		public Vector(float x, float y)
 		{
-			this.x = x;
-			this.y = y;
+			X = x;
+			Y = y;
 		}
 	}
 
 	// 2d rotation composed of cos/sin pair
 	public class Rotation
 	{
-		public float c;
-		public float s;
+		public float Cos;
+		public float Sin;
 	}
 
 	// 2d rotation matrix
 	public class RotationMatrix
 	{
-		public Vector x;
-		public Vector y;
+		public Vector X;
+		public Vector Y;
 
 		public RotationMatrix()
 		{
-			x = new Vector();
-			y = new Vector();
+			X = new Vector();
+			Y = new Vector();
 		}
 
 		public RotationMatrix(Vector x, Vector y)
 		{
-			this.x = x;
-			this.y = y;
+			X = x;
+			Y = y;
 		}
 	}
 
@@ -218,108 +218,108 @@ namespace Libvaxy.Collision
 
 	public class Transformation
 	{
-		public Vector p;
-		public Rotation r;
+		public Vector Position;
+		public Rotation Rotation;
 
 		public Transformation()
 		{
-			p = new Vector();
-			r = new Rotation();
+			Position = new Vector();
+			Rotation = new Rotation();
 		}
 
 		public Transformation(Vector p, Rotation r)
 		{
-			this.p = p;
-			this.r = r;
+			this.Position = p;
+			this.Rotation = r;
 		}
 	}
 
 	// 2d halfspace (aka plane, aka line)
 	public class HalfSpace
 	{
-		public Vector n;   // normal, normalized
-		public float d; // distance to origin from plane, or ax + by = d
+		public Vector Normal;   // normal, normalized
+		public float DistanceFromOrigin; // distance to origin from plane, or ax + by = d
 
 		public HalfSpace()
 		{
-			n = new Vector();
-			d = 0;
+			Normal = new Vector();
+			DistanceFromOrigin = 0;
 		}
 
 		public HalfSpace(Vector n, float d)
 		{
-			this.n = n;
-			this.d = d;
+			this.Normal = n;
+			this.DistanceFromOrigin = d;
 		}
 	}
 
 	public class Circle
 	{
-		public Vector p;
-		public float r;
+		public Vector Position;
+		public float Radius;
 
 		public Circle()
 		{
-			p = new Vector();
-			r = 0;
+			Position = new Vector();
+			Radius = 0;
 		}
 
 		public Circle(Vector p, float r)
 		{
-			this.p = p;
-			this.r = r;
+			this.Position = p;
+			this.Radius = r;
 		}
 	}
 
 	public class AABB
 	{
-		public Vector min;
-		public Vector max;
+		public Vector Min;
+		public Vector Max;
 
 		public AABB()
 		{
-			min = new Vector();
-			max = new Vector();
+			Min = new Vector();
+			Max = new Vector();
 		}
 
 		public AABB(Vector min, Vector max)
 		{
-			this.min = min;
-			this.max = max;
+			this.Min = min;
+			this.Max = max;
 		}
 	}
 
 	// a capsule is defined as a line segment (from a to b) and radius r
 	public class Capsule
 	{
-		public Vector a;
-		public Vector b;
-		public float r;
+		public Vector Start;
+		public Vector End;
+		public float Radius;
 
 		public Capsule()
 		{
-			a = new Vector();
-			b = new Vector();
-			r = 0;
+			Start = new Vector();
+			End = new Vector();
+			Radius = 0;
 		}
 	}
 
 	public class Poly
 	{
-		public int count;
-		public Vector[] verts; // max size 8
-		public Vector[] norms; // max size 8
+		public int VertexCount;
+		public Vector[] Vertices; // max size 8
+		public Vector[] Normals; // max size 8
 
 		public Poly()
 		{
-			count = 0;
-			verts = new Vector[8];
-			norms = new Vector[8];
+			VertexCount = 0;
+			Vertices = new Vector[8];
+			Normals = new Vector[8];
 
 			for (int i = 0; i < 8; i++)
 			{
-				verts[i] = new Vector();
-				norms[i] = new Vector();
+				Vertices[i] = new Vector();
+				Normals[i] = new Vector();
 			}
 		}
 	}
@@ -331,40 +331,40 @@ namespace Libvaxy.Collision
 	// for an in-depth explanation: https://github.com/RandyGaul/cute_headers/issues/30
 	public class Ray
 	{
-		public Vector p;   // position
-		public Vector d;   // direction (normalized)
-		public float t; // distance along d from position p to find endpoint of ray
+		public Vector Position;   // position
+		public Vector Direction;   // direction (normalized)
+		public float Length; // distance along d from position p to find endpoint of ray
 
 		public Ray()
 		{
-			p = new Vector();
-			d = new Vector();
-			t = 0;
+			Position = new Vector();
+			Direction = new Vector();
+			Length = 0;
 		}
 
 		public Ray(Vector p, Vector d, float t)
 		{
-			this.p = p;
-			this.d = d;
-			this.t = t;
+			this.Position = p;
+			this.Direction = d;
+			this.Length = t;
 		}
 	}
 
 	public class RayCast
 	{
-		public float t; // time of impact
-		public Vector n;   // normal of surface at impact (unit length)
+		public float TimeOfImpact; // time of impact
+		public Vector ImpactNormal;   // normal of surface at impact (unit length)
 
 		public RayCast()
 		{
-			t = 0;
-			n = new Vector();
+			TimeOfImpact = 0;
+			ImpactNormal = new Vector();
 		}
 
 		public RayCast(float t, Vector n)
 		{
-			this.t = t;
-			this.n = n;
+			this.TimeOfImpact = t;
+			this.ImpactNormal = n;
 		}
 	}
 
@@ -373,19 +373,19 @@ namespace Libvaxy.Collision
 	// the resolution step is *not* included in cute_c2.
 	public class Manifold
 	{
-		public int count;
-		public float[] depths; // max size 2
-		public Vector[] contact_points; // max size 2
+		public int Count;
+		public float[] Depths; // max size 2
+		public Vector[] ContactPoints; // max size 2
 
 		// always points from shape A to shape B (first and second shapes passed into
 		// any of the c2***to***Manifold functions)
-		public Vector n;
+		public Vector Direction;
 
 		public Manifold()
 		{
-			count = 0;
-			depths = new float[2];
-			contact_points = new[] { new Vector(), new Vector() };
+			Count = 0;
+			Depths = new float[2];
+			ContactPoints = new[] { new Vector(), new Vector() };
 		}
 	}
 
@@ -402,26 +402,26 @@ namespace Libvaxy.Collision
 	// c2GJK function for more details.
 	public class GJKCache
 	{
-		public float metric;
-		public int count;
-		public int[] iA;  // max size 3
-		public int[] iB;  // max size 3
-		public float div;
+		public float Metric;
+		public int Count;
+		public int[] IA;  // max size 3
+		public int[] IB;  // max size 3
+		public float Div;
 
 		public GJKCache()
 		{
-			metric = 0;
-			count = 0;
-			iA = new int[3];
-			iB = new int[3];
-			div = 0;
+			Metric = 0;
+			Count = 0;
+			IA = new int[3];
+			IB = new int[3];
+			Div = 0;
 		}
 	}
 
 	public class DynamicCollision
 	{
-		public const int C2_MAX_POLYGON_VERTS = 8;
-		public const int C2_GJK_ITERS = 20;
+		public const int MaxPolygonVertices = 8;
+		public const int GJKIterations = 20;
 
 		// This is an advanced function, intended to be used by people who know what they're doing.
 		//
@@ -518,51 +518,51 @@ namespace Libvaxy.Collision
 
 		// vector ops
 		/* inline */
-		static Vector c2V(float x, float y) { Vector a = new Vector(); a.x = x; a.y = y; return a; }
+		static Vector c2V(float x, float y) { Vector a = new Vector(); a.X = x; a.Y = y; return a; }
 
 		/* inline */
-		static Vector c2Add(Vector a, Vector b) { a.x += b.x; a.y += b.y; return a; }
+		static Vector c2Add(Vector a, Vector b) { a.X += b.X; a.Y += b.Y; return a; }
 
 		/* inline */
-		static Vector c2Sub(Vector a, Vector b) { Vector c = new Vector(a.x - b.x, a.y - b.y); return c; }
+		static Vector c2Sub(Vector a, Vector b) { Vector c = new Vector(a.X - b.X, a.Y - b.Y); return c; }
 
 		/* inline */
-		static float c2Dot(Vector a, Vector b) { return a.x * b.x + a.y * b.y; }
+		static float c2Dot(Vector a, Vector b) { return a.X * b.X + a.Y * b.Y; }
 
 		/* inline */
-		static Vector c2Mulvs(Vector a, float b) { a.x *= b; a.y *= b; return a; }
+		static Vector c2Mulvs(Vector a, float b) { a.X *= b; a.Y *= b; return a; }
 
 		/* inline */
-		static Vector c2Mulvv(Vector a, Vector b) { a.x *= b.x; a.y *= b.y; return a; }
+		static Vector c2Mulvv(Vector a, Vector b) { a.X *= b.X; a.Y *= b.Y; return a; }
 
 		/* inline */
 		static Vector c2Div(Vector a, float b) { return c2Mulvs(a, 1.0f / b); }
 
 		/* inline */
-		static Vector c2Skew(Vector a) { Vector b = new Vector(); b.x = -a.y; b.y = a.x; return b; }
+		static Vector c2Skew(Vector a) { Vector b = new Vector(); b.X = -a.Y; b.Y = a.X; return b; }
 
 		/* inline */
-		static Vector c2CCW90(Vector a) { Vector b = new Vector(); b.x = a.y; b.y = -a.x; return b; }
+		static Vector c2CCW90(Vector a) { Vector b = new Vector(); b.X = a.Y; b.Y = -a.X; return b; }
 
 		/* inline */
-		static float c2Det2(Vector a, Vector b) { return a.x * b.y - a.y * b.x; }
+		static float c2Det2(Vector a, Vector b) { return a.X * b.Y - a.Y * b.X; }
 		/* inline */
-		static Vector c2Minv(Vector a, Vector b) { return c2V(a.x < b.x ? a.x : b.x, a.y < b.y ? a.y : b.y); }
+		static Vector c2Minv(Vector a, Vector b) { return c2V(a.X < b.X ? a.X : b.X, a.Y < b.Y ? a.Y : b.Y); }
 
 		/* inline */
-		static Vector c2Maxv(Vector a, Vector b) { return c2V(Math.Max(a.x, b.x), Math.Max(a.y, b.y)); }
+		static Vector c2Maxv(Vector a, Vector b) { return c2V(Math.Max(a.X, b.X), Math.Max(a.Y, b.Y)); }
 
 		/* inline */
 		static Vector c2Clampv(Vector a, Vector lo, Vector hi) { return c2Maxv(lo, c2Minv(a, hi)); }
 
 		/* inline */
-		static Vector c2Absv(Vector a) { return c2V(Math.Abs(a.x), Math.Abs(a.y)); }
+		static Vector c2Absv(Vector a) { return c2V(Math.Abs(a.X), Math.Abs(a.Y)); }
 
 		/* inline */
-		static float c2Hmin(Vector a) { return a.x < a.y ? a.x : a.y; }
+		static float c2Hmin(Vector a) { return a.X < a.Y ? a.X : a.Y; }
 
 		/* inline */
-		static float c2Hmax(Vector a) { return Math.Max(a.x, a.y); }
+		static float c2Hmax(Vector a) { return Math.Max(a.X, a.Y); }
 
 		/* inline */
 		static float c2Len(Vector a) { return (float)Math.Sqrt(c2Dot(a, a)); }
@@ -574,7 +574,7 @@ namespace Libvaxy.Collision
 		static Vector c2SafeNorm(Vector a) { float sq = c2Dot(a, a); return sq != 0 ? c2Div(a, c2Len(a)) : c2V(0, 0); }
 
 		/* inline */
-		static Vector c2Neg(Vector a) { return c2V(-a.x, -a.y); }
+		static Vector c2Neg(Vector a) { return c2V(-a.X, -a.Y); }
 
 		/* inline */
 		static Vector c2Lerp(Vector a, Vector b, float t) { return c2Add(a, c2Mulvs(c2Sub(b, a), t)); }
@@ -584,81 +584,81 @@ namespace Libvaxy.Collision
 		{
 			float k = c2Len(a) / c2Len(b);
 			b = c2Mulvs(b, k);
-			if (Math.Abs(a.x - b.x) < kTol && Math.Abs(a.y - b.y) < kTol) return 1;
+			if (Math.Abs(a.X - b.X) < kTol && Math.Abs(a.Y - b.Y) < kTol) return 1;
 			return 0;
 		}
 
 		// rotation ops
 		/* inline */
-		static Rotation c2Rot(float radians) { Rotation r = new Rotation(); c2SinCos(radians, ref r.s, ref r.c); return r; }
+		static Rotation c2Rot(float radians) { Rotation r = new Rotation(); c2SinCos(radians, ref r.Sin, ref r.Cos); return r; }
 
 		/* inline */
-		static Rotation c2RotIdentity() { Rotation r = new Rotation(); r.c = 1.0f; r.s = 0; return r; }
+		static Rotation c2RotIdentity() { Rotation r = new Rotation(); r.Cos = 1.0f; r.Sin = 0; return r; }
 
 		/* inline */
-		static Vector c2RotX(Rotation r) { return c2V(r.c, r.s); }
+		static Vector c2RotX(Rotation r) { return c2V(r.Cos, r.Sin); }
 
 		/* inline */
-		static Vector c2RotY(Rotation r) { return c2V(-r.s, r.c); }
+		static Vector c2RotY(Rotation r) { return c2V(-r.Sin, r.Cos); }
 
 		/* inline */
-		static Vector c2Mulrv(Rotation a, Vector b) { return c2V(a.c * b.x - a.s * b.y, a.s * b.x + a.c * b.y); }
+		static Vector c2Mulrv(Rotation a, Vector b) { return c2V(a.Cos * b.X - a.Sin * b.Y, a.Sin * b.X + a.Cos * b.Y); }
 
 		/* inline */
-		static Vector c2MulrvT(Rotation a, Vector b) { return c2V(a.c * b.x + a.s * b.y, -a.s * b.x + a.c * b.y); }
+		static Vector c2MulrvT(Rotation a, Vector b) { return c2V(a.Cos * b.X + a.Sin * b.Y, -a.Sin * b.X + a.Cos * b.Y); }
 
 		/* inline */
-		static Rotation c2Mulrr(Rotation a, Rotation b) { Rotation c = new Rotation(); c.c = a.c * b.c - a.s * b.s; c.s = a.s * b.c + a.c * b.s; return c; }
+		static Rotation c2Mulrr(Rotation a, Rotation b) { Rotation c = new Rotation(); c.Cos = a.Cos * b.Cos - a.Sin * b.Sin; c.Sin = a.Sin * b.Cos + a.Cos * b.Sin; return c; }
 
 		/* inline */
-		static Rotation c2MulrrT(Rotation a, Rotation b) { Rotation c = new Rotation(); c.c = a.c * b.c + a.s * b.s; c.s = a.c * b.s - a.s * b.c; return c; }
+		static Rotation c2MulrrT(Rotation a, Rotation b) { Rotation c = new Rotation(); c.Cos = a.Cos * b.Cos + a.Sin * b.Sin; c.Sin = a.Cos * b.Sin - a.Sin * b.Cos; return c; }
 
 		/* inline */
-		static Vector c2Mulmv(RotationMatrix a, Vector b) { Vector c = new Vector(); c.x = a.x.x * b.x + a.y.x * b.y; c.y = a.x.y * b.x + a.y.y * b.y; return c; }
+		static Vector c2Mulmv(RotationMatrix a, Vector b) { Vector c = new Vector(); c.X = a.X.X * b.X + a.Y.X * b.Y; c.Y = a.X.Y * b.X + a.Y.Y * b.Y; return c; }
 
 		/* inline */
-		static Vector c2MulmvT(RotationMatrix a, Vector b) { Vector c = new Vector(); c.x = a.x.x * b.x + a.x.y * b.y; c.y = a.y.x * b.x + a.y.y * b.y; return c; }
+		static Vector c2MulmvT(RotationMatrix a, Vector b) { Vector c = new Vector(); c.X = a.X.X * b.X + a.X.Y * b.Y; c.Y = a.Y.X * b.X + a.Y.Y * b.Y; return c; }
 
 		/* inline */
-		static RotationMatrix c2Mulmm(RotationMatrix a, RotationMatrix b) { RotationMatrix c = new RotationMatrix(); c.x = c2Mulmv(a, b.x); c.y = c2Mulmv(a, b.y); return c; }
+		static RotationMatrix c2Mulmm(RotationMatrix a, RotationMatrix b) { RotationMatrix c = new RotationMatrix(); c.X = c2Mulmv(a, b.X); c.Y = c2Mulmv(a, b.Y); return c; }
 
 		/* inline */
-		static RotationMatrix c2MulmmT(RotationMatrix a, RotationMatrix b) { RotationMatrix c = new RotationMatrix(); c.x = c2MulmvT(a, b.x); c.y = c2MulmvT(a, b.y); return c; }
+		static RotationMatrix c2MulmmT(RotationMatrix a, RotationMatrix b) { RotationMatrix c = new RotationMatrix(); c.X = c2MulmvT(a, b.X); c.Y = c2MulmvT(a, b.Y); return c; }
 
 		// transform ops
 		/* inline */
-		static Transformation c2xIdentity() { Transformation x = new Transformation(); x.p = c2V(0, 0); x.r = c2RotIdentity(); return x; }
+		static Transformation c2xIdentity() { Transformation x = new Transformation(); x.Position = c2V(0, 0); x.Rotation = c2RotIdentity(); return x; }
 
 		/* inline */
-		static Vector c2Mulxv(Transformation a, Vector b) { return c2Add(c2Mulrv(a.r, b), a.p); }
+		static Vector c2Mulxv(Transformation a, Vector b) { return c2Add(c2Mulrv(a.Rotation, b), a.Position); }
 
 		/* inline */
-		static Vector c2MulxvT(Transformation a, Vector b) { return c2MulrvT(a.r, c2Sub(b, a.p)); }
+		static Vector c2MulxvT(Transformation a, Vector b) { return c2MulrvT(a.Rotation, c2Sub(b, a.Position)); }
 
 		/* inline */
-		static Transformation c2Mulxx(Transformation a, Transformation b) { Transformation c = new Transformation(); c.r = c2Mulrr(a.r, b.r); c.p = c2Add(c2Mulrv(a.r, b.p), a.p); return c; }
+		static Transformation c2Mulxx(Transformation a, Transformation b) { Transformation c = new Transformation(); c.Rotation = c2Mulrr(a.Rotation, b.Rotation); c.Position = c2Add(c2Mulrv(a.Rotation, b.Position), a.Position); return c; }
 
 		/* inline */
-		static Transformation c2MulxxT(Transformation a, Transformation b) { Transformation c = new Transformation(); c.r = c2MulrrT(a.r, b.r); c.p = c2MulrvT(a.r, c2Sub(b.p, a.p)); return c; }
+		static Transformation c2MulxxT(Transformation a, Transformation b) { Transformation c = new Transformation(); c.Rotation = c2MulrrT(a.Rotation, b.Rotation); c.Position = c2MulrvT(a.Rotation, c2Sub(b.Position, a.Position)); return c; }
 
 		/* inline */
-		static Transformation c2Transform(Vector p, float radians) { Transformation x = new Transformation(); x.r = c2Rot(radians); x.p = p; return x; }
+		static Transformation c2Transform(Vector p, float radians) { Transformation x = new Transformation(); x.Rotation = c2Rot(radians); x.Position = p; return x; }
 
 		// halfspace ops
 		/* inline */
-		static Vector c2Origin(HalfSpace h) { return c2Mulvs(h.n, h.d); }
+		static Vector c2Origin(HalfSpace h) { return c2Mulvs(h.Normal, h.DistanceFromOrigin); }
 
 		/* inline */
-		static float c2Dist(HalfSpace h, Vector p) { return c2Dot(h.n, p) - h.d; }
+		static float c2Dist(HalfSpace h, Vector p) { return c2Dot(h.Normal, p) - h.DistanceFromOrigin; }
 
 		/* inline */
-		static Vector c2Project(HalfSpace h, Vector p) { return c2Sub(p, c2Mulvs(h.n, c2Dist(h, p))); }
+		static Vector c2Project(HalfSpace h, Vector p) { return c2Sub(p, c2Mulvs(h.Normal, c2Dist(h, p))); }
 
 		/* inline */
-		static HalfSpace c2Mulxh(Transformation a, HalfSpace b) { HalfSpace c = new HalfSpace(); c.n = c2Mulrv(a.r, b.n); c.d = c2Dot(c2Mulxv(a, c2Origin(b)), c.n); return c; }
+		static HalfSpace c2Mulxh(Transformation a, HalfSpace b) { HalfSpace c = new HalfSpace(); c.Normal = c2Mulrv(a.Rotation, b.Normal); c.DistanceFromOrigin = c2Dot(c2Mulxv(a, c2Origin(b)), c.Normal); return c; }
 
 		/* inline */
-		static HalfSpace c2MulxhT(Transformation a, HalfSpace b) { HalfSpace c = new HalfSpace(); c.n = c2MulrvT(a.r, b.n); c.d = c2Dot(c2MulxvT(a, c2Origin(b)), c.n); return c; }
+		static HalfSpace c2MulxhT(Transformation a, HalfSpace b) { HalfSpace c = new HalfSpace(); c.Normal = c2MulrvT(a.Rotation, b.Normal); c.DistanceFromOrigin = c2Dot(c2MulxvT(a, c2Origin(b)), c.Normal); return c; }
 
 		/* inline */
 		static Vector c2Intersect(Vector a, Vector b, float da, float db) { return c2Add(a, c2Mulvs(c2Sub(b, a), (da / (da - db)))); }
@@ -666,10 +666,10 @@ namespace Libvaxy.Collision
 		/* inline */
 		static void c2BBVerts(Vector[] verts, AABB bb)
 		{
-			verts[0] = bb.min;
-			verts[1] = c2V(bb.max.x, bb.min.y);
-			verts[2] = bb.max;
-			verts[3] = c2V(bb.min.x, bb.max.y);
+			verts[0] = bb.Min;
+			verts[1] = c2V(bb.Max.X, bb.Min.Y);
+			verts[2] = bb.Max;
+			verts[3] = c2V(bb.Min.X, bb.Max.Y);
 		}
 
 		public static bool c2Collided(object A, Transformation ax, ShapeType typeA, object B, Transformation bx, ShapeType typeB)
@@ -740,7 +740,7 @@ namespace Libvaxy.Collision
 				case ShapeType.AABB:
 					switch (typeB)
 					{
-						case ShapeType.Circle: m = c2CircletoAABBManifold((Circle)B, (AABB)A); m.n = c2Neg(m.n); return m;
+						case ShapeType.Circle: m = c2CircletoAABBManifold((Circle)B, (AABB)A); m.Direction = c2Neg(m.Direction); return m;
 						case ShapeType.AABB: return c2AABBtoAABBManifold((AABB)A, (AABB)B);
 						case ShapeType.Capsule: return c2AABBtoCapsuleManifold((AABB)A, (Capsule)B);
 						case ShapeType.Poly: return c2AABBtoPolyManifold((AABB)A, (Poly)B, bx);
@@ -750,8 +750,8 @@ namespace Libvaxy.Collision
 				case ShapeType.Capsule:
 					switch (typeB)
 					{
-						case ShapeType.Circle: m = c2CircletoCapsuleManifold((Circle)B, (Capsule)A); m.n = c2Neg(m.n); return m;
-						case ShapeType.AABB: m = c2AABBtoCapsuleManifold((AABB)B, (Capsule)A); m.n = c2Neg(m.n); return m;
+						case ShapeType.Circle: m = c2CircletoCapsuleManifold((Circle)B, (Capsule)A); m.Direction = c2Neg(m.Direction); return m;
+						case ShapeType.AABB: m = c2AABBtoCapsuleManifold((AABB)B, (Capsule)A); m.Direction = c2Neg(m.Direction); return m;
 						case ShapeType.Capsule: return c2CapsuletoCapsuleManifold((Capsule)A, (Capsule)B);
 						case ShapeType.Poly: return c2CapsuletoPolyManifold((Capsule)A, (Poly)B, bx);
 					}
@@ -760,9 +760,9 @@ namespace Libvaxy.Collision
 				case ShapeType.Poly:
 					switch (typeB)
 					{
-						case ShapeType.Circle: m = c2CircletoPolyManifold((Circle)B, (Poly)A, ax); m.n = c2Neg(m.n); return m;
-						case ShapeType.AABB: m = c2AABBtoPolyManifold((AABB)B, (Poly)A, ax); m.n = c2Neg(m.n); return m;
-						case ShapeType.Capsule: m = c2CapsuletoPolyManifold((Capsule)B, (Poly)A, ax); m.n = c2Neg(m.n); return m;
+						case ShapeType.Circle: m = c2CircletoPolyManifold((Circle)B, (Poly)A, ax); m.Direction = c2Neg(m.Direction); return m;
+						case ShapeType.AABB: m = c2AABBtoPolyManifold((AABB)B, (Poly)A, ax); m.Direction = c2Neg(m.Direction); return m;
+						case ShapeType.Capsule: m = c2CapsuletoPolyManifold((Capsule)B, (Poly)A, ax); m.Direction = c2Neg(m.Direction); return m;
 						case ShapeType.Poly: return c2PolytoPolyManifold((Poly)A, ax, (Poly)B, bx);
 					}
 					break;
@@ -787,73 +787,73 @@ namespace Libvaxy.Collision
 
 		class Proxy
 		{
-			public float radius;
-			public int count;
-			public Vector[] verts; // max size MAXPOLYGONVERTS
+			public float Radius;
+			public int Count;
+			public Vector[] Vertices; // max size MAXPOLYGONVERTS
 
 			public Proxy()
 			{
-				radius = 0;
-				count = 0;
-				verts = new Vector[C2_MAX_POLYGON_VERTS];
+				Radius = 0;
+				Count = 0;
+				Vertices = new Vector[MaxPolygonVertices];
 
-				for (int i = 0; i < C2_MAX_POLYGON_VERTS; i++)
-					verts[i] = new Vector();
+				for (int i = 0; i < MaxPolygonVertices; i++)
+					Vertices[i] = new Vector();
 			}
 		}
 
 		class SVector
 		{
-			public Vector sA;
-			public Vector sB;
-			public Vector p;
-			public float u;
-			public int iA;
-			public int iB;
+			public Vector SA;
+			public Vector SB;
+			public Vector Position;
+			public float U;
+			public int IA;
+			public int IB;
 
 			public SVector()
 			{
-				sA = new Vector();
-				sB = new Vector();
-				p = new Vector();
-				u = 0;
-				iA = 0;
-				iB = 0;
+				SA = new Vector();
+				SB = new Vector();
+				Position = new Vector();
+				U = 0;
+				IA = 0;
+				IB = 0;
 			}
 
 			public SVector(Vector sA, Vector sB, Vector p, float u, int iA, int iB)
 			{
-				this.sA = sA;
-				this.sB = sB;
-				this.p = p;
-				this.u = u;
-				this.iA = iA;
-				this.iB = iB;
+				this.SA = sA;
+				this.SB = sB;
+				this.Position = p;
+				this.U = u;
+				this.IA = iA;
+				this.IB = iB;
 			}
 		}
 
 		class Simplex
 		{
-			public SVector a, b, c, d;
+			public SVector A, B, C, D;
 			public float div;
 			public int count;
 
 			public Simplex()
 			{
-				a = new SVector();
-				b = new SVector();
-				c = new SVector();
-				d = new SVector();
+				A = new SVector();
+				B = new SVector();
+				C = new SVector();
+				D = new SVector();
 				div = 0f;
 				count = 0;
 			}
 
 			public Simplex(SVector a, SVector b, SVector c, SVector d, float div, int count)
 			{
-				this.a = a;
-				this.b = b;
-				this.c = c;
-				this.d = d;
+				this.A = a;
+				this.B = b;
+				this.C = c;
+				this.D = d;
 				this.div = div;
 				this.count = count;
 			}
@@ -866,37 +866,37 @@ namespace Libvaxy.Collision
 				case ShapeType.Circle:
 					{
 						Circle c = (Circle)shape;
-						p.radius = c.r;
-						p.count = 1;
-						p.verts[0] = c.p;
+						p.Radius = c.Radius;
+						p.Count = 1;
+						p.Vertices[0] = c.Position;
 					}
 					break;
 
 				case ShapeType.AABB:
 					{
 						AABB bb = (AABB)shape;
-						p.radius = 0;
-						p.count = 4;
-						c2BBVerts(p.verts, bb);
+						p.Radius = 0;
+						p.Count = 4;
+						c2BBVerts(p.Vertices, bb);
 					}
 					break;
 
 				case ShapeType.Capsule:
 					{
 						Capsule c = (Capsule)shape;
-						p.radius = c.r;
-						p.count = 2;
-						p.verts[0] = c.a;
-						p.verts[1] = c.b;
+						p.Radius = c.Radius;
+						p.Count = 2;
+						p.Vertices[0] = c.Start;
+						p.Vertices[1] = c.End;
 					}
 					break;
 
 				case ShapeType.Poly:
 					{
 						Poly poly = (Poly)shape;
-						p.radius = 0;
-						p.count = poly.count;
-						for (int i = 0; i < p.count; ++i) p.verts[i] = poly.verts[i];
+						p.Radius = 0;
+						p.Count = poly.VertexCount;
+						for (int i = 0; i < p.Count; ++i) p.Vertices[i] = poly.Vertices[i];
 					}
 					break;
 			}
@@ -925,9 +925,9 @@ namespace Libvaxy.Collision
 			float den = 1.0f / s.div;
 			switch (s.count)
 			{
-				case 1: return s.a.p;
-				case 2: return c2Add(c2Mulvs(s.a.p, den * s.a.u), c2Mulvs(s.b.p, den * s.b.u));
-				case 3: return c2Add(c2Add(c2Mulvs(s.a.p, den * s.a.u), c2Mulvs(s.b.p, den * s.b.u)), c2Mulvs(s.c.p, den * s.c.u));
+				case 1: return s.A.Position;
+				case 2: return c2Add(c2Mulvs(s.A.Position, den * s.A.U), c2Mulvs(s.B.Position, den * s.B.U));
+				case 3: return c2Add(c2Add(c2Mulvs(s.A.Position, den * s.A.U), c2Mulvs(s.B.Position, den * s.B.U)), c2Mulvs(s.C.Position, den * s.C.U));
 				default: return c2V(0, 0);
 			}
 		}
@@ -937,9 +937,9 @@ namespace Libvaxy.Collision
 			float den = 1.0f / s.div;
 			switch (s.count)
 			{
-				case 1: a = s.a.sA; b = s.a.sB; break;
-				case 2: a = c2Add(c2Mulvs(s.a.sA, den * s.a.u), c2Mulvs(s.b.sA, den * s.b.u)); b = c2Add(c2Mulvs(s.a.sB, den * s.a.u), c2Mulvs(s.b.sB, den * s.b.u)); break;
-				case 3: a = c2Add(c2Add(c2Mulvs(s.a.sA, den * s.a.u), c2Mulvs(s.b.sA, den * s.b.u)), c2Mulvs(s.c.sA, den * s.c.u)); b = c2Add(c2Add(c2Mulvs(s.a.sB, den * s.a.u), c2Mulvs(s.b.sB, den * s.b.u)), c2Mulvs(s.c.sB, den * s.c.u)); break;
+				case 1: a = s.A.SA; b = s.A.SB; break;
+				case 2: a = c2Add(c2Mulvs(s.A.SA, den * s.A.U), c2Mulvs(s.B.SA, den * s.B.U)); b = c2Add(c2Mulvs(s.A.SB, den * s.A.U), c2Mulvs(s.B.SB, den * s.B.U)); break;
+				case 3: a = c2Add(c2Add(c2Mulvs(s.A.SA, den * s.A.U), c2Mulvs(s.B.SA, den * s.B.U)), c2Mulvs(s.C.SA, den * s.C.U)); b = c2Add(c2Add(c2Mulvs(s.A.SB, den * s.A.U), c2Mulvs(s.B.SB, den * s.B.U)), c2Mulvs(s.C.SB, den * s.C.U)); break;
 				default: a = c2V(0, 0); b = c2V(0, 0); break;
 			}
 		}
@@ -948,11 +948,11 @@ namespace Libvaxy.Collision
 		{
 			switch (s.count)
 			{
-				case 1: return c2Neg(s.a.p);
+				case 1: return c2Neg(s.A.Position);
 				case 2:
 					{
-						Vector ab = c2Sub(s.b.p, s.a.p);
-						if (c2Det2(ab, c2Neg(s.a.p)) > 0) return c2Skew(ab);
+						Vector ab = c2Sub(s.B.Position, s.A.Position);
+						if (c2Det2(ab, c2Neg(s.A.Position)) > 0) return c2Skew(ab);
 						return c2CCW90(ab);
 					}
 				case 3:
@@ -962,30 +962,30 @@ namespace Libvaxy.Collision
 
 		static /* inline */ void c22(Simplex s)
 		{
-			Vector a = s.a.p;
-			Vector b = s.b.p;
+			Vector a = s.A.Position;
+			Vector b = s.B.Position;
 			float u = c2Dot(b, c2Sub(b, a));
 			float v = c2Dot(a, c2Sub(a, b));
 
 			if (v <= 0)
 			{
-				s.a.u = 1.0f;
+				s.A.U = 1.0f;
 				s.div = 1.0f;
 				s.count = 1;
 			}
 
 			else if (u <= 0)
 			{
-				s.a = s.b;
-				s.a.u = 1.0f;
+				s.A = s.B;
+				s.A.U = 1.0f;
 				s.div = 1.0f;
 				s.count = 1;
 			}
 
 			else
 			{
-				s.a.u = u;
-				s.b.u = v;
+				s.A.U = u;
+				s.B.U = v;
 				s.div = u + v;
 				s.count = 2;
 			}
@@ -993,9 +993,9 @@ namespace Libvaxy.Collision
 
 		static /* inline */ void c23(Simplex s)
 		{
-			Vector a = s.a.p;
-			Vector b = s.b.p;
-			Vector c = s.c.p;
+			Vector a = s.A.Position;
+			Vector b = s.B.Position;
+			Vector c = s.C.Position;
 
 			float uAB = c2Dot(b, c2Sub(b, a));
 			float vAB = c2Dot(a, c2Sub(a, b));
@@ -1010,60 +1010,60 @@ namespace Libvaxy.Collision
 
 			if (vAB <= 0 && uCA <= 0)
 			{
-				s.a.u = 1.0f;
+				s.A.U = 1.0f;
 				s.div = 1.0f;
 				s.count = 1;
 			}
 
 			else if (uAB <= 0 && vBC <= 0)
 			{
-				s.a = s.b;
-				s.a.u = 1.0f;
+				s.A = s.B;
+				s.A.U = 1.0f;
 				s.div = 1.0f;
 				s.count = 1;
 			}
 
 			else if (uBC <= 0 && vCA <= 0)
 			{
-				s.a = s.c;
-				s.a.u = 1.0f;
+				s.A = s.C;
+				s.A.U = 1.0f;
 				s.div = 1.0f;
 				s.count = 1;
 			}
 
 			else if (uAB > 0 && vAB > 0 && wABC <= 0)
 			{
-				s.a.u = uAB;
-				s.b.u = vAB;
+				s.A.U = uAB;
+				s.B.U = vAB;
 				s.div = uAB + vAB;
 				s.count = 2;
 			}
 
 			else if (uBC > 0 && vBC > 0 && uABC <= 0)
 			{
-				s.a = s.b;
-				s.b = s.c;
-				s.a.u = uBC;
-				s.b.u = vBC;
+				s.A = s.B;
+				s.B = s.C;
+				s.A.U = uBC;
+				s.B.U = vBC;
 				s.div = uBC + vBC;
 				s.count = 2;
 			}
 
 			else if (uCA > 0 && vCA > 0 && vABC <= 0)
 			{
-				s.b = s.a;
-				s.a = s.c;
-				s.a.u = uCA;
-				s.b.u = vCA;
+				s.B = s.A;
+				s.A = s.C;
+				s.A.U = uCA;
+				s.B.U = vCA;
 				s.div = uCA + vCA;
 				s.count = 2;
 			}
 
 			else
 			{
-				s.a.u = uABC;
-				s.b.u = vABC;
-				s.c.u = wABC;
+				s.A.U = uABC;
+				s.B.U = vABC;
+				s.C.U = wABC;
 				s.div = uABC + vABC + wABC;
 				s.count = 3;
 			}
@@ -1075,8 +1075,8 @@ namespace Libvaxy.Collision
 			{
 				default: // fall through
 				case 1: return 0;
-				case 2: return c2Len(c2Sub(s.b.p, s.a.p));
-				case 3: return c2Det2(c2Sub(s.b.p, s.a.p), c2Sub(s.c.p, s.a.p));
+				case 2: return c2Len(c2Sub(s.B.Position, s.A.Position));
+				case 3: return c2Det2(c2Sub(s.B.Position, s.A.Position), c2Sub(s.C.Position, s.A.Position));
 			}
 		}
 
@@ -1098,7 +1098,7 @@ namespace Libvaxy.Collision
 			c2MakeProxy(B, typeB, pB);
 
 			Simplex s = new Simplex();
-			SVector[] verts = new SVector[] { s.a, s.b, s.c, s.d };
+			SVector[] verts = new SVector[] { s.A, s.B, s.C, s.D };
 
 			// Metric and caching system as designed by E. Catto in Box2D for his conservative advancment/bilateral
 			// advancement algorithim implementations. The purpose is to reuse old simplex indices (any simplex that
@@ -1108,28 +1108,28 @@ namespace Libvaxy.Collision
 			bool cache_was_read = false;
 			if (cache != null)
 			{
-				bool cache_was_good = cache.count != 0;
+				bool cache_was_good = cache.Count != 0;
 
 				if (cache_was_good)
 				{
-					for (int i = 0; i < cache.count; ++i)
+					for (int i = 0; i < cache.Count; ++i)
 					{
-						int iA = cache.iA[i];
-						int iB = cache.iB[i];
-						Vector sA = c2Mulxv(ax, pA.verts[iA]);
-						Vector sB = c2Mulxv(bx, pB.verts[iB]);
+						int iA = cache.IA[i];
+						int iB = cache.IB[i];
+						Vector sA = c2Mulxv(ax, pA.Vertices[iA]);
+						Vector sB = c2Mulxv(bx, pB.Vertices[iB]);
 						SVector v = verts[i];
-						v.iA = iA;
-						v.sA = sA;
-						v.iB = iB;
-						v.sB = sB;
-						v.p = c2Sub(v.sB, v.sA);
-						v.u = 0;
+						v.IA = iA;
+						v.SA = sA;
+						v.IB = iB;
+						v.SB = sB;
+						v.Position = c2Sub(v.SB, v.SA);
+						v.U = 0;
 					}
-					s.count = cache.count;
-					s.div = cache.div;
+					s.count = cache.Count;
+					s.div = cache.Div;
 
-					float metric_old = cache.metric;
+					float metric_old = cache.Metric;
 					float metric = c2GJKSimplexMetric(s);
 
 					float min_metric = metric < metric_old ? metric : metric_old;
@@ -1141,12 +1141,12 @@ namespace Libvaxy.Collision
 
 			if (!cache_was_read)
 			{
-				s.a.iA = 0;
-				s.a.iB = 0;
-				s.a.sA = c2Mulxv(ax, pA.verts[0]);
-				s.a.sB = c2Mulxv(bx, pB.verts[0]);
-				s.a.p = c2Sub(s.a.sB, s.a.sA);
-				s.a.u = 1.0f;
+				s.A.IA = 0;
+				s.A.IB = 0;
+				s.A.SA = c2Mulxv(ax, pA.Vertices[0]);
+				s.A.SB = c2Mulxv(bx, pB.Vertices[0]);
+				s.A.Position = c2Sub(s.A.SB, s.A.SA);
+				s.A.U = 1.0f;
 				s.div = 1.0f;
 				s.count = 1;
 			}
@@ -1158,13 +1158,13 @@ namespace Libvaxy.Collision
 			float d1 = float.MaxValue;
 			int iter = 0;
 			bool hit = false;
-			while (iter < C2_GJK_ITERS)
+			while (iter < GJKIterations)
 			{
 				save_count = s.count;
 				for (int i = 0; i < save_count; ++i)
 				{
-					saveA[i] = verts[i].iA;
-					saveB[i] = verts[i].iB;
+					saveA[i] = verts[i].IA;
+					saveB[i] = verts[i].IB;
 				}
 
 				switch (s.count)
@@ -1189,17 +1189,17 @@ namespace Libvaxy.Collision
 				Vector d = c2D(s);
 				if (c2Dot(d, d) < float.Epsilon * float.Epsilon) break;
 
-				int iA = c2Support(pA.verts, pA.count, c2MulrvT(ax.r, c2Neg(d)));
-				Vector sA = c2Mulxv(ax, pA.verts[iA]);
-				int iB = c2Support(pB.verts, pB.count, c2MulrvT(bx.r, d));
-				Vector sB = c2Mulxv(bx, pB.verts[iB]);
+				int iA = c2Support(pA.Vertices, pA.Count, c2MulrvT(ax.Rotation, c2Neg(d)));
+				Vector sA = c2Mulxv(ax, pA.Vertices[iA]);
+				int iB = c2Support(pB.Vertices, pB.Count, c2MulrvT(bx.Rotation, d));
+				Vector sB = c2Mulxv(bx, pB.Vertices[iB]);
 
 				SVector v = verts[s.count];
-				v.iA = iA;
-				v.sA = sA;
-				v.iB = iB;
-				v.sB = sB;
-				v.p = c2Sub(v.sB, v.sA);
+				v.IA = iA;
+				v.SA = sA;
+				v.IB = iB;
+				v.SB = sB;
+				v.Position = c2Sub(v.SB, v.SA);
 
 				bool dup = false;
 				for (int i = 0; i < save_count; ++i)
@@ -1229,8 +1229,8 @@ namespace Libvaxy.Collision
 
 			else if (use_radius)
 			{
-				float rA = pA.radius;
-				float rB = pB.radius;
+				float rA = pA.Radius;
+				float rB = pB.Radius;
 
 				if (dist > rA + rB && dist > float.Epsilon)
 				{
@@ -1238,7 +1238,7 @@ namespace Libvaxy.Collision
 					Vector n = c2Norm(c2Sub(b, a));
 					a = c2Add(a, c2Mulvs(n, rA));
 					b = c2Sub(b, c2Mulvs(n, rB));
-					if (a.x == b.x && a.y == b.y) dist = 0;
+					if (a.X == b.X && a.Y == b.Y) dist = 0;
 				}
 
 				else
@@ -1252,15 +1252,15 @@ namespace Libvaxy.Collision
 
 			if (cache != null)
 			{
-				cache.metric = c2GJKSimplexMetric(s);
-				cache.count = s.count;
+				cache.Metric = c2GJKSimplexMetric(s);
+				cache.Count = s.count;
 				for (int i = 0; i < s.count; ++i)
 				{
 					SVector v = verts[i];
-					cache.iA[i] = v.iA;
-					cache.iB[i] = v.iB;
+					cache.IA[i] = v.IA;
+					cache.IB[i] = v.IB;
 				}
-				cache.div = s.div;
+				cache.Div = s.div;
 			}
 
 			if (outA != null) outA = a;
@@ -1273,8 +1273,8 @@ namespace Libvaxy.Collision
 		{
 			Transformation ax = ax_ptr;
 			Transformation bx = bx_ptr;
-			ax.p = c2Add(ax.p, c2Mulvs(vA, t));
-			bx.p = c2Add(bx.p, c2Mulvs(vB, t));
+			ax.Position = c2Add(ax.Position, c2Mulvs(vA, t));
+			bx.Position = c2Add(bx.Position, c2Mulvs(vB, t));
 			float d = c2GJK(A, typeA, ax, B, typeB, bx, a, b, use_radius, 0, cache);
 			return d;
 		}
@@ -1289,7 +1289,7 @@ namespace Libvaxy.Collision
 			Vector a = new Vector();
 			Vector b = new Vector();
 			GJKCache cache = new GJKCache();
-			cache.count = 0;
+			cache.Count = 0;
 			float d = c2Step(t, A, typeA, ax, vA, a, B, typeB, bx, vB, b, use_radius, cache);
 			Vector v = c2Sub(vB, vA);
 
@@ -1317,13 +1317,13 @@ namespace Libvaxy.Collision
 		int c2Hull(Vector[] verts, int count)
 		{
 			if (count <= 2) return 0;
-			count = Math.Min(C2_MAX_POLYGON_VERTS, count);
+			count = Math.Min(MaxPolygonVertices, count);
 
 			int right = 0;
-			float xmax = verts[0].x;
+			float xmax = verts[0].X;
 			for (int i = 1; i < count; ++i)
 			{
-				float x = verts[i].x;
+				float x = verts[i].X;
 				if (x > xmax)
 				{
 					xmax = x;
@@ -1331,10 +1331,10 @@ namespace Libvaxy.Collision
 				}
 
 				else if (x == xmax)
-					if (verts[i].y < verts[right].y) right = i;
+					if (verts[i].Y < verts[right].Y) right = i;
 			}
 
-			int[] hull = new int[C2_MAX_POLYGON_VERTS];
+			int[] hull = new int[MaxPolygonVertices];
 			int out_count = 0;
 			int index = right;
 
@@ -1363,7 +1363,7 @@ namespace Libvaxy.Collision
 				if (next == right) break;
 			}
 
-			Vector[] hull_verts = new Vector[C2_MAX_POLYGON_VERTS];
+			Vector[] hull_verts = new Vector[MaxPolygonVertices];
 			for (int i = 0; i < out_count; ++i) hull_verts[i] = verts[hull[i]];
 			Array.Copy(verts, hull_verts, sizeof(float) * 2 * out_count);
 			return out_count;
@@ -1382,30 +1382,30 @@ namespace Libvaxy.Collision
 
 		void c2MakePoly(Poly p)
 		{
-			p.count = c2Hull(p.verts, p.count);
-			c2Norms(p.verts, p.norms, p.count);
+			p.VertexCount = c2Hull(p.Vertices, p.VertexCount);
+			c2Norms(p.Vertices, p.Normals, p.VertexCount);
 		}
 
 		Poly c2Dual(Poly poly, float skin_factor)
 		{
 			Poly dual = default;
-			dual.count = poly.count;
+			dual.VertexCount = poly.VertexCount;
 
 			// Each plane maps to a point by involution (the mapping is its own inverse) by dividing
 			// the plane normal by its offset factor.
 			// plane = a * x + b * y - d
 			// dual = { a / d, b / d }
-			for (int i = 0; i < poly.count; ++i)
+			for (int i = 0; i < poly.VertexCount; ++i)
 			{
-				Vector n = poly.norms[i];
-				float d = c2Dot(n, poly.verts[i]) - skin_factor;
-				if (d == 0) dual.verts[i] = c2V(0, 0);
-				else dual.verts[i] = c2Div(n, d);
+				Vector n = poly.Normals[i];
+				float d = c2Dot(n, poly.Vertices[i]) - skin_factor;
+				if (d == 0) dual.Vertices[i] = c2V(0, 0);
+				else dual.Vertices[i] = c2Div(n, d);
 			}
 
 			// Instead of canonically building the convex hull, can simply take advantage of how
 			// the vertices are still in proper CCW order, so only the normals must be recomputed.
-			c2Norms(dual.verts, dual.norms, dual.count);
+			c2Norms(dual.Vertices, dual.Normals, dual.VertexCount);
 
 			return dual;
 		}
@@ -1426,24 +1426,24 @@ namespace Libvaxy.Collision
 		// 8. Return the inflated poly.
 		Poly c2InflatePoly(Poly poly, float skin_factor)
 		{
-			Vector average = poly.verts[0];
-			for (int i = 1; i < poly.count; ++i)
+			Vector average = poly.Vertices[0];
+			for (int i = 1; i < poly.VertexCount; ++i)
 			{
-				average = c2Add(average, poly.verts[i]);
+				average = c2Add(average, poly.Vertices[i]);
 			}
-			average = c2Div(average, poly.count);
+			average = c2Div(average, poly.VertexCount);
 
-			for (int i = 0; i < poly.count; ++i)
+			for (int i = 0; i < poly.VertexCount; ++i)
 			{
-				poly.verts[i] = c2Sub(poly.verts[i], average);
+				poly.Vertices[i] = c2Sub(poly.Vertices[i], average);
 			}
 
 			Poly dual = c2Dual(poly, skin_factor);
 			poly = c2Dual(dual, 0);
 
-			for (int i = 0; i < poly.count; ++i)
+			for (int i = 0; i < poly.VertexCount; ++i)
 			{
-				poly.verts[i] = c2Add(poly.verts[i], average);
+				poly.Vertices[i] = c2Add(poly.Vertices[i], average);
 			}
 
 			return poly;
@@ -1457,7 +1457,7 @@ namespace Libvaxy.Collision
 				case ShapeType.Circle:
 					{
 						Circle circle = (Circle)shape;
-						circle.r += skin_factor;
+						circle.Radius += skin_factor;
 					}
 					break;
 
@@ -1465,15 +1465,15 @@ namespace Libvaxy.Collision
 					{
 						AABB bb = (AABB)shape;
 						Vector factor = c2V(skin_factor, skin_factor);
-						bb.min = c2Sub(bb.min, factor);
-						bb.max = c2Add(bb.max, factor);
+						bb.Min = c2Sub(bb.Min, factor);
+						bb.Max = c2Add(bb.Max, factor);
 					}
 					break;
 
 				case ShapeType.Capsule:
 					{
 						Capsule capsule = (Capsule)shape;
-						capsule.r += skin_factor;
+						capsule.Radius += skin_factor;
 					}
 					break;
 
@@ -1488,59 +1488,59 @@ namespace Libvaxy.Collision
 
 		static bool c2CircletoCircle(Circle A, Circle B)
 		{
-			Vector c = c2Sub(B.p, A.p);
+			Vector c = c2Sub(B.Position, A.Position);
 			float d2 = c2Dot(c, c);
-			float r2 = A.r + B.r;
+			float r2 = A.Radius + B.Radius;
 			r2 = r2 * r2;
 			return d2 < r2;
 		}
 
 		static bool c2CircletoAABB(Circle A, AABB B)
 		{
-			Vector L = c2Clampv(A.p, B.min, B.max);
-			Vector ab = c2Sub(A.p, L);
+			Vector L = c2Clampv(A.Position, B.Min, B.Max);
+			Vector ab = c2Sub(A.Position, L);
 			float d2 = c2Dot(ab, ab);
-			float r2 = A.r * A.r;
+			float r2 = A.Radius * A.Radius;
 			return d2 < r2;
 		}
 
 		static bool c2AABBtoAABB(AABB A, AABB B)
 		{
-			bool d0 = B.max.x < A.min.x;
-			bool d1 = A.max.x < B.min.x;
-			bool d2 = B.max.y < A.min.y;
-			bool d3 = A.max.y < B.min.y;
+			bool d0 = B.Max.X < A.Min.X;
+			bool d1 = A.Max.X < B.Min.X;
+			bool d2 = B.Max.Y < A.Min.Y;
+			bool d3 = A.Max.Y < B.Min.Y;
 			return !(d0 | d1 | d2 | d3);
 		}
 
 		static bool c2AABBtoPoint(AABB A, Vector B)
 		{
-			bool d0 = B.x < A.min.x;
-			bool d1 = B.y < A.min.y;
-			bool d2 = B.x > A.max.x;
-			bool d3 = B.y > A.max.y;
+			bool d0 = B.X < A.Min.X;
+			bool d1 = B.Y < A.Min.Y;
+			bool d2 = B.X > A.Max.X;
+			bool d3 = B.Y > A.Max.Y;
 			return !(d0 | d1 | d2 | d3);
 		}
 
 		static bool c2CircleToPoint(Circle A, Vector B)
 		{
-			Vector n = c2Sub(A.p, B);
+			Vector n = c2Sub(A.Position, B);
 			float d2 = c2Dot(n, n);
-			return d2 < A.r * A.r;
+			return d2 < A.Radius * A.Radius;
 		}
 
 		// see: http://www.randygaul.net/2014/07/23/distance-point-to-line-segment/
 		static bool c2CircletoCapsule(Circle A, Capsule B)
 		{
-			Vector n = c2Sub(B.b, B.a);
-			Vector ap = c2Sub(A.p, B.a);
+			Vector n = c2Sub(B.End, B.Start);
+			Vector ap = c2Sub(A.Position, B.Start);
 			float da = c2Dot(ap, n);
 			float d2;
 
 			if (da < 0) d2 = c2Dot(ap, ap);
 			else
 			{
-				float db = c2Dot(c2Sub(A.p, B.b), n);
+				float db = c2Dot(c2Sub(A.Position, B.End), n);
 				if (db < 0)
 				{
 					Vector e = c2Sub(ap, c2Mulvs(n, (da / c2Dot(n, n))));
@@ -1548,12 +1548,12 @@ namespace Libvaxy.Collision
 				}
 				else
 				{
-					Vector bp = c2Sub(A.p, B.b);
+					Vector bp = c2Sub(A.Position, B.End);
 					d2 = c2Dot(bp, bp);
 				}
 			}
 
-			float r = A.r + B.r;
+			float r = A.Radius + B.Radius;
 			return d2 < r * r;
 		}
 
@@ -1595,10 +1595,10 @@ namespace Libvaxy.Collision
 
 		static bool c2RaytoCircle(Ray A, Circle B, out RayCast rayCast)
 		{
-			Vector p = B.p;
-			Vector m = c2Sub(A.p, p);
-			float c = c2Dot(m, m) - B.r * B.r;
-			float b = c2Dot(m, A.d);
+			Vector p = B.Position;
+			Vector m = c2Sub(A.Position, p);
+			float c = c2Dot(m, m) - B.Radius * B.Radius;
+			float b = c2Dot(m, A.Direction);
 			float disc = b * b - c;
 
 			if (disc < 0)
@@ -1609,11 +1609,11 @@ namespace Libvaxy.Collision
 
 			float t = -b - (float)Math.Sqrt(disc);
 			rayCast = new RayCast();
-			if (t >= 0 && t <= A.t)
+			if (t >= 0 && t <= A.Length)
 			{
-				rayCast.t = t;
-				Vector impact = c2Add(A.p, c2Mulvs(A.d, t));
-				rayCast.n = c2Norm(c2Sub(impact, p));
+				rayCast.TimeOfImpact = t;
+				Vector impact = c2Add(A.Position, c2Mulvs(A.Direction, t));
+				rayCast.ImpactNormal = c2Norm(c2Sub(impact, p));
 				return true;
 			}
 			return false;
@@ -1638,11 +1638,11 @@ namespace Libvaxy.Collision
 
 		static bool c2RaytoAABB(Ray A, AABB B, out RayCast rayCast)
 		{
-			Vector p0 = A.p;
-			Vector p1 = c2Add(A.p, c2Mulvs(A.d, A.t));
+			Vector p0 = A.Position;
+			Vector p1 = c2Add(A.Position, c2Mulvs(A.Direction, A.Length));
 			AABB a_box = new AABB();
-			a_box.min = c2Minv(p0, p1);
-			a_box.max = c2Maxv(p0, p1);
+			a_box.Min = c2Minv(p0, p1);
+			a_box.Max = c2Maxv(p0, p1);
 
 			rayCast = null;
 
@@ -1654,21 +1654,21 @@ namespace Libvaxy.Collision
 			Vector ab = c2Sub(p1, p0);
 			Vector n = c2Skew(ab);
 			Vector abs_n = c2Absv(n);
-			Vector half_extents = c2Mulvs(c2Sub(B.max, B.min), 0.5f);
-			Vector center_of_b_box = c2Mulvs(c2Add(B.min, B.max), 0.5f);
+			Vector half_extents = c2Mulvs(c2Sub(B.Max, B.Min), 0.5f);
+			Vector center_of_b_box = c2Mulvs(c2Add(B.Min, B.Max), 0.5f);
 			float d = Math.Abs(c2Dot(n, c2Sub(p0, center_of_b_box))) - c2Dot(abs_n, half_extents);
 			if (d > 0) return false;
 
 			// Calculate intermediate values up-front.
 			// This should play well with superscalar architecture.
-			float da0 = c2SignedDistPointToPlane_OneDimensional(p0.x, -1.0f, B.min.x);
-			float db0 = c2SignedDistPointToPlane_OneDimensional(p1.x, -1.0f, B.min.x);
-			float da1 = c2SignedDistPointToPlane_OneDimensional(p0.x, 1.0f, B.max.x);
-			float db1 = c2SignedDistPointToPlane_OneDimensional(p1.x, 1.0f, B.max.x);
-			float da2 = c2SignedDistPointToPlane_OneDimensional(p0.y, -1.0f, B.min.y);
-			float db2 = c2SignedDistPointToPlane_OneDimensional(p1.y, -1.0f, B.min.y);
-			float da3 = c2SignedDistPointToPlane_OneDimensional(p0.y, 1.0f, B.max.y);
-			float db3 = c2SignedDistPointToPlane_OneDimensional(p1.y, 1.0f, B.max.y);
+			float da0 = c2SignedDistPointToPlane_OneDimensional(p0.X, -1.0f, B.Min.X);
+			float db0 = c2SignedDistPointToPlane_OneDimensional(p1.X, -1.0f, B.Min.X);
+			float da1 = c2SignedDistPointToPlane_OneDimensional(p0.X, 1.0f, B.Max.X);
+			float db1 = c2SignedDistPointToPlane_OneDimensional(p1.X, 1.0f, B.Max.X);
+			float da2 = c2SignedDistPointToPlane_OneDimensional(p0.Y, -1.0f, B.Min.Y);
+			float db2 = c2SignedDistPointToPlane_OneDimensional(p1.Y, -1.0f, B.Min.Y);
+			float da3 = c2SignedDistPointToPlane_OneDimensional(p0.Y, 1.0f, B.Max.Y);
+			float db3 = c2SignedDistPointToPlane_OneDimensional(p1.Y, 1.0f, B.Max.Y);
 			float t0 = c2RayToPlane_OneDimensional(da0, db0);
 			float t1 = c2RayToPlane_OneDimensional(da1, db1);
 			float t2 = c2RayToPlane_OneDimensional(da2, db2);
@@ -1694,26 +1694,26 @@ namespace Libvaxy.Collision
 				// Sort output by finding largest t to deduce the normal.
 				if (t0 >= t1 && t0 >= t2 && t0 >= t3)
 				{
-					rayCast.t = t0 * A.t;
-					rayCast.n = new Vector(-1, 0);
+					rayCast.TimeOfImpact = t0 * A.Length;
+					rayCast.ImpactNormal = new Vector(-1, 0);
 				}
 
 				else if (t1 >= t0 && t1 >= t2 && t1 >= t3)
 				{
-					rayCast.t = t1 * A.t;
-					rayCast.n = new Vector(1, 0);
+					rayCast.TimeOfImpact = t1 * A.Length;
+					rayCast.ImpactNormal = new Vector(1, 0);
 				}
 
 				else if (t2 >= t0 && t2 >= t1 && t2 >= t3)
 				{
-					rayCast.t = t2 * A.t;
-					rayCast.n = new Vector(0, -1);
+					rayCast.TimeOfImpact = t2 * A.Length;
+					rayCast.ImpactNormal = new Vector(0, -1);
 				}
 
 				else
 				{
-					rayCast.t = t3 * A.t;
-					rayCast.n = new Vector(0, 1);
+					rayCast.TimeOfImpact = t3 * A.Length;
+					rayCast.ImpactNormal = new Vector(0, 1);
 				}
 
 				return true;
@@ -1724,24 +1724,24 @@ namespace Libvaxy.Collision
 		static bool c2RaytoCapsule(Ray A, Capsule B, out RayCast rayCast)
 		{
 			RotationMatrix M = new RotationMatrix();
-			M.y = c2Norm(c2Sub(B.b, B.a));
-			M.x = c2CCW90(M.y);
+			M.Y = c2Norm(c2Sub(B.End, B.Start));
+			M.X = c2CCW90(M.Y);
 
 			// rotate capsule to origin, along Y axis
 			// rotate the ray same way
-			Vector cap_n = c2Sub(B.b, B.a);
+			Vector cap_n = c2Sub(B.End, B.Start);
 			Vector yBb = c2MulmvT(M, cap_n);
-			Vector yAp = c2MulmvT(M, c2Sub(A.p, B.a));
-			Vector yAd = c2MulmvT(M, A.d);
-			Vector yAe = c2Add(yAp, c2Mulvs(yAd, A.t));
+			Vector yAp = c2MulmvT(M, c2Sub(A.Position, B.Start));
+			Vector yAd = c2MulmvT(M, A.Direction);
+			Vector yAe = c2Add(yAp, c2Mulvs(yAd, A.Length));
 
 			AABB capsule_bb = new AABB();
-			capsule_bb.min = new Vector(-B.r, 0);
-			capsule_bb.max = new Vector(B.r, yBb.y);
+			capsule_bb.Min = new Vector(-B.Radius, 0);
+			capsule_bb.Max = new Vector(B.Radius, yBb.Y);
 
 			rayCast = new RayCast();
-			rayCast.n = c2Norm(cap_n);
-			rayCast.t = 0;
+			rayCast.ImpactNormal = c2Norm(cap_n);
+			rayCast.TimeOfImpact = 0;
 
 			// check and see if ray starts within the capsule
 			if (c2AABBtoPoint(capsule_bb, yAp))
@@ -1750,46 +1750,46 @@ namespace Libvaxy.Collision
 			{
 				Circle capsule_a = new Circle();
 				Circle capsule_b = new Circle();
-				capsule_a.p = B.a;
-				capsule_a.r = B.r;
-				capsule_b.p = B.b;
-				capsule_b.r = B.r;
+				capsule_a.Position = B.Start;
+				capsule_a.Radius = B.Radius;
+				capsule_b.Position = B.End;
+				capsule_b.Radius = B.Radius;
 
-				if (c2CircleToPoint(capsule_a, A.p))
+				if (c2CircleToPoint(capsule_a, A.Position))
 					return true;
-				else if (c2CircleToPoint(capsule_b, A.p))
+				else if (c2CircleToPoint(capsule_b, A.Position))
 					return true;
 			}
 
-			if (yAe.x * yAp.x < 0 || Math.Min(Math.Abs(yAe.x), Math.Abs(yAp.x)) < B.r)
+			if (yAe.X * yAp.X < 0 || Math.Min(Math.Abs(yAe.X), Math.Abs(yAp.X)) < B.Radius)
 			{
 				Circle Ca = new Circle();
 				Circle Cb = new Circle();
-				Ca.p = B.a;
-				Ca.r = B.r;
-				Cb.p = B.b;
-				Cb.r = B.r;
+				Ca.Position = B.Start;
+				Ca.Radius = B.Radius;
+				Cb.Position = B.End;
+				Cb.Radius = B.Radius;
 
 				// ray starts inside capsule prism -- must hit one of the semi-circles
-				if (Math.Abs(yAp.x) < B.r)
+				if (Math.Abs(yAp.X) < B.Radius)
 				{
-					if (yAp.y < 0) return c2RaytoCircle(A, Ca, out rayCast);
+					if (yAp.Y < 0) return c2RaytoCircle(A, Ca, out rayCast);
 					else return c2RaytoCircle(A, Cb, out rayCast);
 				}
 
 				// hit the capsule prism
 				else
 				{
-					float c = yAp.x > 0 ? B.r : -B.r;
-					float d = (yAe.x - yAp.x);
-					float t = (c - yAp.x) / d;
-					float y = yAp.y + (yAe.y - yAp.y) * t;
+					float c = yAp.X > 0 ? B.Radius : -B.Radius;
+					float d = (yAe.X - yAp.X);
+					float t = (c - yAp.X) / d;
+					float y = yAp.Y + (yAe.Y - yAp.Y) * t;
 					if (y <= 0) return c2RaytoCircle(A, Ca, out rayCast);
-					if (y >= yBb.y) return c2RaytoCircle(A, Cb, out rayCast);
+					if (y >= yBb.Y) return c2RaytoCircle(A, Cb, out rayCast);
 					else
 					{
-						rayCast.n = c > 0 ? M.x : c2Skew(M.y);
-						rayCast.t = t * A.t;
+						rayCast.ImpactNormal = c > 0 ? M.X : c2Skew(M.Y);
+						rayCast.TimeOfImpact = t * A.Length;
 						return true;
 					}
 				}
@@ -1801,19 +1801,19 @@ namespace Libvaxy.Collision
 		static bool c2RaytoPoly(Ray A, Poly B, Transformation bx_ptr, out RayCast rayCast)
 		{
 			Transformation bx = bx_ptr ?? c2xIdentity();
-			Vector p = c2MulxvT(bx, A.p);
-			Vector d = c2MulrvT(bx.r, A.d);
+			Vector p = c2MulxvT(bx, A.Position);
+			Vector d = c2MulrvT(bx.Rotation, A.Direction);
 			float lo = 0;
-			float hi = A.t;
+			float hi = A.Length;
 			int index = ~0;
 
 			rayCast = null;
 
 			// test ray to each plane, tracking lo/hi times of intersection
-			for (int i = 0; i < B.count; ++i)
+			for (int i = 0; i < B.VertexCount; ++i)
 			{
-				float num = c2Dot(B.norms[i], c2Sub(B.verts[i], p));
-				float den = c2Dot(B.norms[i], d);
+				float num = c2Dot(B.Normals[i], c2Sub(B.Vertices[i], p));
+				float den = c2Dot(B.Normals[i], d);
 				if (den == 0 && num < 0) return false;
 				else
 				{
@@ -1831,8 +1831,8 @@ namespace Libvaxy.Collision
 
 			if (index != ~0)
 			{
-				rayCast.t = lo;
-				rayCast.n = c2Mulrv(bx.r, B.norms[index]);
+				rayCast.TimeOfImpact = lo;
+				rayCast.ImpactNormal = c2Mulrv(bx.Rotation, B.Normals[index]);
 				return true;
 			}
 
@@ -1842,18 +1842,18 @@ namespace Libvaxy.Collision
 		static Manifold c2CircletoCircleManifold(Circle A, Circle B)
 		{
 			Manifold m = new Manifold();
-			m.count = 0;
-			Vector d = c2Sub(B.p, A.p);
+			m.Count = 0;
+			Vector d = c2Sub(B.Position, A.Position);
 			float d2 = c2Dot(d, d);
-			float r = A.r + B.r;
+			float r = A.Radius + B.Radius;
 			if (d2 < r * r)
 			{
 				float l = (float)Math.Sqrt(d2);
 				Vector n = l != 0 ? c2Mulvs(d, 1.0f / l) : new Vector(0, 1.0f);
-				m.count = 1;
-				m.depths[0] = r - l;
-				m.contact_points[0] = c2Sub(B.p, c2Mulvs(n, B.r));
-				m.n = n;
+				m.Count = 1;
+				m.Depths[0] = r - l;
+				m.ContactPoints[0] = c2Sub(B.Position, c2Mulvs(n, B.Radius));
+				m.Direction = n;
 			}
 
 			return m;
@@ -1862,11 +1862,11 @@ namespace Libvaxy.Collision
 		static Manifold c2CircletoAABBManifold(Circle A, AABB B)
 		{
 			Manifold m = new Manifold();
-			m.count = 0;
-			Vector L = c2Clampv(A.p, B.min, B.max);
-			Vector ab = c2Sub(L, A.p);
+			m.Count = 0;
+			Vector L = c2Clampv(A.Position, B.Min, B.Max);
+			Vector ab = c2Sub(L, A.Position);
 			float d2 = c2Dot(ab, ab);
-			float r2 = A.r * A.r;
+			float r2 = A.Radius * A.Radius;
 			if (d2 < r2)
 			{
 				// shallow (center of circle not inside of AABB)
@@ -1874,23 +1874,23 @@ namespace Libvaxy.Collision
 				{
 					float d = (float)Math.Sqrt(d2);
 					Vector n = c2Norm(ab);
-					m.count = 1;
-					m.depths[0] = A.r - d;
-					m.contact_points[0] = c2Add(A.p, c2Mulvs(n, d));
-					m.n = n;
+					m.Count = 1;
+					m.Depths[0] = A.Radius - d;
+					m.ContactPoints[0] = c2Add(A.Position, c2Mulvs(n, d));
+					m.Direction = n;
 				}
 
 				// deep (center of circle inside of AABB)
 				// clamp circle's center to edge of AABB, then form the manifold
 				else
 				{
-					Vector mid = c2Mulvs(c2Add(B.min, B.max), 0.5f);
-					Vector e = c2Mulvs(c2Sub(B.max, B.min), 0.5f);
-					Vector d = c2Sub(A.p, mid);
+					Vector mid = c2Mulvs(c2Add(B.Min, B.Max), 0.5f);
+					Vector e = c2Mulvs(c2Sub(B.Max, B.Min), 0.5f);
+					Vector d = c2Sub(A.Position, mid);
 					Vector abs_d = c2Absv(d);
 
-					float x_overlap = e.x - abs_d.x;
-					float y_overlap = e.y - abs_d.y;
+					float x_overlap = e.X - abs_d.X;
+					float y_overlap = e.Y - abs_d.Y;
 
 					float depth;
 					Vector n;
@@ -1899,20 +1899,20 @@ namespace Libvaxy.Collision
 					{
 						depth = x_overlap;
 						n = new Vector(1.0f, 0);
-						n = c2Mulvs(n, d.x < 0 ? 1.0f : -1.0f);
+						n = c2Mulvs(n, d.X < 0 ? 1.0f : -1.0f);
 					}
 
 					else
 					{
 						depth = y_overlap;
 						n = new Vector(0, 1.0f);
-						n = c2Mulvs(n, d.y < 0 ? 1.0f : -1.0f);
+						n = c2Mulvs(n, d.Y < 0 ? 1.0f : -1.0f);
 					}
 
-					m.count = 1;
-					m.depths[0] = A.r + depth;
-					m.contact_points[0] = c2Sub(A.p, c2Mulvs(n, depth));
-					m.n = n;
+					m.Count = 1;
+					m.Depths[0] = A.Radius + depth;
+					m.ContactPoints[0] = c2Sub(A.Position, c2Mulvs(n, depth));
+					m.Direction = n;
 				}
 			}
 
@@ -1922,21 +1922,21 @@ namespace Libvaxy.Collision
 		static Manifold c2CircletoCapsuleManifold(Circle A, Capsule B)
 		{
 			Manifold m = new Manifold();
-			m.count = 0;
+			m.Count = 0;
 			Vector a = new Vector();
 			Vector b = new Vector();
-			float r = A.r + B.r;
+			float r = A.Radius + B.Radius;
 			float d = c2GJK(A, ShapeType.Circle, null, B, ShapeType.Capsule, null, a, b, false, 0, null);
 			if (d < r)
 			{
 				Vector n;
-				if (d == 0) n = c2Norm(c2Skew(c2Sub(B.b, B.a)));
+				if (d == 0) n = c2Norm(c2Skew(c2Sub(B.End, B.Start)));
 				else n = c2Norm(c2Sub(b, a));
 
-				m.count = 1;
-				m.depths[0] = r - d;
-				m.contact_points[0] = c2Sub(b, c2Mulvs(n, B.r));
-				m.n = n;
+				m.Count = 1;
+				m.Depths[0] = r - d;
+				m.ContactPoints[0] = c2Sub(b, c2Mulvs(n, B.Radius));
+				m.Direction = n;
 			}
 
 			return m;
@@ -1945,17 +1945,17 @@ namespace Libvaxy.Collision
 		static Manifold c2AABBtoAABBManifold(AABB A, AABB B)
 		{
 			Manifold m = new Manifold();
-			m.count = 0;
-			Vector mid_a = c2Mulvs(c2Add(A.min, A.max), 0.5f);
-			Vector mid_b = c2Mulvs(c2Add(B.min, B.max), 0.5f);
-			Vector eA = c2Absv(c2Mulvs(c2Sub(A.max, A.min), 0.5f));
-			Vector eB = c2Absv(c2Mulvs(c2Sub(B.max, B.min), 0.5f));
+			m.Count = 0;
+			Vector mid_a = c2Mulvs(c2Add(A.Min, A.Max), 0.5f);
+			Vector mid_b = c2Mulvs(c2Add(B.Min, B.Max), 0.5f);
+			Vector eA = c2Absv(c2Mulvs(c2Sub(A.Max, A.Min), 0.5f));
+			Vector eB = c2Absv(c2Mulvs(c2Sub(B.Max, B.Min), 0.5f));
 			Vector d = c2Sub(mid_b, mid_a);
 
 			// calc overlap on x and y axes
-			float dx = eA.x + eB.x - Math.Abs(d.x);
+			float dx = eA.X + eB.X - Math.Abs(d.X);
 			if (dx < 0) return null;
-			float dy = eA.y + eB.y - Math.Abs(d.y);
+			float dy = eA.Y + eB.Y - Math.Abs(d.Y);
 			if (dy < 0) return null;
 
 			Vector n;
@@ -1966,15 +1966,15 @@ namespace Libvaxy.Collision
 			if (dx < dy)
 			{
 				depth = dx;
-				if (d.x < 0)
+				if (d.X < 0)
 				{
 					n = new Vector(-1.0f, 0);
-					p = c2Sub(mid_a, new Vector(eA.x, 0));
+					p = c2Sub(mid_a, new Vector(eA.X, 0));
 				}
 				else
 				{
 					n = new Vector(1.0f, 0);
-					p = c2Add(mid_a, new Vector(eA.x, 0));
+					p = c2Add(mid_a, new Vector(eA.X, 0));
 				}
 			}
 
@@ -1982,22 +1982,22 @@ namespace Libvaxy.Collision
 			else
 			{
 				depth = dy;
-				if (d.y < 0)
+				if (d.Y < 0)
 				{
 					n = new Vector(0, -1.0f);
-					p = c2Sub(mid_a, new Vector(0, eA.y));
+					p = c2Sub(mid_a, new Vector(0, eA.Y));
 				}
 				else
 				{
 					n = new Vector(0, 1.0f);
-					p = c2Add(mid_a, new Vector(0, eA.y));
+					p = c2Add(mid_a, new Vector(0, eA.Y));
 				}
 			}
 
-			m.count = 1;
-			m.contact_points[0] = p;
-			m.depths[0] = depth;
-			m.n = n;
+			m.Count = 1;
+			m.ContactPoints[0] = p;
+			m.Depths[0] = depth;
+			m.Direction = n;
 
 			return m;
 		}
@@ -2005,34 +2005,34 @@ namespace Libvaxy.Collision
 		static Manifold c2AABBtoCapsuleManifold(AABB A, Capsule B)
 		{
 			Manifold m = new Manifold();
-			m.count = 0;
+			m.Count = 0;
 			Poly p = new Poly();
-			c2BBVerts(p.verts, A);
-			p.count = 4;
-			c2Norms(p.verts, p.norms, 4);
+			c2BBVerts(p.Vertices, A);
+			p.VertexCount = 4;
+			c2Norms(p.Vertices, p.Normals, 4);
 			m = c2CapsuletoPolyManifold(B, p, null);
-			m.n = c2Neg(m.n);
+			m.Direction = c2Neg(m.Direction);
 			return m;
 		}
 
 		static Manifold c2CapsuletoCapsuleManifold(Capsule A, Capsule B)
 		{
 			Manifold m = new Manifold();
-			m.count = 0;
+			m.Count = 0;
 			Vector a = new Vector();
 			Vector b = new Vector();
-			float r = A.r + B.r;
+			float r = A.Radius + B.Radius;
 			float d = c2GJK(A, ShapeType.Capsule, null, B, ShapeType.Capsule, null, a, b, false, 0, null);
 			if (d < r)
 			{
 				Vector n;
-				if (d == 0) n = c2Norm(c2Skew(c2Sub(A.b, A.a)));
+				if (d == 0) n = c2Norm(c2Skew(c2Sub(A.End, A.Start)));
 				else n = c2Norm(c2Sub(b, a));
 
-				m.count = 1;
-				m.depths[0] = r - d;
-				m.contact_points[0] = c2Sub(b, c2Mulvs(n, B.r));
-				m.n = n;
+				m.Count = 1;
+				m.Depths[0] = r - d;
+				m.ContactPoints[0] = c2Sub(b, c2Mulvs(n, B.Radius));
+				m.Direction = n;
 			}
 
 			return m;
@@ -2041,15 +2041,15 @@ namespace Libvaxy.Collision
 		static HalfSpace c2PlaneAt(Poly p, int i)
 		{
 			HalfSpace h = new HalfSpace();
-			h.n = p.norms[i];
-			h.d = c2Dot(p.norms[i], p.verts[i]);
+			h.Normal = p.Normals[i];
+			h.DistanceFromOrigin = c2Dot(p.Normals[i], p.Vertices[i]);
 			return h;
 		}
 
 		static Manifold c2CircletoPolyManifold(Circle A, Poly B, Transformation bx_tr)
 		{
 			Manifold m = new Manifold();
-			m.count = 0;
+			m.Count = 0;
 			Vector a = new Vector();
 			Vector b = new Vector();
 			float d = c2GJK(A, ShapeType.Circle, null, B, ShapeType.Poly, bx_tr, a, b, false, 0, null);
@@ -2060,13 +2060,13 @@ namespace Libvaxy.Collision
 			{
 				Vector n = c2Sub(b, a);
 				float l = c2Dot(n, n);
-				if (l < A.r * A.r)
+				if (l < A.Radius * A.Radius)
 				{
 					l = (float)Math.Sqrt(l);
-					m.count = 1;
-					m.contact_points[0] = b;
-					m.depths[0] = A.r - l;
-					m.n = c2Mulvs(n, 1.0f / l);
+					m.Count = 1;
+					m.ContactPoints[0] = b;
+					m.Depths[0] = A.Radius - l;
+					m.Direction = c2Mulvs(n, 1.0f / l);
 				}
 			}
 
@@ -2077,13 +2077,13 @@ namespace Libvaxy.Collision
 				Transformation bx = bx_tr ?? c2xIdentity();
 				float sep = -float.MaxValue;
 				int index = ~0;
-				Vector local = c2MulxvT(bx, A.p);
+				Vector local = c2MulxvT(bx, A.Position);
 
-				for (int i = 0; i < B.count; ++i)
+				for (int i = 0; i < B.VertexCount; ++i)
 				{
 					HalfSpace hf = c2PlaneAt(B, i);
 					d = c2Dist(hf, local);
-					if (d > A.r) return null;
+					if (d > A.Radius) return null;
 					if (d > sep)
 					{
 						sep = d;
@@ -2093,10 +2093,10 @@ namespace Libvaxy.Collision
 
 				HalfSpace h = c2PlaneAt(B, index);
 				Vector p = c2Project(h, local);
-				m.count = 1;
-				m.contact_points[0] = c2Mulxv(bx, p);
-				m.depths[0] = A.r - sep;
-				m.n = c2Neg(c2Mulrv(bx.r, B.norms[index]));
+				m.Count = 1;
+				m.ContactPoints[0] = c2Mulxv(bx, p);
+				m.Depths[0] = A.Radius - sep;
+				m.Direction = c2Neg(c2Mulrv(bx.Rotation, B.Normals[index]));
 			}
 
 			return m;
@@ -2106,11 +2106,11 @@ namespace Libvaxy.Collision
 		static Manifold c2AABBtoPolyManifold(AABB A, Poly B, Transformation bx)
 		{
 			Manifold m = new Manifold();
-			m.count = 0;
+			m.Count = 0;
 			Poly p = new Poly();
-			c2BBVerts(p.verts, A);
-			p.count = 4;
-			c2Norms(p.verts, p.norms, 4);
+			c2BBVerts(p.Vertices, A);
+			p.VertexCount = 4;
+			c2Norms(p.Vertices, p.Normals, 4);
 			m = c2PolytoPolyManifold(p, null, B, bx);
 			return m;
 		}
@@ -2139,17 +2139,17 @@ namespace Libvaxy.Collision
 		{
 			Vector inVec = c2Norm(c2Sub(rb, ra));
 			HalfSpace left = new HalfSpace();
-			left.n = c2Neg(inVec);
-			left.d = c2Dot(c2Neg(inVec), ra);
+			left.Normal = c2Neg(inVec);
+			left.DistanceFromOrigin = c2Dot(c2Neg(inVec), ra);
 			HalfSpace right = new HalfSpace();
-			right.n = inVec;
-			right.d = c2Dot(inVec, rb);
+			right.Normal = inVec;
+			right.DistanceFromOrigin = c2Dot(inVec, rb);
 			if (c2Clip(seg, left) < 2) return false;
 			if (c2Clip(seg, right) < 2) return false;
 			if (h != null)
 			{
-				h.n = c2CCW90(inVec);
-				h.d = c2Dot(c2CCW90(inVec), ra);
+				h.Normal = c2CCW90(inVec);
+				h.DistanceFromOrigin = c2Dot(c2CCW90(inVec), ra);
 			}
 			return true;
 		}
@@ -2159,8 +2159,8 @@ namespace Libvaxy.Collision
 		// endpoints of the segment
 		static bool c2SidePlanesFromPoly(Vector[] seg, Transformation x, Poly p, int e, HalfSpace h)
 		{
-			Vector ra = c2Mulxv(x, p.verts[e]);
-			Vector rb = c2Mulxv(x, p.verts[e + 1 == p.count ? 0 : e + 1]);
+			Vector ra = c2Mulxv(x, p.Vertices[e]);
+			Vector rb = c2Mulxv(x, p.Vertices[e + 1 == p.VertexCount ? 0 : e + 1]);
 			return c2SidePlanes(seg, ra, rb, h);
 		}
 
@@ -2174,23 +2174,23 @@ namespace Libvaxy.Collision
 				float d = c2Dist(h, p);
 				if (d <= 0)
 				{
-					m.contact_points[cp] = p;
-					m.depths[cp] = -d;
+					m.ContactPoints[cp] = p;
+					m.Depths[cp] = -d;
 					++cp;
 				}
 			}
-			m.count = cp;
-			m.n = h.n;
+			m.Count = cp;
+			m.Direction = h.Normal;
 
 			return m;
 		}
 
 		static Vector c2CapsuleSupport(Capsule A, Vector dir)
 		{
-			float da = c2Dot(A.a, dir);
-			float db = c2Dot(A.b, dir);
-			if (da > db) return c2Add(A.a, c2Mulvs(dir, A.r));
-			else return c2Add(A.b, c2Mulvs(dir, A.r));
+			float da = c2Dot(A.Start, dir);
+			float db = c2Dot(A.End, dir);
+			if (da > db) return c2Add(A.Start, c2Mulvs(dir, A.Radius));
+			else return c2Add(A.End, c2Mulvs(dir, A.Radius));
 		}
 
 		static void c2AntinormalFace(Capsule cap, Poly p, Transformation x, out int face_out, out Vector n_out)
@@ -2198,10 +2198,10 @@ namespace Libvaxy.Collision
 			float sep = -float.MaxValue;
 			int index = ~0;
 			Vector n = new Vector();
-			for (int i = 0; i < p.count; ++i)
+			for (int i = 0; i < p.VertexCount; ++i)
 			{
 				HalfSpace h = c2Mulxh(x, c2PlaneAt(p, i));
-				Vector n0 = c2Neg(h.n);
+				Vector n0 = c2Neg(h.Normal);
 				Vector s = c2CapsuleSupport(cap, n0);
 				float d = c2Dist(h, s);
 				if (d > sep)
@@ -2219,23 +2219,23 @@ namespace Libvaxy.Collision
 		{
 			int index = ~0;
 			float min_dot = -float.MaxValue;
-			for (int i = 0; i < ip.count; ++i)
+			for (int i = 0; i < ip.VertexCount; ++i)
 			{
-				float dot = c2Dot(rn_in_incident_space, ip.norms[i]);
+				float dot = c2Dot(rn_in_incident_space, ip.Normals[i]);
 				if (dot < min_dot)
 				{
 					min_dot = dot;
 					index = i;
 				}
 			}
-			incident[0] = c2Mulxv(ix, ip.verts[index]);
-			incident[1] = c2Mulxv(ix, ip.verts[index + 1 == ip.count ? 0 : index + 1]);
+			incident[0] = c2Mulxv(ix, ip.Vertices[index]);
+			incident[1] = c2Mulxv(ix, ip.Vertices[index + 1 == ip.VertexCount ? 0 : index + 1]);
 		}
 
 		static Manifold c2CapsuletoPolyManifold(Capsule A, Poly B, Transformation bx_ptr)
 		{
 			Manifold m = new Manifold();
-			m.count = 0;
+			m.Count = 0;
 			Vector a = new Vector();
 			Vector b = new Vector();
 			float d = c2GJK(A, ShapeType.Capsule, null, B, ShapeType.Poly, bx_ptr, a, b, false, 0, null);
@@ -2245,35 +2245,35 @@ namespace Libvaxy.Collision
 			{
 				Transformation bx = bx_ptr ?? c2xIdentity();
 				Capsule A_in_B = new Capsule();
-				A_in_B.a = c2MulxvT(bx, A.a);
-				A_in_B.b = c2MulxvT(bx, A.b);
-				Vector ab = c2Norm(c2Sub(A_in_B.a, A_in_B.b));
+				A_in_B.Start = c2MulxvT(bx, A.Start);
+				A_in_B.End = c2MulxvT(bx, A.End);
+				Vector ab = c2Norm(c2Sub(A_in_B.Start, A_in_B.End));
 
 				// test capsule axes
 				HalfSpace ab_h0 = new HalfSpace();
-				ab_h0.n = c2CCW90(ab);
-				ab_h0.d = c2Dot(A_in_B.a, ab_h0.n);
-				int v0 = c2Support(B.verts, B.count, c2Neg(ab_h0.n));
-				float s0 = c2Dist(ab_h0, B.verts[v0]);
+				ab_h0.Normal = c2CCW90(ab);
+				ab_h0.DistanceFromOrigin = c2Dot(A_in_B.Start, ab_h0.Normal);
+				int v0 = c2Support(B.Vertices, B.VertexCount, c2Neg(ab_h0.Normal));
+				float s0 = c2Dist(ab_h0, B.Vertices[v0]);
 
 				HalfSpace ab_h1 = new HalfSpace();
-				ab_h1.n = c2Skew(ab);
-				ab_h1.d = c2Dot(A_in_B.a, ab_h1.n);
-				int v1 = c2Support(B.verts, B.count, c2Neg(ab_h1.n));
-				float s1 = c2Dist(ab_h1, B.verts[v1]);
+				ab_h1.Normal = c2Skew(ab);
+				ab_h1.DistanceFromOrigin = c2Dot(A_in_B.Start, ab_h1.Normal);
+				int v1 = c2Support(B.Vertices, B.VertexCount, c2Neg(ab_h1.Normal));
+				float s1 = c2Dist(ab_h1, B.Vertices[v1]);
 
 				// test poly axes
 				int index = ~0;
 				float sep = -float.MaxValue;
 				int code = 0;
-				for (int i = 0; i < B.count; ++i)
+				for (int i = 0; i < B.VertexCount; ++i)
 				{
 					HalfSpace h = c2PlaneAt(B, i);
-					float da = c2Dot(A_in_B.a, c2Neg(h.n));
-					float db = c2Dot(A_in_B.b, c2Neg(h.n));
+					float da = c2Dot(A_in_B.Start, c2Neg(h.Normal));
+					float db = c2Dot(A_in_B.End, c2Neg(h.Normal));
 					float d2;
-					if (da > db) d2 = c2Dist(h, A_in_B.a);
-					else d = c2Dist(h, A_in_B.b);
+					if (da > db) d2 = c2Dist(h, A_in_B.Start);
+					else d = c2Dist(h, A_in_B.End);
 					if (d > sep)
 					{
 						sep = d;
@@ -2301,21 +2301,21 @@ namespace Libvaxy.Collision
 					case 0: // poly face
 						{
 							Vector[] seg = new Vector[2];
-							seg[0] = A.a;
-							seg[1] = A.b;
+							seg[0] = A.Start;
+							seg[1] = A.End;
 							HalfSpace h = new HalfSpace();
 							if (!c2SidePlanesFromPoly(seg, bx, B, index, h)) return null;
 							m = c2KeepDeep(seg, h);
-							m.n = c2Neg(m.n);
+							m.Direction = c2Neg(m.Direction);
 						}
 						break;
 
 					case 1: // side 0 of capsule segment
 						{
 							Vector[] incident = new Vector[2];
-							c2Incident(incident, B, bx, ab_h0.n);
+							c2Incident(incident, B, bx, ab_h0.Normal);
 							HalfSpace h = new HalfSpace();
-							if (!c2SidePlanes(incident, A_in_B.b, A_in_B.a, h)) return null;
+							if (!c2SidePlanes(incident, A_in_B.End, A_in_B.Start, h)) return null;
 							m = c2KeepDeep(incident, h);
 						}
 						break;
@@ -2323,9 +2323,9 @@ namespace Libvaxy.Collision
 					case 2: // side 1 of capsule segment
 						{
 							Vector[] incident = new Vector[2];
-							c2Incident(incident, B, bx, ab_h1.n);
+							c2Incident(incident, B, bx, ab_h1.Normal);
 							HalfSpace h = new HalfSpace();
-							if (!c2SidePlanes(incident, A_in_B.a, A_in_B.b, h)) return null;
+							if (!c2SidePlanes(incident, A_in_B.Start, A_in_B.End, h)) return null;
 							m = c2KeepDeep(incident, h);
 						}
 						break;
@@ -2335,15 +2335,15 @@ namespace Libvaxy.Collision
 						return null;
 				}
 
-				for (int i = 0; i < m.count; ++i) m.depths[i] += A.r;
+				for (int i = 0; i < m.Count; ++i) m.Depths[i] += A.Radius;
 			}
 			// shallow, use GJK results a and b to define manifold
-			else if (d < A.r)
+			else if (d < A.Radius)
 			{
-				m.count = 1;
-				m.n = c2Norm(c2Sub(b, a));
-				m.contact_points[0] = c2Add(a, c2Mulvs(m.n, A.r));
-				m.depths[0] = A.r - d;
+				m.Count = 1;
+				m.Direction = c2Norm(c2Sub(b, a));
+				m.ContactPoints[0] = c2Add(a, c2Mulvs(m.Direction, A.Radius));
+				m.Depths[0] = A.Radius - d;
 			}
 
 			return m;
@@ -2356,11 +2356,11 @@ namespace Libvaxy.Collision
 			float sep = -float.MaxValue;
 			int index = ~0;
 
-			for (int i = 0; i < A.count; ++i)
+			for (int i = 0; i < A.VertexCount; ++i)
 			{
 				HalfSpace h = c2PlaneAt(A, i);
-				int idx = c2Support(B.verts, B.count, c2Mulrv(a_in_b.r, c2Neg(h.n)));
-				Vector p = c2Mulxv(b_in_a, B.verts[idx]);
+				int idx = c2Support(B.Vertices, B.VertexCount, c2Mulrv(a_in_b.Rotation, c2Neg(h.Normal)));
+				Vector p = c2Mulxv(b_in_a, B.Vertices[idx]);
 				float d = c2Dist(h, p);
 				if (d > sep)
 				{
@@ -2384,7 +2384,7 @@ namespace Libvaxy.Collision
 		static Manifold c2PolytoPolyManifold(Poly A, Transformation ax_ptr, Poly B, Transformation bx_ptr)
 		{
 			Manifold m = new Manifold();
-			m.count = 0;
+			m.Count = 0;
 			Transformation ax = ax_ptr ?? c2xIdentity();
 			Transformation bx = bx_ptr ?? c2xIdentity();
 			float sa, sb;
@@ -2414,11 +2414,11 @@ namespace Libvaxy.Collision
 			}
 
 			Vector[] incident = new Vector[2];
-			c2Incident(incident, ip, ix, c2MulrvT(ix.r, c2Mulrv(rx.r, rp.norms[re])));
+			c2Incident(incident, ip, ix, c2MulrvT(ix.Rotation, c2Mulrv(rx.Rotation, rp.Normals[re])));
 			HalfSpace rh = new HalfSpace();
 			if (!c2SidePlanesFromPoly(incident, rx, rp, re, rh)) return null;
 			m = c2KeepDeep(incident, rh);
-			if (flip) m.n = c2Neg(m.n);
+			if (flip) m.Direction = c2Neg(m.Direction);
 			return m;
 		}
 	}
