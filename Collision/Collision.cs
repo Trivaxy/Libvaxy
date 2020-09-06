@@ -177,10 +177,16 @@ namespace Libvaxy.Collision
 	}
 
 	// 2d rotation composed of cos/sin pair
-	public class Rotation
+	public struct Rotation
 	{
 		public float Cos;
 		public float Sin;
+
+		public Rotation(float cos, float sin)
+		{
+			Cos = cos;
+			Sin = sin;
+		}
 	}
 
 	// 2d rotation matrix
@@ -210,22 +216,18 @@ namespace Libvaxy.Collision
 	// an identity transformation and assumes the verts inside of c2Poly are already
 	// in world space.
 
-	public class Transformation
+	public struct Transformation
 	{
 		public Vector Position;
 		public Rotation Rotation;
-
-		public Transformation()
-		{
-			Position = new Vector();
-			Rotation = new Rotation();
-		}
 
 		public Transformation(Vector p, Rotation r)
 		{
 			Position = p;
 			Rotation = r;
 		}
+
+		public static Transformation Identity() => new Transformation(new Vector(), new Rotation(1f, 0f));
 	}
 
 	// 2d halfspace (aka plane, aka line)
@@ -367,7 +369,7 @@ namespace Libvaxy.Collision
 			VertexCount = vertices.Length;
 			Vertices = vertices;
 			Normals = DynamicCollision.c2Norms(Vertices, Vertices.Length);
-			Transformation = null;
+			Transformation = Transformation.Identity();
 		}
 
 		public Poly(Vector[] vertices, Transformation transformation)
@@ -687,10 +689,6 @@ namespace Libvaxy.Collision
 
 		/* inline */
 		static RotationMatrix c2MulmmT(RotationMatrix a, RotationMatrix b) { RotationMatrix c = new RotationMatrix(); c.X = c2MulmvT(a, b.X); c.Y = c2MulmvT(a, b.Y); return c; }
-
-		// transform ops
-		/* inline */
-		static Transformation c2xIdentity() { Transformation x = new Transformation(); x.Position = MakeVector(0, 0); x.Rotation = c2RotIdentity(); return x; }
 
 		/* inline */
 		static Vector c2Mulxv(Transformation a, Vector b) { return AddVectors(c2Mulrv(a.Rotation, b), a.Position); }
@@ -1107,12 +1105,8 @@ namespace Libvaxy.Collision
 		// from Erin's version from his online resources.
 		public static float c2GJK(object A, ShapeType typeA, Transformation ax_ptr, object B, ShapeType typeB, Transformation bx_ptr, ref Vector outA, ref Vector outB, bool use_radius, int iterations, GJKCache cache)
 		{
-			Transformation ax;
-			Transformation bx;
-			if (ax_ptr == null) ax = c2xIdentity();
-			else ax = ax_ptr;
-			if (bx_ptr == null) bx = c2xIdentity();
-			else bx = bx_ptr;
+			Transformation ax = ax_ptr;
+			Transformation bx = bx_ptr;
 
 			Proxy pA = new Proxy();
 			Proxy pB = new Proxy();
@@ -1302,10 +1296,9 @@ namespace Libvaxy.Collision
 		static float c2TOI(object A, ShapeType typeA, Transformation ax_ptr, Vector vA, object B, ShapeType typeB, Transformation bx_ptr, Vector vB, bool use_radius, ref int iterations)
 		{
 			float t = 0;
-			Transformation ax;
-			Transformation bx;
-			ax = ax_ptr ?? c2xIdentity();
-			bx = bx_ptr ?? c2xIdentity();
+			Transformation ax = ax_ptr;
+			Transformation bx = bx_ptr;
+
 			Vector a = new Vector();
 			Vector b = new Vector();
 			GJKCache cache = new GJKCache();
@@ -1577,31 +1570,31 @@ namespace Libvaxy.Collision
 
 		internal static bool c2AABBtoCapsule(AABB A, Capsule B)
 		{
-			if (c2GJK(A, ShapeType.AABB, null, B, ShapeType.Capsule, null, true, 0, null) != 0) return false;
+			if (c2GJK(A, ShapeType.AABB, Transformation.Identity(), B, ShapeType.Capsule, Transformation.Identity(), true, 0, null) != 0) return false;
 			return true;
 		}
 
 		internal static bool c2CapsuletoCapsule(Capsule A, Capsule B)
 		{
-			if (c2GJK(A, ShapeType.Capsule, null, B, ShapeType.Capsule, null, true, 0, null) != 0) return false;
+			if (c2GJK(A, ShapeType.Capsule, Transformation.Identity(), B, ShapeType.Capsule, Transformation.Identity(), true, 0, null) != 0) return false;
 			return true;
 		}
 
 		internal static bool c2CircletoPoly(Circle A, Poly B)
 		{
-			if (c2GJK(A, ShapeType.Circle, null, B, ShapeType.Poly, B.Transformation, true, 0, null) != 0) return false;
+			if (c2GJK(A, ShapeType.Circle, Transformation.Identity(), B, ShapeType.Poly, B.Transformation, true, 0, null) != 0) return false;
 			return true;
 		}
 
 		internal static bool c2AABBtoPoly(AABB A, Poly B)
 		{
-			if (c2GJK(A, ShapeType.AABB, null, B, ShapeType.Poly, B.Transformation, true, 0, null) != 0) return false;
+			if (c2GJK(A, ShapeType.AABB, Transformation.Identity(), B, ShapeType.Poly, B.Transformation, true, 0, null) != 0) return false;
 			return true;
 		}
 
 		internal static bool c2CapsuletoPoly(Capsule A, Poly B)
 		{
-			if (c2GJK(A, ShapeType.Capsule, null, B, ShapeType.Poly, B.Transformation, true, 0, null) != 0) return false;
+			if (c2GJK(A, ShapeType.Capsule, Transformation.Identity(), B, ShapeType.Poly, B.Transformation, true, 0, null) != 0) return false;
 			return true;
 		}
 
@@ -1818,7 +1811,7 @@ namespace Libvaxy.Collision
 
 		static bool c2RaytoPoly(Ray A, Poly B, Transformation bx_ptr, out RayCast rayCast)
 		{
-			Transformation bx = bx_ptr ?? c2xIdentity();
+			Transformation bx = bx_ptr;
 			Vector p = c2MulxvT(bx, A.Position);
 			Vector d = c2MulrvT(bx.Rotation, A.Direction);
 			float lo = 0;
@@ -1944,7 +1937,7 @@ namespace Libvaxy.Collision
 			Vector a = new Vector();
 			Vector b = new Vector();
 			float r = A.Radius + B.Radius;
-			float d = c2GJK(A, ShapeType.Circle, null, B, ShapeType.Capsule, null, ref a, ref b, false, 0, null);
+			float d = c2GJK(A, ShapeType.Circle, Transformation.Identity(), B, ShapeType.Capsule, Transformation.Identity(), ref a, ref b, false, 0, null);
 			if (d < r)
 			{
 				Vector n;
@@ -2024,8 +2017,8 @@ namespace Libvaxy.Collision
 		{
 			Manifold m = new Manifold();
 			m.Count = 0;
-			Poly p = new Poly(c2BBVerts(A), null);
-			m = c2CapsuletoPolyManifold(B, p, null);
+			Poly p = new Poly(c2BBVerts(A));
+			m = c2CapsuletoPolyManifold(B, p, Transformation.Identity());
 			m.Direction = c2Neg(m.Direction);
 			return m;
 		}
@@ -2037,7 +2030,7 @@ namespace Libvaxy.Collision
 			Vector a = new Vector();
 			Vector b = new Vector();
 			float r = A.Radius + B.Radius;
-			float d = c2GJK(A, ShapeType.Capsule, null, B, ShapeType.Capsule, null, ref a, ref b, false, 0, null);
+			float d = c2GJK(A, ShapeType.Capsule, Transformation.Identity(), B, ShapeType.Capsule, Transformation.Identity(), ref a, ref b, false, 0, null);
 			if (d < r)
 			{
 				Vector n;
@@ -2067,7 +2060,7 @@ namespace Libvaxy.Collision
 			m.Count = 0;
 			Vector a = new Vector();
 			Vector b = new Vector();
-			float d = c2GJK(A, ShapeType.Circle, null, B, ShapeType.Poly, bx_tr, ref a, ref b, false, 0, null);
+			float d = c2GJK(A, ShapeType.Circle, Transformation.Identity(), B, ShapeType.Poly, bx_tr, ref a, ref b, false, 0, null);
 
 			// shallow, the circle center did not hit the polygon
 			// just use a and b from GJK to define the collision
@@ -2089,7 +2082,7 @@ namespace Libvaxy.Collision
 			// find the face closest to circle center to form manifold
 			else
 			{
-				Transformation bx = bx_tr ?? c2xIdentity();
+				Transformation bx = bx_tr;
 				float sep = -float.MaxValue;
 				int index = ~0;
 				Vector local = c2MulxvT(bx, A.Position);
@@ -2122,8 +2115,8 @@ namespace Libvaxy.Collision
 		{
 			Manifold m = new Manifold();
 			m.Count = 0;
-			Poly p = new Poly(c2BBVerts(A), null);
-			m = c2PolytoPolyManifold(p, null, B, bx);
+			Poly p = new Poly(c2BBVerts(A));
+			m = c2PolytoPolyManifold(p, Transformation.Identity(), B, bx);
 			return m;
 		}
 
@@ -2250,12 +2243,12 @@ namespace Libvaxy.Collision
 			m.Count = 0;
 			Vector a = new Vector();
 			Vector b = new Vector();
-			float d = c2GJK(A, ShapeType.Capsule, null, B, ShapeType.Poly, bx_ptr, ref a, ref b, false, 0, null);
+			float d = c2GJK(A, ShapeType.Capsule, Transformation.Identity(), B, ShapeType.Poly, bx_ptr, ref a, ref b, false, 0, null);
 
 			// deep, treat as segment to poly collision
 			if (d < 1.0e-6f)
 			{
-				Transformation bx = bx_ptr ?? c2xIdentity();
+				Transformation bx = bx_ptr;
 				Capsule A_in_B = new Capsule();
 				A_in_B.Start = c2MulxvT(bx, A.Start);
 				A_in_B.End = c2MulxvT(bx, A.End);
@@ -2397,8 +2390,8 @@ namespace Libvaxy.Collision
 		{
 			Manifold m = new Manifold();
 			m.Count = 0;
-			Transformation ax = ax_ptr ?? c2xIdentity();
-			Transformation bx = bx_ptr ?? c2xIdentity();
+			Transformation ax = ax_ptr;
+			Transformation bx = bx_ptr;
 			float sa, sb;
 			if ((sa = c2CheckFaces(A, ax, B, bx, out int ea)) >= 0) return null;
 			if ((sb = c2CheckFaces(B, bx, A, ax, out int eb)) >= 0) return null;
