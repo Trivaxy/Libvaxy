@@ -296,10 +296,17 @@ namespace Libvaxy.Extensions
 			LibvaxyMod.DisposeOnUnload(texture);
 			return texture;
 		}
-		
-        private static byte GetColorTolerance(float hueValue, float tolerance) => (byte)(hueValue * tolerance);
 
-		private static int CoordinateToIndex(int x, int y, int width) => y * width + x;
+		/// <summary>
+		/// Convertes a two dimensional pixel coordinate into one dimension.
+		/// </summary>
+		/// <param name="x">The X coordinate of the pixel.</param>
+		/// <param name="y">The Y coordinate of the pixel.</param>
+		/// <param name="width">The width of the texture.</param>
+		/// <returns>The one dimensional equivalent of the (X, Y) coordinate.</returns>
+		public static int CoordinateToIndex(int x, int y, int width) => y * width + x;
+
+		private static byte GetColorTolerance(float hueValue, float tolerance) => (byte)(hueValue * tolerance);
 
 		private static void CheckMasksCompatible(Texture2D texture, Texture2D mask)
 		{
