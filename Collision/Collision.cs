@@ -240,16 +240,10 @@ namespace Libvaxy.Collision
 	}
 
 	// 2d rotation matrix
-	public class RotationMatrix
+	public struct RotationMatrix
 	{
 		public Vector X;
 		public Vector Y;
-
-		public RotationMatrix()
-		{
-			X = new Vector();
-			Y = new Vector();
-		}
 
 		public RotationMatrix(Vector x, Vector y)
 		{
