@@ -1,5 +1,6 @@
 using Libvaxy.Attributes;
 using Libvaxy.Debug;
+using Libvaxy.Extensions;
 using Libvaxy.GameHelpers;
 using log4net;
 using Microsoft.Xna.Framework;
@@ -40,6 +41,7 @@ namespace Libvaxy
 			FallingTileTextures = new Dictionary<int, Texture2D>();
 			fallingTileAlphaMask = GetTexture("GameHelpers/FallingTileAlphaMask");
 			disposeList = new List<IDisposable>();
+			TerrariaAssembly = typeof(Main).Assembly;
 			ModAssemblies = ModLoader.Mods.Skip(1).ToDictionary(m => m.Name, m => m.Code); // initialize on load so libvaxy-dependent mods function when using this
 			StackInspectHandler.Initialize();
 			HookHandler.ApplyHooks();
@@ -47,7 +49,6 @@ namespace Libvaxy
 
 		public void PostLoad()
 		{
-			TerrariaAssembly = typeof(Main).Assembly;
 			ModAssemblies = ModLoader.Mods.Skip(1).ToDictionary(m => m.Name, m => m.Code); // add the rest of the loaded mods after Load()
 			DetourHandler.ApplyDetours();
 		}

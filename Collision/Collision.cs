@@ -512,7 +512,7 @@ namespace Libvaxy.Collision
 	// contains all information necessary to resolve a collision, or in other words
 	// this is the information needed to separate shapes that are colliding. Doing
 	// the resolution step is *not* included in cute_c2.
-	public class Manifold
+	public struct Manifold
 	{
 		public int Count;
 		public float[] Depths; // max size 2
@@ -521,13 +521,6 @@ namespace Libvaxy.Collision
 		// always points from shape A to shape B (first and second shapes passed into
 		// any of the c2***to***Manifold functions)
 		public Vector Direction;
-
-		public Manifold()
-		{
-			Count = 0;
-			Depths = new float[2];
-			ContactPoints = new[] { new Vector(), new Vector() };
-		}
 	}
 
 	public enum ShapeType
@@ -714,7 +707,7 @@ namespace Libvaxy.Collision
 					break;
 			}
 
-			return null; // should never happen
+			return default; // should never happen
 		}
 
 		public static bool c2CastRay(Ray A, in object B, Transformation bx, ShapeType typeB, out RayCast rayCast)
@@ -1897,9 +1890,9 @@ namespace Libvaxy.Collision
 
 			// calc overlap on x and y axes
 			float dx = eA.X + eB.X - Math.Abs(d.X);
-			if (dx < 0) return null;
+			if (dx < 0) return m;
 			float dy = eA.Y + eB.Y - Math.Abs(d.Y);
-			if (dy < 0) return null;
+			if (dy < 0) return m;
 
 			Vector n;
 			float depth;
@@ -2023,7 +2016,7 @@ namespace Libvaxy.Collision
 				{
 					HalfSpace hf = c2PlaneAt(B, i);
 					d = HalfSpace.Distance(hf, local);
-					if (d > A.Radius) return null;
+					if (d > A.Radius) return default;
 					if (d > sep)
 					{
 						sep = d;
@@ -2241,7 +2234,7 @@ namespace Libvaxy.Collision
 							seg[0] = A.Start;
 							seg[1] = A.End;
 							HalfSpace h = new HalfSpace();
-							if (!c2SidePlanesFromPoly(seg, bx, B, index, h)) return null;
+							if (!c2SidePlanesFromPoly(seg, bx, B, index, h)) return default;
 							m = c2KeepDeep(seg, h);
 							m.Direction = Vector.Negate(m.Direction);
 						}
@@ -2252,7 +2245,7 @@ namespace Libvaxy.Collision
 							Vector[] incident = new Vector[2];
 							c2Incident(incident, B, bx, ab_h0.Normal);
 							HalfSpace h = new HalfSpace();
-							if (!c2SidePlanes(incident, A_in_B.End, A_in_B.Start, h)) return null;
+							if (!c2SidePlanes(incident, A_in_B.End, A_in_B.Start, h)) return default;
 							m = c2KeepDeep(incident, h);
 						}
 						break;
@@ -2262,14 +2255,14 @@ namespace Libvaxy.Collision
 							Vector[] incident = new Vector[2];
 							c2Incident(incident, B, bx, ab_h1.Normal);
 							HalfSpace h = new HalfSpace();
-							if (!c2SidePlanes(incident, A_in_B.Start, A_in_B.End, h)) return null;
+							if (!c2SidePlanes(incident, A_in_B.Start, A_in_B.End, h)) return default;
 							m = c2KeepDeep(incident, h);
 						}
 						break;
 
 					default:
 						// should never happen.
-						return null;
+						return default;
 				}
 
 				for (int i = 0; i < m.Count; ++i) m.Depths[i] += A.Radius;
@@ -2325,8 +2318,8 @@ namespace Libvaxy.Collision
 			Transformation ax = ax_ptr;
 			Transformation bx = bx_ptr;
 			float sa, sb;
-			if ((sa = c2CheckFaces(A, ax, B, bx, out int ea)) >= 0) return null;
-			if ((sb = c2CheckFaces(B, bx, A, ax, out int eb)) >= 0) return null;
+			if ((sa = c2CheckFaces(A, ax, B, bx, out int ea)) >= 0) return default;
+			if ((sb = c2CheckFaces(B, bx, A, ax, out int eb)) >= 0) return default;
 
 			Poly rp;
 			Poly ip;
@@ -2353,7 +2346,7 @@ namespace Libvaxy.Collision
 			Vector[] incident = new Vector[2];
 			c2Incident(incident, ip, ix, Vector.RotateTranspose(ix.Rotation, Vector.Rotate(rx.Rotation, rp.Normals[re])));
 			HalfSpace rh = new HalfSpace();
-			if (!c2SidePlanesFromPoly(incident, rx, rp, re, rh)) return null;
+			if (!c2SidePlanesFromPoly(incident, rx, rp, re, rh)) return default;
 			m = c2KeepDeep(incident, rh);
 			if (flip) m.Direction = Vector.Negate(m.Direction);
 			return m;
