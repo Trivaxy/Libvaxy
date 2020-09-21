@@ -230,6 +230,8 @@ namespace Libvaxy.Collision
 		public static Vector Transform(Transformation a, Vector b) => Add(Rotate(a.Rotation, b), a.Position);
 
 		public static Vector TransformTranspose(Transformation a, Vector b) => RotateTranspose(a.Rotation, Subtract(b, a.Position));
+
+		public static Vector Intersect(Vector a, Vector b, float da, float db) => Add(a, MultiplyMagnitude(Subtract(b, a), (da / (da - db))));
 	}
 
 	// 2d rotation composed of cos/sin pair
@@ -335,6 +337,8 @@ namespace Libvaxy.Collision
 
 		public abstract bool IntersectsPoly(Poly poly);
 
+		public abstract bool IntersectsPoint(Point point);
+
 		public bool IntersectsShape(Shape shape)
 		{
 			if (shape is Circle circle)
@@ -345,6 +349,8 @@ namespace Libvaxy.Collision
 				return IntersectsCapsule(capsule);
 			else if (shape is Poly poly)
 				return IntersectsPoly(poly);
+			else if (shape is Point point)
+				return IntersectsPoint(point);
 
 			return false;
 		}
@@ -368,13 +374,55 @@ namespace Libvaxy.Collision
 			Radius = r;
 		}
 
-		public override bool IntersectsAABB(AABB aabb) => DynamicCollision.c2CircletoAABB(this, aabb);
+		public override bool IntersectsAABB(AABB aabb)
+		{
+			Vector L = Vector.Clamp(Position, aabb.Min, aabb.Max);
+			Vector ab = Vector.Subtract(Position, L);
+			float d2 = Vector.DotProduct(ab, ab);
+			float r2 = Radius * Radius;
+			return d2 < r2;
+		}
 
-		public override bool IntersectsCapsule(Capsule capsule) => DynamicCollision.c2CircletoCapsule(this, capsule);
+		public override bool IntersectsCapsule(Capsule capsule)
+		{
+			Vector n = Vector.Subtract(capsule.End, capsule.Start);
+			Vector ap = Vector.Subtract(Position, capsule.Start);
+			float da = Vector.DotProduct(ap, n);
+			float d2;
 
-		public override bool IntersectsCircle(Circle circle) => DynamicCollision.c2CircletoCircle(this, circle);
+			if (da < 0) d2 = Vector.DotProduct(ap, ap);
+			else
+			{
+				float db = Vector.DotProduct(Vector.Subtract(Position, capsule.End), n);
+				if (db < 0)
+				{
+					Vector e = Vector.Subtract(ap, Vector.MultiplyMagnitude(n, (da / Vector.DotProduct(n, n))));
+					d2 = Vector.DotProduct(e, e);
+				}
+				else
+				{
+					Vector bp = Vector.Subtract(Position, capsule.End);
+					d2 = Vector.DotProduct(bp, bp);
+				}
+			}
 
-		public override bool IntersectsPoly(Poly poly) => DynamicCollision.c2CircletoPoly(this, poly);
+			float r = Radius + capsule.Radius;
+			return d2 < r * r;
+		}
+
+		public override bool IntersectsCircle(Circle circle)
+		{
+			Vector c = Vector.Subtract(circle.Position, Position);
+			float d2 = Vector.DotProduct(c, c);
+			float r2 = Radius + circle.Radius;
+			r2 = r2 * r2;
+			return d2 < r2;
+		}
+
+		public override bool IntersectsPoly(Poly poly)
+			=> DynamicCollision.GJK(this, ShapeType.Circle, Transformation.Identity, poly, ShapeType.Poly, poly.Transformation, true, 0, null) == 0;
+
+		public override bool IntersectsPoint(Point point) => point.IntersectsCircle(this);
 	}
 
 	public class AABB : Shape
@@ -394,13 +442,25 @@ namespace Libvaxy.Collision
 			Max = max;
 		}
 
-		public override bool IntersectsAABB(AABB aabb) => DynamicCollision.c2AABBtoAABB(this, aabb);
+		public Vector[] Vertices => new[] { Min, new Vector(Max.X, Min.Y), Max, new Vector(Min.X, Max.Y) };
 
-		public override bool IntersectsCapsule(Capsule capsule) => DynamicCollision.c2AABBtoCapsule(this, capsule);
+		public override bool IntersectsAABB(AABB aabb)
+		{
+			bool d0 = aabb.Max.X < Min.X;
+			bool d1 = Max.X < aabb.Min.X;
+			bool d2 = aabb.Max.Y < Min.Y;
+			bool d3 = Max.Y < aabb.Min.Y;
+			return !(d0 | d1 | d2 | d3);
+		}
 
-		public override bool IntersectsCircle(Circle circle) => DynamicCollision.c2CircletoAABB(circle, this);
+		public override bool IntersectsCapsule(Capsule capsule)
+			=> DynamicCollision.GJK(this, ShapeType.AABB, Transformation.Identity, capsule, ShapeType.Capsule, Transformation.Identity, true, 0, null) == 0;
 
-		public override bool IntersectsPoly(Poly poly) => DynamicCollision.c2AABBtoPoly(this, poly);
+		public override bool IntersectsCircle(Circle circle) => circle.IntersectsAABB(this);
+
+		public override bool IntersectsPoly(Poly poly) => poly.IntersectsAABB(this);
+
+		public override bool IntersectsPoint(Point point) => point.IntersectsAABB(this);
 	}
 
 	// a capsule is defined as a line segment (from a to b) and radius r
@@ -424,13 +484,17 @@ namespace Libvaxy.Collision
 			Radius = radius;
 		}
 
-		public override bool IntersectsAABB(AABB aabb) => DynamicCollision.c2AABBtoCapsule(aabb, this);
+		public override bool IntersectsAABB(AABB aabb) => aabb.IntersectsCapsule(this);
 
-		public override bool IntersectsCapsule(Capsule capsule) => DynamicCollision.c2CapsuletoCapsule(this, capsule);
+		public override bool IntersectsCapsule(Capsule capsule)
+			=> DynamicCollision.GJK(this, ShapeType.Capsule, Transformation.Identity, capsule, ShapeType.Capsule, Transformation.Identity, true, 0, null) == 0;
 
-		public override bool IntersectsCircle(Circle circle) => DynamicCollision.c2CircletoCapsule(circle, this);
+		public override bool IntersectsCircle(Circle circle) => circle.IntersectsCapsule(this);
 
-		public override bool IntersectsPoly(Poly poly) => DynamicCollision.c2CapsuletoPoly(this, poly);
+		public override bool IntersectsPoly(Poly poly)
+			=> DynamicCollision.GJK(this, ShapeType.Capsule, Transformation.Identity, poly, ShapeType.Poly, poly.Transformation, true, 0, null) == 0;
+
+		public override bool IntersectsPoint(Point point) => point.IntersectsCapsule(this);
 	}
 
 	public class Poly : Shape
@@ -456,13 +520,39 @@ namespace Libvaxy.Collision
 			Transformation = transformation;
 		}
 
-		public override bool IntersectsAABB(AABB aabb) => DynamicCollision.c2AABBtoPoly(aabb, this);
+		public override bool IntersectsAABB(AABB aabb)
+			=> DynamicCollision.GJK(aabb, ShapeType.AABB, Transformation.Identity, this, ShapeType.Poly, Transformation, true, 0, null) == 0;
 
-		public override bool IntersectsCapsule(Capsule capsule) => DynamicCollision.c2CapsuletoPoly(capsule, this);
+		public override bool IntersectsCapsule(Capsule capsule) => capsule.IntersectsPoly(this);
 
-		public override bool IntersectsCircle(Circle circle) => DynamicCollision.c2CircletoPoly(circle, this);
+		public override bool IntersectsCircle(Circle circle) => circle.IntersectsPoly(this);
 
-		public override bool IntersectsPoly(Poly poly) => DynamicCollision.c2PolytoPoly(this, poly);
+		public override bool IntersectsPoly(Poly poly)
+			=> DynamicCollision.GJK(this, ShapeType.Poly, Transformation, poly, ShapeType.Poly, poly.Transformation, true, 0, null) == 0;
+
+		public override bool IntersectsPoint(Point point) => point.IntersectsPoly(this);
+	}
+
+	// this is a custom type for the sake of completion, not originally included in tinyc2
+	public class Point : Shape
+	{
+		public Vector Coordinates;
+
+		private AABB AABBRepresentation => new AABB(Coordinates, Coordinates);
+
+		public Point(Vector coordinates) => Coordinates = coordinates;
+
+		public Point(float x, float y) => Coordinates = new Vector(x, y);
+
+		public override bool IntersectsAABB(AABB aabb) => Coordinates.X >= aabb.Min.X && Coordinates.Y >= aabb.Min.Y && Coordinates.X <= aabb.Max.X && Coordinates.Y <= aabb.Max.Y;
+
+		public override bool IntersectsCapsule(Capsule capsule) => AABBRepresentation.IntersectsCapsule(capsule);
+
+		public override bool IntersectsCircle(Circle circle) => circle.IntersectsAABB(AABBRepresentation);
+
+		public override bool IntersectsPoly(Poly poly) => AABBRepresentation.IntersectsPoly(poly);
+
+		public override bool IntersectsPoint(Point point) => Coordinates.X == point.Coordinates.X && Coordinates.Y == point.Coordinates.Y;
 	}
 
 	// IMPORTANT:
@@ -646,20 +736,6 @@ namespace Libvaxy.Collision
 		// halfspace and T stands for transpose.For example c2MulxvT stands for "multiply
 		// a transform with a vector, and transpose the transform".
 
-		/* inline */
-		static Vector c2Intersect(Vector a, Vector b, float da, float db) { return Vector.Add(a, Vector.MultiplyMagnitude(Vector.Subtract(b, a), (da / (da - db)))); }
-
-		/* inline */
-		static Vector[] c2BBVerts(AABB bb)
-		{
-			Vector[] verts = new Vector[4];
-			verts[0] = bb.Min;
-			verts[1] = new Vector(bb.Max.X, bb.Min.Y);
-			verts[2] = bb.Max;
-			verts[3] = new Vector(bb.Min.X, bb.Max.Y);
-			return verts;
-		}
-
 		public static Manifold c2Collide(in object A, Transformation ax, ShapeType typeA, in object B, Transformation bx, ShapeType typeB)
 		{
 			Manifold m;
@@ -816,7 +892,7 @@ namespace Libvaxy.Collision
 						AABB bb = (AABB)shape;
 						p.Radius = 0;
 						p.Count = 4;
-						p.Vertices = c2BBVerts(bb);
+						p.Vertices = bb.Vertices;
 					}
 					break;
 
@@ -1019,7 +1095,7 @@ namespace Libvaxy.Collision
 			}
 		}
 
-		public static float c2GJK(object A, ShapeType typeA, Transformation ax_ptr, object B, ShapeType typeB, Transformation bx_ptr, bool use_radius, int iterations, GJKCache cache)
+		public static float GJK(object A, ShapeType typeA, Transformation ax_ptr, object B, ShapeType typeB, Transformation bx_ptr, bool use_radius, int iterations, GJKCache cache)
 		{
 			Vector dummyVector = default;
 			return c2GJK(A, typeA, ax_ptr, B, typeB, bx_ptr, ref dummyVector, ref dummyVector, use_radius, iterations, cache);
@@ -1422,111 +1498,20 @@ namespace Libvaxy.Collision
 			}
 		}
 
-		internal static bool c2CircletoCircle(Circle A, Circle B)
+		internal static bool AABBIntersectsPoint(AABB aabb, Vector point)
 		{
-			Vector c = Vector.Subtract(B.Position, A.Position);
-			float d2 = Vector.DotProduct(c, c);
-			float r2 = A.Radius + B.Radius;
-			r2 = r2 * r2;
-			return d2 < r2;
-		}
-
-		internal static bool c2CircletoAABB(Circle A, AABB B)
-		{
-			Vector L = Vector.Clamp(A.Position, B.Min, B.Max);
-			Vector ab = Vector.Subtract(A.Position, L);
-			float d2 = Vector.DotProduct(ab, ab);
-			float r2 = A.Radius * A.Radius;
-			return d2 < r2;
-		}
-
-		internal static bool c2AABBtoAABB(AABB A, AABB B)
-		{
-			bool d0 = B.Max.X < A.Min.X;
-			bool d1 = A.Max.X < B.Min.X;
-			bool d2 = B.Max.Y < A.Min.Y;
-			bool d3 = A.Max.Y < B.Min.Y;
+			bool d0 = point.X < aabb.Min.X;
+			bool d1 = point.Y < aabb.Min.Y;
+			bool d2 = point.X > aabb.Max.X;
+			bool d3 = point.Y > aabb.Max.Y;
 			return !(d0 | d1 | d2 | d3);
 		}
 
-		static bool c2AABBtoPoint(AABB A, Vector B)
+		internal static bool CircleIntersectsPoint(Circle circle, Vector point)
 		{
-			bool d0 = B.X < A.Min.X;
-			bool d1 = B.Y < A.Min.Y;
-			bool d2 = B.X > A.Max.X;
-			bool d3 = B.Y > A.Max.Y;
-			return !(d0 | d1 | d2 | d3);
-		}
-
-		static bool c2CircleToPoint(Circle A, Vector B)
-		{
-			Vector n = Vector.Subtract(A.Position, B);
+			Vector n = Vector.Subtract(circle.Position, point);
 			float d2 = Vector.DotProduct(n, n);
-			return d2 < A.Radius * A.Radius;
-		}
-
-		// see: http://www.randygaul.net/2014/07/23/distance-point-to-line-segment/
-		internal static bool c2CircletoCapsule(Circle A, Capsule B)
-		{
-			Vector n = Vector.Subtract(B.End, B.Start);
-			Vector ap = Vector.Subtract(A.Position, B.Start);
-			float da = Vector.DotProduct(ap, n);
-			float d2;
-
-			if (da < 0) d2 = Vector.DotProduct(ap, ap);
-			else
-			{
-				float db = Vector.DotProduct(Vector.Subtract(A.Position, B.End), n);
-				if (db < 0)
-				{
-					Vector e = Vector.Subtract(ap, Vector.MultiplyMagnitude(n, (da / Vector.DotProduct(n, n))));
-					d2 = Vector.DotProduct(e, e);
-				}
-				else
-				{
-					Vector bp = Vector.Subtract(A.Position, B.End);
-					d2 = Vector.DotProduct(bp, bp);
-				}
-			}
-
-			float r = A.Radius + B.Radius;
-			return d2 < r * r;
-		}
-
-		internal static bool c2AABBtoCapsule(AABB A, Capsule B)
-		{
-			if (c2GJK(A, ShapeType.AABB, Transformation.Identity, B, ShapeType.Capsule, Transformation.Identity, true, 0, null) != 0) return false;
-			return true;
-		}
-
-		internal static bool c2CapsuletoCapsule(Capsule A, Capsule B)
-		{
-			if (c2GJK(A, ShapeType.Capsule, Transformation.Identity, B, ShapeType.Capsule, Transformation.Identity, true, 0, null) != 0) return false;
-			return true;
-		}
-
-		internal static bool c2CircletoPoly(Circle A, Poly B)
-		{
-			if (c2GJK(A, ShapeType.Circle, Transformation.Identity, B, ShapeType.Poly, B.Transformation, true, 0, null) != 0) return false;
-			return true;
-		}
-
-		internal static bool c2AABBtoPoly(AABB A, Poly B)
-		{
-			if (c2GJK(A, ShapeType.AABB, Transformation.Identity, B, ShapeType.Poly, B.Transformation, true, 0, null) != 0) return false;
-			return true;
-		}
-
-		internal static bool c2CapsuletoPoly(Capsule A, Poly B)
-		{
-			if (c2GJK(A, ShapeType.Capsule, Transformation.Identity, B, ShapeType.Poly, B.Transformation, true, 0, null) != 0) return false;
-			return true;
-		}
-
-		internal static bool c2PolytoPoly(Poly A, Poly B)
-		{
-			if (c2GJK(A, ShapeType.Poly, A.Transformation, B, ShapeType.Poly, B.Transformation, true, 0, null) != 0) return false;
-			return true;
+			return d2 < circle.Radius * circle.Radius;
 		}
 
 		internal static bool c2RaytoCircle(Ray A, Circle B, out RayCast rayCast)
@@ -1583,7 +1568,7 @@ namespace Libvaxy.Collision
 			rayCast = null;
 
 			// Test B's axes.
-			if (!c2AABBtoAABB(a_box, B))
+			if (!a_box.IntersectsAABB(B))
 				return false;
 
 			// Test the ray's axes (along the segment's normal).
@@ -1680,7 +1665,7 @@ namespace Libvaxy.Collision
 			rayCast.TimeOfImpact = 0;
 
 			// check and see if ray starts within the capsule
-			if (c2AABBtoPoint(capsule_bb, yAp))
+			if (AABBIntersectsPoint(capsule_bb, yAp))
 				return true;
 			else
 			{
@@ -1691,9 +1676,9 @@ namespace Libvaxy.Collision
 				capsule_b.Position = B.End;
 				capsule_b.Radius = B.Radius;
 
-				if (c2CircleToPoint(capsule_a, A.Position))
+				if (CircleIntersectsPoint(capsule_a, A.Position))
 					return true;
-				else if (c2CircleToPoint(capsule_b, A.Position))
+				else if (CircleIntersectsPoint(capsule_b, A.Position))
 					return true;
 			}
 
@@ -1942,7 +1927,7 @@ namespace Libvaxy.Collision
 		{
 			Manifold m = new Manifold();
 			m.Count = 0;
-			Poly p = new Poly(c2BBVerts(A));
+			Poly p = new Poly(A.Vertices);
 			m = c2CapsuletoPolyManifold(B, p, Transformation.Identity);
 			m.Direction = Vector.Negate(m.Direction);
 			return m;
@@ -2040,7 +2025,7 @@ namespace Libvaxy.Collision
 		{
 			Manifold m = new Manifold();
 			m.Count = 0;
-			Poly p = new Poly(c2BBVerts(A));
+			Poly p = new Poly(A.Vertices);
 			m = c2PolytoPolyManifold(p, Transformation.Identity, B, bx);
 			return m;
 		}
@@ -2060,7 +2045,7 @@ namespace Libvaxy.Collision
 				vecs[sp++] = seg[0];
 				vecs[sp++] = seg[1];
 			}
-			else if (d0 * d1 <= 0) vecs[sp++] = c2Intersect(seg[0], seg[1], d0, d1);
+			else if (d0 * d1 <= 0) vecs[sp++] = Vector.Intersect(seg[0], seg[1], d0, d1);
 			seg[0] = vecs[0]; seg[1] = vecs[1];
 			return sp;
 		}
