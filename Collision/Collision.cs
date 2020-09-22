@@ -508,7 +508,7 @@ namespace Libvaxy.Collision
 		{
 			VertexCount = vertices.Length;
 			Vertices = vertices;
-			Normals = DynamicCollision.c2Norms(Vertices, Vertices.Length);
+			Normals = DynamicCollision.Normals(Vertices);
 			Transformation = Transformation.Identity;
 		}
 
@@ -516,7 +516,7 @@ namespace Libvaxy.Collision
 		{
 			VertexCount = vertices.Length;
 			Vertices = vertices;
-			Normals = DynamicCollision.c2Norms(Vertices, Vertices.Length);
+			Normals = DynamicCollision.Normals(Vertices);
 			Transformation = transformation;
 		}
 
@@ -804,16 +804,13 @@ namespace Libvaxy.Collision
 		{
 			public float Radius;
 			public int Count;
-			public Vector[] Vertices; // max size MAXPOLYGONVERTS
+			public Vector[] Vertices;
 
-			public Proxy()
+			public Proxy(float radius, int count, Vector[] vertices)
 			{
-				Radius = 0;
-				Count = 0;
-				Vertices = new Vector[MaxPolygonVertices];
-
-				for (int i = 0; i < MaxPolygonVertices; i++)
-					Vertices[i] = new Vector();
+				Radius = radius;
+				Count = count;
+				Vertices = vertices;
 			}
 		}
 
@@ -874,50 +871,32 @@ namespace Libvaxy.Collision
 			}
 		}
 
-		static /* inline */ void c2MakeProxy(object shape, ShapeType type, Proxy p)
+		private static Proxy MakeProxy(object shape, ShapeType type)
 		{
 			switch (type)
 			{
 				case ShapeType.Circle:
-					{
-						Circle c = (Circle)shape;
-						p.Radius = c.Radius;
-						p.Count = 1;
-						p.Vertices[0] = c.Position;
-					}
-					break;
+					Circle circle = (Circle)shape;
+					return new Proxy(circle.Radius, 1, new[] { circle.Position });
 
 				case ShapeType.AABB:
-					{
-						AABB bb = (AABB)shape;
-						p.Radius = 0;
-						p.Count = 4;
-						p.Vertices = bb.Vertices;
-					}
-					break;
+					AABB aabb = (AABB)shape;
+					return new Proxy(0, 4, aabb.Vertices);
 
 				case ShapeType.Capsule:
-					{
-						Capsule c = (Capsule)shape;
-						p.Radius = c.Radius;
-						p.Count = 2;
-						p.Vertices[0] = c.Start;
-						p.Vertices[1] = c.End;
-					}
-					break;
+					Capsule capsule = (Capsule)shape;
+					return new Proxy(capsule.Radius, 2, new[] { capsule.Start, capsule.End });
 
 				case ShapeType.Poly:
-					{
-						Poly poly = (Poly)shape;
-						p.Radius = 0;
-						p.Count = poly.VertexCount;
-						for (int i = 0; i < p.Count; ++i) p.Vertices[i] = poly.Vertices[i];
-					}
-					break;
+					Poly poly = (Poly)shape;
+					return new Proxy(0, poly.VertexCount, poly.Vertices);
+
+				default:
+					return new Proxy(0, 0, null); // should never happen
 			}
 		}
 
-		static /* inline */ int c2Support(Vector[] verts, int count, Vector d)
+		private static int FarthestVertexFromVectorIndex(Vector[] verts, int count, Vector d)
 		{
 			int imax = 0;
 			float dmax = Vector.DotProduct(verts[0], d);
@@ -935,7 +914,7 @@ namespace Libvaxy.Collision
 			return imax;
 		}
 
-		static /* inline */ Vector c2L(Simplex s)
+		private static Vector c2L(Simplex s)
 		{
 			float den = 1.0f / s.Div;
 			switch (s.Count)
@@ -947,7 +926,7 @@ namespace Libvaxy.Collision
 			}
 		}
 
-		static /* inline */ void c2Witness(Simplex s, out Vector a, out Vector b)
+		private static void Witness(Simplex s, out Vector a, out Vector b)
 		{
 			float den = 1.0f / s.Div;
 			switch (s.Count)
@@ -959,7 +938,7 @@ namespace Libvaxy.Collision
 			}
 		}
 
-		static /* inline */ Vector c2D(Simplex s)
+		private static Vector c2D(Simplex s)
 		{
 			switch (s.Count)
 			{
@@ -975,7 +954,7 @@ namespace Libvaxy.Collision
 			}
 		}
 
-		static /* inline */ void c22(Simplex s)
+		private static void c22(Simplex s)
 		{
 			Vector a = s.A.Position;
 			Vector b = s.B.Position;
@@ -1006,7 +985,7 @@ namespace Libvaxy.Collision
 			}
 		}
 
-		static /* inline */ void c23(Simplex s)
+		private static void c23(Simplex s)
 		{
 			Vector a = s.A.Position;
 			Vector b = s.B.Position;
@@ -1084,7 +1063,7 @@ namespace Libvaxy.Collision
 			}
 		}
 
-		static /* inline */ float c2GJKSimplexMetric(Simplex s)
+		private static float c2GJKSimplexMetric(Simplex s)
 		{
 			switch (s.Count)
 			{
@@ -1098,21 +1077,19 @@ namespace Libvaxy.Collision
 		public static float GJK(object A, ShapeType typeA, Transformation ax_ptr, object B, ShapeType typeB, Transformation bx_ptr, bool use_radius, int iterations, GJKCache cache)
 		{
 			Vector dummyVector = default;
-			return c2GJK(A, typeA, ax_ptr, B, typeB, bx_ptr, ref dummyVector, ref dummyVector, use_radius, iterations, cache);
+			return GJK(A, typeA, ax_ptr, B, typeB, bx_ptr, ref dummyVector, ref dummyVector, use_radius, iterations, cache);
 		}
 
 		// Please see http://box2d.org/downloads/ under GDC 2010 for Erin's demo code
 		// and PDF slides for documentation on the GJK algorithm. This function is mostly
 		// from Erin's version from his online resources.
-		public static float c2GJK(object A, ShapeType typeA, Transformation ax_ptr, object B, ShapeType typeB, Transformation bx_ptr, ref Vector outA, ref Vector outB, bool use_radius, int iterations, GJKCache cache)
+		public static float GJK(object A, ShapeType typeA, Transformation ax_ptr, object B, ShapeType typeB, Transformation bx_ptr, ref Vector outA, ref Vector outB, bool use_radius, int iterations, GJKCache cache)
 		{
 			Transformation ax = ax_ptr;
 			Transformation bx = bx_ptr;
 
-			Proxy pA = new Proxy();
-			Proxy pB = new Proxy();
-			c2MakeProxy(A, typeA, pA);
-			c2MakeProxy(B, typeB, pB);
+			Proxy pA = MakeProxy(A, typeA);
+			Proxy pB = MakeProxy(B, typeB);
 
 			Simplex s = new Simplex();
 			SVector[] verts = new SVector[] { s.A, s.B, s.C, s.D };
@@ -1206,9 +1183,9 @@ namespace Libvaxy.Collision
 				Vector d = c2D(s);
 				if (Vector.DotProduct(d, d) < float.Epsilon * float.Epsilon) break;
 
-				int iA = c2Support(pA.Vertices, pA.Count, Vector.RotateTranspose(ax.Rotation, Vector.Negate(d)));
+				int iA = FarthestVertexFromVectorIndex(pA.Vertices, pA.Count, Vector.RotateTranspose(ax.Rotation, Vector.Negate(d)));
 				Vector sA = Vector.Transform(ax, pA.Vertices[iA]);
-				int iB = c2Support(pB.Vertices, pB.Count, Vector.RotateTranspose(bx.Rotation, d));
+				int iB = FarthestVertexFromVectorIndex(pB.Vertices, pB.Count, Vector.RotateTranspose(bx.Rotation, d));
 				Vector sB = Vector.Transform(bx, pB.Vertices[iB]);
 
 				SVector v = verts[s.Count];
@@ -1233,7 +1210,7 @@ namespace Libvaxy.Collision
 				++iter;
 			}
 
-			c2Witness(s, out Vector a, out Vector b);
+			Witness(s, out Vector a, out Vector b);
 			float dist = Vector.Length(Vector.Subtract(a, b));
 
 			if (hit)
@@ -1284,17 +1261,17 @@ namespace Libvaxy.Collision
 			return dist;
 		}
 
-		static float c2Step(float t, object A, ShapeType typeA, Transformation ax_ptr, Vector vA, Vector a, object B, ShapeType typeB, Transformation bx_ptr, Vector vB, Vector b, bool use_radius, GJKCache cache)
+		private static float Step(float t, object A, ShapeType typeA, Transformation ax_ptr, Vector vA, Vector a, object B, ShapeType typeB, Transformation bx_ptr, Vector vB, Vector b, bool use_radius, GJKCache cache)
 		{
 			Transformation ax = ax_ptr;
 			Transformation bx = bx_ptr;
 			ax.Position = Vector.Add(ax.Position, Vector.MultiplyMagnitude(vA, t));
 			bx.Position = Vector.Add(bx.Position, Vector.MultiplyMagnitude(vB, t));
-			float d = c2GJK(A, typeA, ax, B, typeB, bx, ref a, ref b, use_radius, 0, cache);
+			float d = GJK(A, typeA, ax, B, typeB, bx, ref a, ref b, use_radius, 0, cache);
 			return d;
 		}
 
-		static float c2TOI(object A, ShapeType typeA, Transformation ax_ptr, Vector vA, object B, ShapeType typeB, Transformation bx_ptr, Vector vB, bool use_radius, ref int iterations)
+		public static float TimeOfImpact(object A, ShapeType typeA, Transformation ax_ptr, Vector vA, object B, ShapeType typeB, Transformation bx_ptr, Vector vB, bool use_radius, ref int iterations)
 		{
 			float t = 0;
 			Transformation ax = ax_ptr;
@@ -1304,7 +1281,7 @@ namespace Libvaxy.Collision
 			Vector b = new Vector();
 			GJKCache cache = new GJKCache();
 			cache.Count = 0;
-			float d = c2Step(t, A, typeA, ax, vA, a, B, typeB, bx, vB, b, use_radius, cache);
+			float d = Step(t, A, typeA, ax, vA, a, B, typeB, bx, vB, b, use_radius, cache);
 			Vector v = Vector.Subtract(vB, vA);
 
 			int iters = 0;
@@ -1319,7 +1296,7 @@ namespace Libvaxy.Collision
 				float t1 = t + delta;
 				if (t0 == t1) break;
 				t = t1;
-				d = c2Step(t, A, typeA, ax, vA, a, B, typeB, bx, vB, b, use_radius, cache);
+				d = Step(t, A, typeA, ax, vA, a, B, typeB, bx, vB, b, use_radius, cache);
 			}
 
 			t = t >= 1 ? 1 : t;
@@ -1383,14 +1360,14 @@ namespace Libvaxy.Collision
 			return out_count;
 		}
 
-		internal static Vector[] c2Norms(Vector[] verts, int count)
+		internal static Vector[] Normals(Vector[] verts)
 		{
-			Vector[] norms = new Vector[count];
+			Vector[] norms = new Vector[verts.Length];
 
-			for (int i = 0; i < count; ++i)
+			for (int i = 0; i < norms.Length; ++i)
 			{
 				int a = i;
-				int b = i + 1 < count ? i + 1 : 0;
+				int b = i + 1 < norms.Length ? i + 1 : 0;
 				Vector e = Vector.Subtract(verts[b], verts[a]);
 				norms[i] = Vector.Normalize(Vector.CounterClockwise90(e));
 			}
@@ -1417,7 +1394,7 @@ namespace Libvaxy.Collision
 
 			// Instead of canonically building the convex hull, can simply take advantage of how
 			// the vertices are still in proper CCW order, so only the normals must be recomputed.
-			dual.Normals = c2Norms(dual.Vertices, dual.VertexCount);
+			dual.Normals = Normals(dual.Vertices);
 
 			return dual;
 		}
@@ -1847,7 +1824,7 @@ namespace Libvaxy.Collision
 			Vector a = new Vector();
 			Vector b = new Vector();
 			float r = A.Radius + B.Radius;
-			float d = c2GJK(A, ShapeType.Circle, Transformation.Identity, B, ShapeType.Capsule, Transformation.Identity, ref a, ref b, false, 0, null);
+			float d = GJK(A, ShapeType.Circle, Transformation.Identity, B, ShapeType.Capsule, Transformation.Identity, ref a, ref b, false, 0, null);
 			if (d < r)
 			{
 				Vector n;
@@ -1940,7 +1917,7 @@ namespace Libvaxy.Collision
 			Vector a = new Vector();
 			Vector b = new Vector();
 			float r = A.Radius + B.Radius;
-			float d = c2GJK(A, ShapeType.Capsule, Transformation.Identity, B, ShapeType.Capsule, Transformation.Identity, ref a, ref b, false, 0, null);
+			float d = GJK(A, ShapeType.Capsule, Transformation.Identity, B, ShapeType.Capsule, Transformation.Identity, ref a, ref b, false, 0, null);
 			if (d < r)
 			{
 				Vector n;
@@ -1970,7 +1947,7 @@ namespace Libvaxy.Collision
 			m.Count = 0;
 			Vector a = new Vector();
 			Vector b = new Vector();
-			float d = c2GJK(A, ShapeType.Circle, Transformation.Identity, B, ShapeType.Poly, bx_tr, ref a, ref b, false, 0, null);
+			float d = GJK(A, ShapeType.Circle, Transformation.Identity, B, ShapeType.Poly, bx_tr, ref a, ref b, false, 0, null);
 
 			// shallow, the circle center did not hit the polygon
 			// just use a and b from GJK to define the collision
@@ -2153,7 +2130,7 @@ namespace Libvaxy.Collision
 			m.Count = 0;
 			Vector a = new Vector();
 			Vector b = new Vector();
-			float d = c2GJK(A, ShapeType.Capsule, Transformation.Identity, B, ShapeType.Poly, bx_ptr, ref a, ref b, false, 0, null);
+			float d = GJK(A, ShapeType.Capsule, Transformation.Identity, B, ShapeType.Poly, bx_ptr, ref a, ref b, false, 0, null);
 
 			// deep, treat as segment to poly collision
 			if (d < 1.0e-6f)
@@ -2168,13 +2145,13 @@ namespace Libvaxy.Collision
 				HalfSpace ab_h0 = new HalfSpace();
 				ab_h0.Normal = Vector.CounterClockwise90(ab);
 				ab_h0.DistanceFromOrigin = Vector.DotProduct(A_in_B.Start, ab_h0.Normal);
-				int v0 = c2Support(B.Vertices, B.VertexCount, Vector.Negate(ab_h0.Normal));
+				int v0 = FarthestVertexFromVectorIndex(B.Vertices, B.VertexCount, Vector.Negate(ab_h0.Normal));
 				float s0 = HalfSpace.Distance(ab_h0, B.Vertices[v0]);
 
 				HalfSpace ab_h1 = new HalfSpace();
 				ab_h1.Normal = Vector.Skew(ab);
 				ab_h1.DistanceFromOrigin = Vector.DotProduct(A_in_B.Start, ab_h1.Normal);
-				int v1 = c2Support(B.Vertices, B.VertexCount, Vector.Negate(ab_h1.Normal));
+				int v1 = FarthestVertexFromVectorIndex(B.Vertices, B.VertexCount, Vector.Negate(ab_h1.Normal));
 				float s1 = HalfSpace.Distance(ab_h1, B.Vertices[v1]);
 
 				// test poly axes
@@ -2274,7 +2251,7 @@ namespace Libvaxy.Collision
 			for (int i = 0; i < A.VertexCount; ++i)
 			{
 				HalfSpace h = c2PlaneAt(A, i);
-				int idx = c2Support(B.Vertices, B.VertexCount, Vector.Rotate(a_in_b.Rotation, Vector.Negate(h.Normal)));
+				int idx = FarthestVertexFromVectorIndex(B.Vertices, B.VertexCount, Vector.Rotate(a_in_b.Rotation, Vector.Negate(h.Normal)));
 				Vector p = Vector.Transform(b_in_a, B.Vertices[idx]);
 				float d = HalfSpace.Distance(h, p);
 				if (d > sep)
