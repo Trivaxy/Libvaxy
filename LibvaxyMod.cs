@@ -62,9 +62,12 @@ namespace Libvaxy
 			FallingTileTextures = null;
 			fallingTileAlphaMask = null;
 
-			foreach (IDisposable disposable in disposeList)
-				disposable.Dispose();
-			disposeList = null;
+			if (disposeList != null)
+			{
+				foreach (IDisposable disposable in disposeList)
+					disposable.Dispose();
+				disposeList = null;
+			}
 
 			TerrariaAssembly = null;
 			ModAssemblies = null;
