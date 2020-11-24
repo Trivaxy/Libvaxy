@@ -31,13 +31,13 @@ namespace Libvaxy
 		public static Assembly TerrariaAssembly;
 		public static Dictionary<string, Assembly> ModAssemblies;
 
-		internal static new ILog Logger => instance.Logger;
+        internal new static ILog Logger => instance.Logger;
 
 		internal void PreLoad() => instance = this;
 
 		public override void Load()
-		{
-			Reflection.InitializeCaches();
+        {
+            Reflection.InitializeCaches();
 			FallingTileTextures = new Dictionary<int, Texture2D>();
 			fallingTileAlphaMask = GetTexture("GameHelpers/FallingTileAlphaMask");
 			disposeList = new List<IDisposable>();
@@ -45,11 +45,11 @@ namespace Libvaxy
 			ModAssemblies = ModLoader.Mods.Skip(1).ToDictionary(m => m.Name, m => m.Code); // initialize on load so libvaxy-dependent mods function when using this
 			StackInspectHandler.Initialize();
 			HookHandler.ApplyHooks();
-		}
+        }
 
 		public void PostLoad()
 		{
-			ModAssemblies = ModLoader.Mods.Skip(1).ToDictionary(m => m.Name, m => m.Code); // add the rest of the loaded mods after Load()
+            ModAssemblies = ModLoader.Mods.Skip(1).ToDictionary(m => m.Name, m => m.Code); // add the rest of the loaded mods after Load()
 			DetourHandler.ApplyDetours();
 		}
 
@@ -58,8 +58,7 @@ namespace Libvaxy
 			instance = null;
 
 			Reflection.UnloadCaches();
-
-			FallingTileTextures = null;
+            FallingTileTextures = null;
 			fallingTileAlphaMask = null;
 
 			if (disposeList != null)
@@ -73,7 +72,7 @@ namespace Libvaxy
 			ModAssemblies = null;
 
 			StackInspectHandler.Unload();
-		}
+        }
 
 		internal static void DisposeOnUnload(IDisposable disposable)
 			=> disposeList.Add(disposable);

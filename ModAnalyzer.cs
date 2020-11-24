@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Terraria.ModLoader;
@@ -14,7 +15,7 @@ namespace Libvaxy
 	/// </summary>
 	public class ModAnalyzer
 	{
-		private Mod mod;
+		private readonly Mod mod;
 
 		public ModAnalyzer(Mod mod) => this.mod = mod;
 
@@ -89,13 +90,13 @@ namespace Libvaxy
 		}
 
 		/// <summary>
-		/// Gets all the resources inside a mod as a Dictionary whose keys are the Type of the resource and the values are the collection of the resource.
+		/// Gets all the resources inside a mod as a Dictionary whose keys are the Type of the resource and the values are an enumerable of the resource.
 		/// </summary>
 		/// <returns>Returns all resources inside a mod as a Dictionary</returns>
-		public Dictionary<Type, object> GetAllResources()
+		public Dictionary<Type, IEnumerable> GetAllResources()
 		{
 			// i hate this.
-			return new Dictionary<Type, object>()
+			return new Dictionary<Type, IEnumerable>()
 			{
 				{ typeof(Texture2D), GetResources<Texture2D>() },
 				{ typeof(SoundEffect), GetResources<SoundEffect>() },

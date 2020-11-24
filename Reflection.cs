@@ -293,8 +293,7 @@ namespace Libvaxy
 			Type[] types = assembly?.GetTypes() ?? LibvaxyMod.ModAssemblies.Values.SelectMany(asm => asm.GetTypes()).ToArray();
 
 			return types
-				.Where(type => type.FullName == name)
-				.First();
+                .First(type => type.FullName == name);
 		}
 
 		/// <summary>
@@ -347,14 +346,14 @@ namespace Libvaxy
 		{
 			string key = FullMemberName(info);
 
-			if (info is FieldInfo)
-				fieldCache[key] = (FieldInfo)info;
-			else if (info is PropertyInfo)
-				propertyCache[key] = (PropertyInfo)info;
-			else if (info is MethodInfo)
-				methodCache[key] = (MethodInfo)info;
-			else if (info is ConstructorInfo)
-				constructorCache[key] = (ConstructorInfo)info;
+			if (info is FieldInfo fieldInfo)
+				fieldCache[key] = fieldInfo;
+			else if (info is PropertyInfo propertyInfo)
+				propertyCache[key] = propertyInfo;
+			else if (info is MethodInfo methodInfo)
+				methodCache[key] = methodInfo;
+			else if (info is ConstructorInfo constructorInfo)
+				constructorCache[key] = constructorInfo;
 		}
 
 		internal static string FullMemberName(this MemberInfo info)

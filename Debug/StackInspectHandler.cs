@@ -50,8 +50,7 @@ namespace Libvaxy.Debug
 					il.Index++;
 				}
 
-				il.Index++;
-				il.Emit(OpCodes.Pop);
+                il.Emit(OpCodes.Pop);
 
 				inspectedMethodsRegisterCount[hook] = 1;
 			});
@@ -70,7 +69,7 @@ namespace Libvaxy.Debug
 #pragma warning restore IDE0051
 		{
 
-			LibvaxyMod.Logger.Debug($"Topmost value in stack of {method} BEFORE [{instruction}] is run: {obj ?? "None"}");
+			LibvaxyMod.Logger.Debug($"Top value in stack of {method} BEFORE [{instruction}] is run: {obj ?? "None"}");
 		}
 	}
 }
