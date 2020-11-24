@@ -615,8 +615,7 @@ namespace Libvaxy.Collision
 
 	public enum ShapeType
 	{
-		None,
-		Circle,
+        Circle,
 		AABB,
 		Capsule,
 		Poly
@@ -644,8 +643,8 @@ namespace Libvaxy.Collision
 
 	public class DynamicCollision
 	{
-		public const int MaxPolygonVertices = 8;
-		public const int GJKIterations = 20;
+		private const int MaxPolygonVertices = 8;
+		private const int GJKIterations = 20;
 
 		// This is an advanced function, intended to be used by people who know what they're doing.
 		//
@@ -814,7 +813,7 @@ namespace Libvaxy.Collision
 			}
 		}
 
-		class SVector
+		struct SVector
 		{
 			public Vector SA;
 			public Vector SB;
@@ -823,17 +822,7 @@ namespace Libvaxy.Collision
 			public int IA;
 			public int IB;
 
-			public SVector()
-			{
-				SA = new Vector();
-				SB = new Vector();
-				Position = new Vector();
-				U = 0;
-				IA = 0;
-				IB = 0;
-			}
-
-			public SVector(Vector sA, Vector sB, Vector p, float u, int iA, int iB)
+            public SVector(Vector sA, Vector sB, Vector p, float u, int iA, int iB)
 			{
 				SA = sA;
 				SB = sB;
@@ -844,23 +833,13 @@ namespace Libvaxy.Collision
 			}
 		}
 
-		class Simplex
+		struct Simplex
 		{
 			public SVector A, B, C, D;
 			public float Div;
 			public int Count;
 
-			public Simplex()
-			{
-				A = new SVector();
-				B = new SVector();
-				C = new SVector();
-				D = new SVector();
-				Div = 0f;
-				Count = 0;
-			}
-
-			public Simplex(SVector a, SVector b, SVector c, SVector d, float div, int count)
+            public Simplex(SVector a, SVector b, SVector c, SVector d, float div, int count)
 			{
 				A = a;
 				B = b;
@@ -1073,7 +1052,7 @@ namespace Libvaxy.Collision
 				case 3: return Vector.Delta(Vector.Subtract(s.B.Position, s.A.Position), Vector.Subtract(s.C.Position, s.A.Position));
 			}
 		}
-
+		
 		public static float GJK(object A, ShapeType typeA, Transformation ax_ptr, object B, ShapeType typeB, Transformation bx_ptr, bool use_radius, int iterations, GJKCache cache)
 		{
 			Vector dummyVector = default;
@@ -1083,7 +1062,7 @@ namespace Libvaxy.Collision
 		// Please see http://box2d.org/downloads/ under GDC 2010 for Erin's demo code
 		// and PDF slides for documentation on the GJK algorithm. This function is mostly
 		// from Erin's version from his online resources.
-		public static float GJK(object A, ShapeType typeA, Transformation ax_ptr, object B, ShapeType typeB, Transformation bx_ptr, ref Vector outA, ref Vector outB, bool use_radius, int iterations, GJKCache cache)
+		private static float GJK(object A, ShapeType typeA, Transformation ax_ptr, object B, ShapeType typeB, Transformation bx_ptr, ref Vector outA, ref Vector outB, bool use_radius, int iterations, GJKCache cache)
 		{
 			Transformation ax = ax_ptr;
 			Transformation bx = bx_ptr;
