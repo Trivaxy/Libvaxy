@@ -1,11 +1,9 @@
 ﻿using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using MonoMod.RuntimeDetour;
-using MonoMod.Utils;
 using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using Terraria;
 
 namespace Libvaxy.Attributes
 {
@@ -35,14 +33,14 @@ namespace Libvaxy.Attributes
 					il.Body.Instructions.Clear();
 					ILCursor cursor = new ILCursor(il);
 
-					FieldInfo typeInfo = Reflection.GetFieldInfo(targetType, attribute.fieldName);
+					FieldInfo targetFieldInfo = Reflection.GetFieldInfo(targetType, attribute.fieldName);
 
-					if (typeInfo.IsStatic)
-						cursor.Emit(OpCodes.Ldsfld, typeInfo);
+					if (targetFieldInfo.IsStatic)
+						cursor.Emit(OpCodes.Ldsfld, targetFieldInfo);
 					else
 					{
 						cursor.Emit(OpCodes.Ldarg_0);
-						cursor.Emit(OpCodes.Ldfld, typeInfo);
+						cursor.Emit(OpCodes.Ldfld, targetFieldInfo);
 					}
 
 					cursor.Emit(OpCodes.Ret);

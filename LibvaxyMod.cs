@@ -57,6 +57,7 @@ namespace Libvaxy
 		{
             ModAssemblies = ModLoader.Mods.Skip(1).ToDictionary(m => m.Name, m => m.Code); // add the rest of the loaded mods after Load()
 			FieldGetHandler.ApplyFieldGets();
+			FieldSetHandler.ApplyFieldSets();
 			DetourHandler.ApplyDetours();
 		}
 
@@ -122,18 +123,9 @@ namespace Libvaxy
 
 			stopwatch.Stop();
 
-			return stopwatch.ElapsedTicks;
+			return stopwatch.ElapsedMilliseconds / iterations;
 		}
 
 		public override void PostAddRecipes() => PostLoad();
-	}
-
-	public static class FieldGetters
-	{
-		[FieldGet("adjWater")]
-		public static bool IsAdjacentToWater(this Player player) => false;
-
-		[FieldGet("defaultItemGrabRange")]
-		public static int GetDefaultItemGrabRange(this Player player) => 0;
 	}
 }
