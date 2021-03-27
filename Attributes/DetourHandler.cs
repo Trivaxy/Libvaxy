@@ -14,8 +14,6 @@ namespace Libvaxy.Attributes
 		// TODO: Make it possible to call original method easily + pass in an instance of the caller
 		internal static void ApplyDetours()
 		{
-			MonoModHooks.RequestNativeAccess();
-
 			foreach (MethodInfo method in Reflection.GetMethodsWithAttribute<DetourAttribute>())
 			{
 				DetourAttribute attribute = method.GetCustomAttribute<DetourAttribute>();

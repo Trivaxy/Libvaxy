@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Terraria;
@@ -38,11 +39,16 @@ namespace Libvaxy
 		public override void Load()
         {
             Reflection.InitializeCaches();
+			MonoModHooks.RequestNativeAccess();
+
 			FallingTileTextures = new Dictionary<int, Texture2D>();
 			fallingTileAlphaMask = GetTexture("GameHelpers/FallingTileAlphaMask");
+
 			disposeList = new List<IDisposable>();
+
 			TerrariaAssembly = typeof(Main).Assembly;
 			ModAssemblies = ModLoader.Mods.Skip(1).ToDictionary(m => m.Name, m => m.Code); // initialize on load so libvaxy-dependent mods function when using this
+
 			StackInspectHandler.Initialize();
 			HookHandler.ApplyHooks();
         }
@@ -50,6 +56,7 @@ namespace Libvaxy
 		public void PostLoad()
 		{
             ModAssemblies = ModLoader.Mods.Skip(1).ToDictionary(m => m.Name, m => m.Code); // add the rest of the loaded mods after Load()
+			FieldGetHandler.ApplyFieldGets();
 			DetourHandler.ApplyDetours();
 		}
 
@@ -104,6 +111,29 @@ namespace Libvaxy
 				Main.NewText(message, color);
 		}
 
+		public static double Benchmark(Action action, int iterations)
+		{
+			GC.Collect();
+			action.Invoke(); // run once outside of loop to avoid initialization costs
+
+			Stopwatch stopwatch = Stopwatch.StartNew();
+			for (int i = 0; i < iterations; i++)
+				action.Invoke();
+
+			stopwatch.Stop();
+
+			return stopwatch.ElapsedTicks;
+		}
+
 		public override void PostAddRecipes() => PostLoad();
+	}
+
+	public static class FieldGetters
+	{
+		[FieldGet("adjWater")]
+		public static bool IsAdjacentToWater(this Player player) => false;
+
+		[FieldGet("defaultItemGrabRange")]
+		public static int GetDefaultItemGrabRange(this Player player) => 0;
 	}
 }
