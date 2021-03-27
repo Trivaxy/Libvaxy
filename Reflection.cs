@@ -105,8 +105,8 @@ namespace Libvaxy
 		/// <param name="type">The type.</param>
 		/// <param name="name">The field name.</param>
 		/// <returns>Whether the type has the field or not.</returns>
-		public static bool HasField(Type type, string name)
-			=> GetFieldInfo(type, name) != null;
+		public static bool HasField(Type type, string name, BindingFlags flags = AllFlags)
+			=> GetFieldInfo(type, name, flags) != null;
 
 		/// <summary>
 		/// Gets the value of a property inside an instance.
@@ -176,8 +176,8 @@ namespace Libvaxy
 		/// <param name="type">The type.</param>
 		/// <param name="name">The name of the property.</param>
 		/// <returns>Whether the type has the property or not.</returns>
-		public static bool HasProperty(Type type, string name)
-			=> GetPropertyInfo(type, name) != null;
+		public static bool HasProperty(Type type, string name, BindingFlags flags = AllFlags)
+			=> GetPropertyInfo(type, name, flags) != null;
 
 		/// <summary>
 		/// Invokes an instance method and gets its return value.
@@ -215,8 +215,8 @@ namespace Libvaxy
 			return (T)methodCache[key].Invoke(null, parameters);
 		}
 
-		public static bool HasMethod(Type type, string name, params Type[] paramTypes)
-			=> GetMethodInfo(type, name, paramTypes) != null;
+		public static bool HasMethod(Type type, string name, BindingFlags flags = AllFlags, params Type[] paramTypes)
+			=> GetMethodInfo(type, name, paramTypes, flags) != null;
 
 		/// <summary>
 		/// Invokes a constructor on an object.
@@ -234,8 +234,8 @@ namespace Libvaxy
 			constructorCache[key].Invoke(obj, parameters);
 		}
 
-		public static bool HasConstructor(Type type, params Type[] ctorParamTypes)
-			=> GetConstructorInfo(type, ctorParamTypes) != null;
+		public static bool HasConstructor(Type type, BindingFlags flags = AllFlags, params Type[] ctorParamTypes)
+			=> GetConstructorInfo(type, ctorParamTypes, flags) != null;
 
 		/// <summary>
 		/// Gets a FieldInfo without internally caching it.
@@ -271,7 +271,7 @@ namespace Libvaxy
 		/// <param name="type">The type containing the property</param>
 		/// <param name="paramTypes">The parameter types of the constructor, in order</param>
 		/// <returns>The acquired ConstructorInfo</returns>
-		public static ConstructorInfo GetConstructorInfo(Type type, Type[] paramTypes) => type.GetConstructor(AllFlags, Type.DefaultBinder, paramTypes, null);
+		public static ConstructorInfo GetConstructorInfo(Type type, Type[] paramTypes, BindingFlags flags = AllFlags) => type.GetConstructor(flags, Type.DefaultBinder, paramTypes, null);
 
 		/// <summary>
 		/// Gets the type of each parameter passed in.
