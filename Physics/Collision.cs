@@ -339,6 +339,16 @@ namespace Libvaxy.Collision
 
 		public abstract bool IntersectsPoint(Point point);
 
+		public abstract Manifold CircleCollisionManifold(Circle circle);
+
+		public abstract Manifold AABBCollisionManifold(AABB aabb);
+
+		public abstract Manifold CapsuleCollisionManifold(Capsule capsule);
+
+		public abstract Manifold PolyCollisionManifold(Poly poly);
+
+		public abstract Manifold PointCollisionManifold(Point point);
+
 		public bool IntersectsShape(Shape shape)
 		{
 			if (shape is Circle circle)
@@ -353,6 +363,22 @@ namespace Libvaxy.Collision
 				return IntersectsPoint(point);
 
 			return false;
+		}
+
+		public Manifold ShapeCollisionManifold(Shape shape)
+		{
+			if (shape is Circle circle)
+				return CircleCollisionManifold(circle);
+			else if (shape is AABB aabb)
+				return AABBCollisionManifold(aabb);
+			else if (shape is Capsule capsule)
+				return CapsuleCollisionManifold(capsule);
+			else if (shape is Poly poly)
+				return PolyCollisionManifold(poly);
+			else if (shape is Point point)
+				return PointCollisionManifold(point);
+
+			return default;
 		}
 	}
 
@@ -423,18 +449,22 @@ namespace Libvaxy.Collision
 			=> DynamicCollision.GJK(this, ShapeType.Circle, Transformation.Identity, poly, ShapeType.Poly, poly.Transformation, true, 0, null) == 0;
 
 		public override bool IntersectsPoint(Point point) => point.IntersectsCircle(this);
+
+		public override Manifold CircleCollisionManifold(Circle circle) => DynamicCollision.c2CircletoCircleManifold(this, circle);
+
+		public override Manifold AABBCollisionManifold(AABB aabb) => DynamicCollision.c2CircletoAABBManifold(this, aabb);
+
+		public override Manifold CapsuleCollisionManifold(Capsule capsule) => DynamicCollision.c2CircletoCapsuleManifold(this, capsule);
+
+		public override Manifold PolyCollisionManifold(Poly poly) => DynamicCollision.c2CircletoPolyManifold(this, poly, poly.Transformation);
+
+		public override Manifold PointCollisionManifold(Point point) => point.CircleCollisionManifold(this);
 	}
 
 	public class AABB : Shape
 	{
 		public Vector Min;
 		public Vector Max;
-
-		public AABB()
-		{
-			Min = new Vector();
-			Max = new Vector();
-		}
 
 		public AABB(Vector min, Vector max)
 		{
@@ -461,6 +491,16 @@ namespace Libvaxy.Collision
 		public override bool IntersectsPoly(Poly poly) => poly.IntersectsAABB(this);
 
 		public override bool IntersectsPoint(Point point) => point.IntersectsAABB(this);
+
+		public override Manifold CircleCollisionManifold(Circle circle) => circle.AABBCollisionManifold(this);
+
+		public override Manifold AABBCollisionManifold(AABB aabb) => DynamicCollision.c2AABBtoAABBManifold(this, aabb);
+
+		public override Manifold CapsuleCollisionManifold(Capsule capsule) => DynamicCollision.c2AABBtoCapsuleManifold(this, capsule);
+
+		public override Manifold PolyCollisionManifold(Poly poly) => DynamicCollision.c2AABBtoPolyManifold(this, poly, poly.Transformation);
+
+		public override Manifold PointCollisionManifold(Point point) => point.AABBCollisionManifold(this);
 	}
 
 	// a capsule is defined as a line segment (from a to b) and radius r
@@ -495,6 +535,16 @@ namespace Libvaxy.Collision
 			=> DynamicCollision.GJK(this, ShapeType.Capsule, Transformation.Identity, poly, ShapeType.Poly, poly.Transformation, true, 0, null) == 0;
 
 		public override bool IntersectsPoint(Point point) => point.IntersectsCapsule(this);
+
+		public override Manifold CircleCollisionManifold(Circle circle) => circle.CapsuleCollisionManifold(this);
+
+		public override Manifold AABBCollisionManifold(AABB aabb) => aabb.CapsuleCollisionManifold(this);
+
+		public override Manifold CapsuleCollisionManifold(Capsule capsule) => DynamicCollision.c2CapsuletoCapsuleManifold(this, capsule);
+
+		public override Manifold PolyCollisionManifold(Poly poly) => DynamicCollision.c2CapsuletoPolyManifold(this, poly, poly.Transformation);
+
+		public override Manifold PointCollisionManifold(Point point) => point.CapsuleCollisionManifold(this);
 	}
 
 	public class Poly : Shape
@@ -531,6 +581,16 @@ namespace Libvaxy.Collision
 			=> DynamicCollision.GJK(this, ShapeType.Poly, Transformation, poly, ShapeType.Poly, poly.Transformation, true, 0, null) == 0;
 
 		public override bool IntersectsPoint(Point point) => point.IntersectsPoly(this);
+
+		public override Manifold CircleCollisionManifold(Circle circle) => circle.PolyCollisionManifold(this);
+
+		public override Manifold AABBCollisionManifold(AABB aabb) => aabb.PolyCollisionManifold(this);
+
+		public override Manifold CapsuleCollisionManifold(Capsule capsule) => capsule.PolyCollisionManifold(this);
+
+		public override Manifold PolyCollisionManifold(Poly poly) => DynamicCollision.c2PolytoPolyManifold(this, Transformation, poly, poly.Transformation);
+
+		public override Manifold PointCollisionManifold(Point point) => point.PolyCollisionManifold(this);
 	}
 
 	// this is a custom type for the sake of completion, not originally included in tinyc2
@@ -553,6 +613,16 @@ namespace Libvaxy.Collision
 		public override bool IntersectsPoly(Poly poly) => AABBRepresentation.IntersectsPoly(poly);
 
 		public override bool IntersectsPoint(Point point) => Coordinates.X == point.Coordinates.X && Coordinates.Y == point.Coordinates.Y;
+
+		public override Manifold CircleCollisionManifold(Circle circle) => AABBRepresentation.CircleCollisionManifold(circle);
+
+		public override Manifold AABBCollisionManifold(AABB aabb) => AABBRepresentation.AABBCollisionManifold(aabb);
+
+		public override Manifold CapsuleCollisionManifold(Capsule capsule) => AABBRepresentation.CapsuleCollisionManifold(capsule);
+
+		public override Manifold PolyCollisionManifold(Poly poly) => AABBRepresentation.PolyCollisionManifold(poly);
+
+		public override Manifold PointCollisionManifold(Point point) => AABBRepresentation.AABBCollisionManifold(point.AABBRepresentation);
 	}
 
 	// IMPORTANT:
@@ -893,7 +963,7 @@ namespace Libvaxy.Collision
 			return imax;
 		}
 
-		private static Vector c2L(Simplex s)
+		private static Vector c2L(ref Simplex s)
 		{
 			float den = 1.0f / s.Div;
 			switch (s.Count)
@@ -933,7 +1003,7 @@ namespace Libvaxy.Collision
 			}
 		}
 
-		private static void c22(Simplex s)
+		private static void c22(ref Simplex s)
 		{
 			Vector a = s.A.Position;
 			Vector b = s.B.Position;
@@ -964,7 +1034,7 @@ namespace Libvaxy.Collision
 			}
 		}
 
-		private static void c23(Simplex s)
+		private static void c23(ref Simplex s)
 		{
 			Vector a = s.A.Position;
 			Vector b = s.B.Position;
@@ -1042,7 +1112,7 @@ namespace Libvaxy.Collision
 			}
 		}
 
-		private static float c2GJKSimplexMetric(Simplex s)
+		private static float c2GJKSimplexMetric(ref Simplex s)
 		{
 			switch (s.Count)
 			{
@@ -1103,7 +1173,7 @@ namespace Libvaxy.Collision
 					s.Div = cache.Div;
 
 					float metric_old = cache.Metric;
-					float metric = c2GJKSimplexMetric(s);
+					float metric = c2GJKSimplexMetric(ref s);
 
 					float min_metric = metric < metric_old ? metric : metric_old;
 					float max_metric = metric > metric_old ? metric : metric_old;
@@ -1143,8 +1213,8 @@ namespace Libvaxy.Collision
 				switch (s.Count)
 				{
 					case 1: break;
-					case 2: c22(s); break;
-					case 3: c23(s); break;
+					case 2: c22(ref s); break;
+					case 3: c23(ref s); break;
 				}
 
 				if (s.Count == 3)
@@ -1153,7 +1223,7 @@ namespace Libvaxy.Collision
 					break;
 				}
 
-				Vector p = c2L(s);
+				Vector p = c2L(ref s);
 				d1 = Vector.DotProduct(p, p);
 
 				if (d1 > d0) break;
@@ -1223,7 +1293,7 @@ namespace Libvaxy.Collision
 
 			if (cache != null)
 			{
-				cache.Metric = c2GJKSimplexMetric(s);
+				cache.Metric = c2GJKSimplexMetric(ref s);
 				cache.Count = s.Count;
 				for (int i = 0; i < s.Count; ++i)
 				{
@@ -1517,9 +1587,7 @@ namespace Libvaxy.Collision
 		{
 			Vector p0 = A.Position;
 			Vector p1 = Vector.Add(A.Position, Vector.MultiplyMagnitude(A.Direction, A.Length));
-			AABB a_box = new AABB();
-			a_box.Min = Vector.MinComponents(p0, p1);
-			a_box.Max = Vector.MaxComponents(p0, p1);
+			AABB a_box = new AABB(Vector.MinComponents(p0, p1), Vector.MaxComponents(p0, p1));
 
 			rayCast = null;
 
@@ -1612,9 +1680,7 @@ namespace Libvaxy.Collision
 			Vector yAd = Vector.RotateMatrixTranspose(M, A.Direction);
 			Vector yAe = Vector.Add(yAp, Vector.MultiplyMagnitude(yAd, A.Length));
 
-			AABB capsule_bb = new AABB();
-			capsule_bb.Min = new Vector(-B.Radius, 0);
-			capsule_bb.Max = new Vector(B.Radius, yBb.Y);
+			AABB capsule_bb = new AABB(new Vector(-B.Radius, 0), new Vector(B.Radius, yBb.Y));
 
 			rayCast = new RayCast();
 			rayCast.ImpactNormal = Vector.Normalize(cap_n);
@@ -1716,7 +1782,7 @@ namespace Libvaxy.Collision
 			return false;
 		}
 
-		static Manifold c2CircletoCircleManifold(Circle A, Circle B)
+		internal static Manifold c2CircletoCircleManifold(Circle A, Circle B)
 		{
 			Manifold m = new Manifold();
 			m.Count = 0;
@@ -1736,7 +1802,7 @@ namespace Libvaxy.Collision
 			return m;
 		}
 
-		static Manifold c2CircletoAABBManifold(Circle A, AABB B)
+		internal static Manifold c2CircletoAABBManifold(Circle A, AABB B)
 		{
 			Manifold m = new Manifold();
 			m.Count = 0;
@@ -1796,7 +1862,7 @@ namespace Libvaxy.Collision
 			return m;
 		}
 
-		static Manifold c2CircletoCapsuleManifold(Circle A, Capsule B)
+		internal static Manifold c2CircletoCapsuleManifold(Circle A, Capsule B)
 		{
 			Manifold m = new Manifold();
 			m.Count = 0;
@@ -1819,7 +1885,7 @@ namespace Libvaxy.Collision
 			return m;
 		}
 
-		static Manifold c2AABBtoAABBManifold(AABB A, AABB B)
+		internal static Manifold c2AABBtoAABBManifold(AABB A, AABB B)
 		{
 			Manifold m = new Manifold();
 			m.Count = 0;
@@ -1879,7 +1945,7 @@ namespace Libvaxy.Collision
 			return m;
 		}
 
-		static Manifold c2AABBtoCapsuleManifold(AABB A, Capsule B)
+		internal static Manifold c2AABBtoCapsuleManifold(AABB A, Capsule B)
 		{
 			Manifold m = new Manifold();
 			m.Count = 0;
@@ -1889,7 +1955,7 @@ namespace Libvaxy.Collision
 			return m;
 		}
 
-		static Manifold c2CapsuletoCapsuleManifold(Capsule A, Capsule B)
+		internal static Manifold c2CapsuletoCapsuleManifold(Capsule A, Capsule B)
 		{
 			Manifold m = new Manifold();
 			m.Count = 0;
@@ -1920,7 +1986,7 @@ namespace Libvaxy.Collision
 			return h;
 		}
 
-		static Manifold c2CircletoPolyManifold(Circle A, Poly B, Transformation bx_tr)
+		internal static Manifold c2CircletoPolyManifold(Circle A, Poly B, Transformation bx_tr)
 		{
 			Manifold m = new Manifold();
 			m.Count = 0;
@@ -1977,7 +2043,7 @@ namespace Libvaxy.Collision
 		}
 
 		// Forms a c2Poly and uses c2PolytoPolyManifold
-		static Manifold c2AABBtoPolyManifold(AABB A, Poly B, Transformation bx)
+		internal static Manifold c2AABBtoPolyManifold(AABB A, Poly B, Transformation bx)
 		{
 			Manifold m = new Manifold();
 			m.Count = 0;
@@ -2103,7 +2169,7 @@ namespace Libvaxy.Collision
 			incident[1] = Vector.Transform(ix, ip.Vertices[index + 1 == ip.VertexCount ? 0 : index + 1]);
 		}
 
-		static Manifold c2CapsuletoPolyManifold(Capsule A, Poly B, Transformation bx_ptr)
+		internal static Manifold c2CapsuletoPolyManifold(Capsule A, Poly B, Transformation bx_ptr)
 		{
 			Manifold m = new Manifold();
 			m.Count = 0;
@@ -2252,7 +2318,7 @@ namespace Libvaxy.Collision
 		// Find the incident face, which is most anti-normal face
 		// Clip incident face to reference face side planes
 		// Keep all points behind the reference face
-		static Manifold c2PolytoPolyManifold(Poly A, Transformation ax_ptr, Poly B, Transformation bx_ptr)
+		internal static Manifold c2PolytoPolyManifold(Poly A, Transformation ax_ptr, Poly B, Transformation bx_ptr)
 		{
 			Manifold m = new Manifold();
 			m.Count = 0;
