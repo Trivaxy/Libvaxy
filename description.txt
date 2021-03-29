@@ -10,6 +10,8 @@ Here's an overview of what Libvaxy currently provides:
 - Classes that allow you to add content quicker (SimpleItem, SimpleTileItem, etc)
 - AutoSerializers so saving/loading custom data is easier
 - Debugging utilities for IL edits
+- The ability to access non-public/hidden fields and methods without earning any slowdown from reflection
+- Comes bundled with a safe version of the SharpMath2 library for all your collision needs
 
 ... and much more, coming soon, with your help!
 
