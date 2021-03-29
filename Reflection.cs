@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
+using Terraria.ModLoader;
 
 namespace Libvaxy
 {
@@ -223,8 +224,17 @@ namespace Libvaxy
 		/// <param name="flags">Any optional flags you want to pass in</param>
 		/// <param name="paramTypes">The types of the parameters in the method, in order</param>
 		/// <returns>Whether or not the type has a matching method</returns>
-		public static bool HasMethod(Type type, string name, BindingFlags flags = AllFlags, params Type[] paramTypes)
-			=> GetMethodInfo(type, name, paramTypes, flags) != null;
+		public static bool HasMethod(Type type, string name, BindingFlags flags = AllFlags, bool ignoreParameters = true, params Type[] paramTypes)
+		{
+			if (!ignoreParameters)
+				return GetMethodInfo(type, name, paramTypes, flags) != null;
+
+			foreach (MethodInfo method in type.GetMethods(flags))
+				if (method.Name == name)
+					return true;
+
+			return false;
+		}
 
 		/// <summary>
 		/// Searches for a constructor in the passed instance's type matching the specified parameter types and invokes it on the object.
@@ -276,7 +286,7 @@ namespace Libvaxy
 		/// <param name="paramTypes">The parameter types of the method, in order</param>
 		/// <param name="flags">Any optional flags you want to pass in. By default, most flags are automatically included</param>
 		/// <returns>The acquired MethodInfo</returns>
-		public static MethodInfo GetMethodInfo(Type type, string name, Type[] paramTypes = null, BindingFlags flags = AllFlags) => type.GetMethod(name, flags, null, paramTypes, null);
+		public static MethodInfo GetMethodInfo(Type type, string name, Type[] paramTypes = null, BindingFlags flags = AllFlags) => type.GetMethod(name, flags, null, paramTypes ?? Type.EmptyTypes, null);
 
 		/// <summary>
 		/// Gets a ConstructorInfo without internally caching it.
