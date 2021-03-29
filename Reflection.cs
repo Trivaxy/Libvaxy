@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 namespace Libvaxy
 {
 	/// <summary>
-	/// Provides many useful reflection utilities to make it easy. Does automatic caching for certain methods.
+	/// Provides many useful utilities to make reflection easy. Does automatic caching when needed.
 	/// </summary>
 	public static class Reflection
 	{
@@ -215,17 +215,23 @@ namespace Libvaxy
 			return (T)methodCache[key].Invoke(null, parameters);
 		}
 
+		/// <summary>
+		/// Checks whether the specified type has a method with the specified name and parameter types.
+		/// </summary>
+		/// <param name="type">The type to search in</param>
+		/// <param name="name">The name of the method</param>
+		/// <param name="flags">Any optional flags you want to pass in</param>
+		/// <param name="paramTypes">The types of the parameters in the method, in order</param>
+		/// <returns>Whether or not the type has a matching method</returns>
 		public static bool HasMethod(Type type, string name, BindingFlags flags = AllFlags, params Type[] paramTypes)
 			=> GetMethodInfo(type, name, paramTypes, flags) != null;
 
 		/// <summary>
-		/// Invokes a constructor on an object.
+		/// Searches for a constructor in the passed instance's type matching the specified parameter types and invokes it on the object.
 		/// </summary>
-		/// <param name="obj">The instance containing the method</param>
-		/// <param name="name">The name of the method</param>
-		/// <param name="flags">Any optional flags you want to pass in. BindingFlags.Instance is always automatically included</param>
-		/// <param name="parameters">The parameters to pass to the method</param>
-		/// <returns>The invoked method's return value</returns>
+		/// <param name="obj">The instance to search in and to also pass to the constructor</param>
+		/// <param name="ctorParamTypes">The parameter types of the constructor, in order</param>
+		/// <param name="parameters">The values to pass to the constructor that is found</param>
 		public static void InvokeConstructor(object obj, Type[] ctorParamTypes, params object[] parameters)
 		{
 			string key = FullMethodName(obj.GetType(), ".ctor", GetObjectTypes(parameters));
@@ -234,8 +240,15 @@ namespace Libvaxy
 			constructorCache[key].Invoke(obj, parameters);
 		}
 
-		public static bool HasConstructor(Type type, BindingFlags flags = AllFlags, params Type[] ctorParamTypes)
-			=> GetConstructorInfo(type, ctorParamTypes, flags) != null;
+		/// <summary>
+		/// Checks whether the specified type has a constructor with the specified parameter types.
+		/// </summary>
+		/// <param name="type">The type to search in</param>
+		/// <param name="flags">Any optional flags you want to pass in</param>
+		/// <param name="paramTypes">The types of the constructor parameters, in order</param>
+		/// <returns>Whether or not the type has a matching constructor</returns>
+		public static bool HasConstructor(Type type, BindingFlags flags = AllFlags, params Type[] paramTypes)
+			=> GetConstructorInfo(type, paramTypes, flags) != null;
 
 		/// <summary>
 		/// Gets a FieldInfo without internally caching it.
@@ -280,14 +293,40 @@ namespace Libvaxy
 		/// <returns>An array containing the type of each parameter, in order</returns>
 		public static Type[] GetObjectTypes(params object[] parameters) => parameters.Select(p => p.GetType()).ToArray();
 
+		/// <summary>
+		/// Returns a corresponding array of types representing the parameter types of the method. 
+		/// </summary>
+		/// <param name="info">The method with the parameters</param>
+		/// <returns>An array of the parameter types</returns>
 		public static Type[] GetParameterTypes(MethodInfo info) => info.GetParameters().Select(p => p.ParameterType).ToArray();
 
+		/// <summary>
+		/// Creates an uninitalized instance of the type T, completely disregarding constructors.
+		/// </summary>
+		/// <typeparam name="T">The type to create an instance for</typeparam>
+		/// <returns>An instance of the type T</returns>
 		public static T CreateInstance<T>() => (T)CreateInstance(typeof(T));
 
+		/// <summary>
+		/// Creates an uninitalized instance of the specified type and casts it to T, completely disregarding constructors.
+		/// </summary>
+		/// <typeparam name="T">The type to cast the created instance to</typeparam>
+		/// <returns>An instance of the specified type</returns>
 		public static T CreateInstance<T>(Type type) => (T)CreateInstance(type);
 
+		/// <summary>
+		/// Creates an uninitialized instance of the specified type, completely disregarding constructors.
+		/// </summary>
+		/// <param name="type">The type to create an instance for</param>
+		/// <returns>An instance of the specified type</returns>
 		public static object CreateInstance(Type type) => FormatterServices.GetUninitializedObject(type);
 
+		/// <summary>
+		/// Searches the given assembly (or all mod assemblies if no assembly is specified) for a type matching the specified <b>full</b> name.
+		/// </summary>
+		/// <param name="name">The <b>full</b> name of the type</param>
+		/// <param name="assembly">The assembly to search in. If this is null, all mod assemblies are searched</param>
+		/// <returns>A type matching the specified name</returns>
 		public static Type GetType(string name, Assembly assembly = null)
 		{
 			Type[] types = assembly?.GetTypes() ?? LibvaxyMod.ModAssemblies.Values.SelectMany(asm => asm.GetTypes()).ToArray();
@@ -297,11 +336,12 @@ namespace Libvaxy
 		}
 
 		/// <summary>
-		/// Searches the given assembly for types holding the specified attribute.
+		/// Searches the given assembly (or all mod assemblies if no assembly is specified) for types holding the specified attribute.
 		/// </summary>
-		/// <typeparam name="T">The type of the attribute</typeparam>
-		/// <param name="assembly">The assembly to search in</param>
-		/// <returns>An array of all types in the assembly holding the specified attribute</returns>
+		/// <typeparam name="T">The type of the attribute to search for</typeparam>
+		/// <param name="assembly">The assembly to search in. If this is null, all mod assemblies are searched</param>
+		/// <param name="inherited">Whether or not to also search the inheritance tree of types for the attribute</param>
+		/// <returns>An array of all types holding the specified attribute</returns>
 		public static Type[] GetTypesWithAttribute<T>(Assembly assembly = null, bool inherited = false)
 			where T: Attribute
 		{
@@ -312,6 +352,13 @@ namespace Libvaxy
 				.ToArray();
 		}
 
+		/// <summary>
+		/// Searches the given assembly (or all mod assemblies if no assembly is specified) for methods holding the specified attribute.
+		/// </summary>
+		/// <typeparam name="T">The type of the attribute to search for</typeparam>
+		/// <param name="assembly">The assembly to search in. If this is null, all mod assemblies are searched</param>
+		/// <param name="inherited">Whether or not to also search the inheritance tree of the type containing the method for the attribute</param>
+		/// <returns>An array of all methods holding the specified attribute</returns>
 		public static MethodInfo[] GetMethodsWithAttribute<T>(Assembly assembly = null, bool inherited = false)
 			where T: Attribute
 		{
@@ -323,6 +370,12 @@ namespace Libvaxy
 				.ToArray();
 		}
 
+		/// <summary>
+		/// Searches the given assembly (or all mod assemblies if no assembly is specified) for types extending the specified type.
+		/// </summary>
+		/// <param name="type">The parent type to find the extending types of</param>
+		/// <param name="assembly">The assembly to search in. If this is null, all mod assemblies are searched</param>
+		/// <returns>An array of all the types extending from the specified type</returns>
 		public static Type[] GetSubtypes(Type type, Assembly assembly = null)
 		{
 			Type[] types = assembly?.GetTypes() ?? LibvaxyMod.ModAssemblies.Values.SelectMany(asm => asm.GetTypes()).ToArray();
@@ -332,6 +385,12 @@ namespace Libvaxy
 				.ToArray();
 		}
 
+		/// <summary>
+		/// Searches the given assembly (or all mod assemblies if no assembly is specified) for non-abstract types extending the specified type.
+		/// </summary>
+		/// <param name="type">The parent type to find the non-abstract extending types of</param>
+		/// <param name="assembly">The assembly to search in. If this is null, all mod assemblies are searched</param>
+		/// <returns>An array of all the non-abstract types extending from the specified type</returns>
 		public static Type[] GetNonAbstractSubtypes(Type type, Assembly assembly = null)
 		{
 			Type[] types = assembly?.GetTypes() ?? LibvaxyMod.ModAssemblies.Values.SelectMany(asm => asm.GetTypes()).ToArray();
