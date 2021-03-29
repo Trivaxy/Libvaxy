@@ -56,6 +56,7 @@ namespace Libvaxy
 		public void PostLoad()
 		{
             ModAssemblies = ModLoader.Mods.Skip(1).ToDictionary(m => m.Name, m => m.Code); // add the rest of the loaded mods after Load()
+			MethodInvokerHandler.ApplyMethodInvokers();
 			FieldGetHandler.ApplyFieldGets();
 			FieldSetHandler.ApplyFieldSets();
 			DetourHandler.ApplyDetours();
