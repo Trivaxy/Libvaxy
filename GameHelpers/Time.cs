@@ -13,9 +13,9 @@ namespace Libvaxy.GameHelpers
 		/// <summary>
 		/// Converts milliseconds to ticks.
 		/// </summary>
-		/// <param name="milliSeconds">How many milliseconds.</param>
+		/// <param name="milliseconds">How many milliseconds.</param>
 		/// <returns>The number of ticks from milliseconds.</returns>
-		public static int FromMilliSeconds(float milliSeconds) => FromSeconds(milliSeconds / 1000);
+		public static int FromMilliSeconds(float milliseconds) => FromSeconds(milliseconds / 1000);
 
 		/// <summary>
 		/// Converts seconds to ticks.
