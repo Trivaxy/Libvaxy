@@ -313,19 +313,21 @@ namespace Libvaxy.WorldGen
 		/// <param name="forced">Wether or not this will override existing blocks.</param>
 		public static void FillCircle(int x, int y, int radius, int type, bool forced)
 		{
-			Vector2 origin = new Vector2(x, y);
+			Point origin = new Point(x, y);
+			int radiusSquared = radius * radius;
 
-			for (int i = 0; i < radius; i++)
+			for (int i = origin.X - radius; i < origin.X + radius; i++)
 			{
-				for (int j = 0; j < radius; j++)
+				for (int j = origin.Y - radius; j < origin.Y + radius; j++)
 				{
-					float f = radius * 0.5f;
-					if (Vector2.DistanceSquared(new Vector2(i + (int)origin.X, j + (int)origin.Y), origin + new Vector2(radius / 2, radius / 2)) < f * f)
-					{
-						Tile tile = Framing.GetTileSafely(i + (int)origin.X, j + (int)origin.Y);
-						if (!(forced && tile.active()))
-							tile.type = (ushort)type;
-					}
+					int diffX = origin.X - i;
+					int diffY = origin.Y - j;
+
+					if (diffX * diffX + diffY * diffY <= radiusSquared)
+						if (type != -1)
+							PlaceTile(i, j, type, true, forced);
+						else
+							Framing.GetTileSafely(i, j).active(false);
 				}
 			}
 		}
