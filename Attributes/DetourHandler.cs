@@ -9,7 +9,7 @@ namespace Libvaxy.Attributes
 	/// <summary>
 	/// Internal class used by Libvaxy to apply mod detours.
 	/// </summary>
-	internal class DetourHandler
+	internal static class DetourHandler
 	{
 		// TODO: Make it possible to call original method easily + pass in an instance of the caller
 		internal static void ApplyDetours()
