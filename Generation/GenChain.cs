@@ -1,9 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
-using static Terraria.WorldGen;
+using Terraria;
 
-namespace Libvaxy.WorldGen
+namespace Libvaxy.Generation
 {
 	public class GenChain
 	{
@@ -15,7 +15,7 @@ namespace Libvaxy.WorldGen
 			points.Add(startingPoint);
 		}
 
-		private int RandomPointIndex => _genRand.Next(points.Count);
+		private int RandomPointIndex => WorldGen._genRand.Next(points.Count);
 
 		public GenChain TakeRandomPoint(Action<Point> action)
 		{

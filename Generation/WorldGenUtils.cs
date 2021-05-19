@@ -1,9 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using Terraria;
-using static Terraria.WorldGen;
 
-namespace Libvaxy.WorldGen
+namespace Libvaxy.Generation
 {
 	/// <summary>
 	/// Provides many utilities to make worldgen-related things more viable (some methods can be used outside worldgen as well).
@@ -127,7 +126,7 @@ namespace Libvaxy.WorldGen
 		/// <param name="width">The width of the rectangle.</param>
 		/// <param name="height">The height of the rectangle.</param>
 		/// <returns>A random point within the rectangle.</returns>
-		public static Point GetRandomPointInArea(int x, int y, int width, int height) => new Point(genRand.Next(x, x + width), genRand.Next(y, y + height));
+		public static Point GetRandomPointInArea(int x, int y, int width, int height) => new Point(WorldGen.genRand.Next(x, x + width), WorldGen.genRand.Next(y, y + height));
 
 		/// <summary>
 		/// Gets multiple random points within a rectangle.
@@ -325,7 +324,7 @@ namespace Libvaxy.WorldGen
 
 					if (diffX * diffX + diffY * diffY <= radiusSquared)
 						if (type != -1)
-							PlaceTile(i, j, type, true, forced);
+							WorldGen.PlaceTile(i, j, type, true, forced);
 						else
 							Framing.GetTileSafely(i, j).active(false);
 				}
