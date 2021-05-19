@@ -342,7 +342,7 @@ namespace Libvaxy
 			Type[] types = assembly?.GetTypes() ?? LibvaxyMod.ModAssemblies.Values.SelectMany(asm => asm.GetTypes()).ToArray();
 
 			return types
-                .First(type => type.FullName == name);
+                .FirstOrDefault(type => type.FullName == name);
 		}
 
 		/// <summary>
